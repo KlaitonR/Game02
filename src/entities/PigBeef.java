@@ -3,6 +3,8 @@ package entities;
 import java.awt.image.BufferedImage;
 
 import util.Id;
+import util.Mapa;
+import util.Regiao;
 
 public class PigBeef extends Beef{
 
@@ -12,6 +14,8 @@ public class PigBeef extends Beef{
 		pack = true;
 		id = Id.ID_PIG_BEEF;
 		qtPack = 63;
+		mapa.add(Mapa.MAPA_FLORESTA);
+		regiao.add(Regiao.REGIAO_FLORESTA);
 		
 	}
 

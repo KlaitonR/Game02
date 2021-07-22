@@ -273,6 +273,7 @@ public class SystemCreation {
 					if(Game.player.clickCraft) {
 						
 						Game.player.clickCraft = false;
+						Sound.Clips.creation.play();
 						
 						if(slot[index1].itensPack.size()>=required1) {
 							int i=0;

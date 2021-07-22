@@ -7,6 +7,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
+
+import construction.Construction;
+import construction.Mine;
 import entities.Axe;
 import entities.Bullet;
 import entities.BulletShoot;
@@ -28,14 +31,20 @@ import entities.Tree;
 import entities.Wapon;
 import graficos.Spritsheet;
 import main.Game;
+import mobs.Mob;
 import mobs.Pig;
+import util.Mapa;
+import util.Regiao;
 
 public class World {
 	
 	public static Tile[] tiles;
 	public static int WIDTH, HEIGHT;
 	public static int TILE_SIZE = 16;
+	public static int TILE_CONSTRUCTE32 = 32;
 	public static Npc npc;
+	public Mapa mapa;
+	public Regiao regiao;
 	
 	public World(String path) {
 		try {
@@ -53,6 +62,11 @@ public class World {
 					tiles[xx + (yy*WIDTH)] = new FloorTile(xx*16, yy*16, Tile.TILE_FLOOR);
 					tiles[xx + (yy*WIDTH)].psTiles = xx + (yy*WIDTH);
 					
+					if(Game.mapaGame.equals(Mapa.MAPA_CALABOUÇO)) {
+						tiles[xx + (yy*WIDTH)] = new EarthTile(xx*16, yy*16, Tile.TILE_EARTH);
+						tiles[xx + (yy*WIDTH)].psTiles = xx + (yy*WIDTH);
+					}
+					
 					if(pixelAtual == 0xFF000000) { //chão
 						tiles[xx + (yy*WIDTH)] = new FloorTile(xx*16, yy*16, Tile.TILE_FLOOR);
 						tiles[xx + (yy*WIDTH)].psTiles = xx + (yy*WIDTH);
@@ -63,6 +77,7 @@ public class World {
 						tiles[xx + (yy*WIDTH)].psTiles = xx + (yy*WIDTH);
 						
 					}else if(pixelAtual == 0xFF0000FF) { //Player
+						
 						Game.player.setX(xx*16);
 						Game.player.setY(yy*16);
 						Game.player.psTiles = xx + (yy*WIDTH);
@@ -165,6 +180,26 @@ public class World {
 						Game.entities.add(hoe);
 						hoe.psTiles = xx + (yy*WIDTH);
 						tiles[xx + (yy*WIDTH)].en = hoe;
+						
+					}else if (pixelAtual == 0xFF15F44E){ //Mina
+						Mine mine = new Mine(xx*16, yy*16, 32, 32, Construction.MINE_EN);
+						mine.tipo = "mina";
+						Game.entities.add(mine);
+						mine.psTiles = xx + (yy*WIDTH);
+						tiles[xx + (yy*WIDTH)].en = mine;
+						
+					}else if (pixelAtual == 0xFFA84300) { //FloorCAL
+						tiles[xx + (yy*WIDTH)] = new EarthTile(xx*16, yy*16, Tile.TILE_EARTH);
+						tiles[xx + (yy*WIDTH)].psTiles = xx + (yy*WIDTH);
+						
+					}else if (pixelAtual == 0xFF260F00) { //wallCAL
+						tiles[xx + (yy*WIDTH)] = new WallCal(xx*16, yy*16, Tile.TILE_WALL_CAL);
+						tiles[xx + (yy*WIDTH)].psTiles = xx + (yy*WIDTH);
+						
+					}else if (pixelAtual == 0xFF0A0300) { //FLOOR_CAL_SOLID
+						tiles[xx + (yy*WIDTH)] = new FloorCalSolid(xx*16, yy*16, Tile.TILE_FLOOR_CAL_SOLID);
+						tiles[xx + (yy*WIDTH)].psTiles = xx + (yy*WIDTH);
+						
 					}
 				}
 			}
@@ -172,14 +207,15 @@ public class World {
 			e.printStackTrace();
 		}
 		
-		createMobs();
+		if(!Game.mapaGame.equals(Mapa.MAPA_CALABOUÇO)) {
+			createMobs();
 		
-		npc = new Npc(144, 80, 16, 16, Game.spritesheet.getSprite(224, 0, 16, 16));
-		Game.entities.add(npc);
-
-//		xx + (yy*WIDTH)
-//		9 + (5*100) = 509
-		tiles[509].en = npc;
+			npc = new Npc(144, 80, 16, 16, Game.spritesheet.getSprite(224, 0, 16, 16));
+			Game.entities.add(npc);
+//			xx + (yy*WIDTH)
+//			9 + (5*100) = 509
+			tiles[509].en = npc;
+		}
 		
 //Método randomico de gerar mapa
 //
@@ -279,6 +315,10 @@ public class World {
 					Game.minimapaPixels[xx + (yy*WIDTH)] = 0xFF0000;
 				}
 				
+				if((tiles[xx + (yy*WIDTH)] instanceof FloorCalSolid)){
+					Game.minimapaPixels[xx + (yy*WIDTH)] = 0xA84300;
+				}
+				
 				for(int i=0; i < Game.enemies.size(); i++) {
 					int xEnemy = (int) (Game.enemies.get(i).x/16);
 					int yEnemy = (int) (Game.enemies.get(i).y/16);
@@ -293,18 +333,22 @@ public class World {
 					
 				}
 				
-				for(int i=0; i < Game.mobs.size(); i++) {
-					int xMob = (int) (Game.mobs.get(i).x/16);
-					int yMob = (int) (Game.mobs.get(i).y/16);
-					
-					int ps = (int)(xMob+ yMob*World.WIDTH);
-					
-					if(World.tiles[ps].show) {
-						Game.minimapaPixels[ps] = 0xFF0000;
-					}else {
-						Game.minimapaPixels[ps] = 0x000000;
+				if(Game.mapaGame.equals(Mapa.MAPA_FLORESTA)) {
+					for(int i=0; i < Game.mobs.size(); i++) {
+						Mob m = Game.mobs.get(i);
+						int xMob = (int) (Game.mobs.get(i).x/16);
+						int yMob = (int) (Game.mobs.get(i).y/16);
+						
+						int ps = (int)(xMob+ yMob*World.WIDTH);
+						
+						if(m instanceof Mob) {
+							if(World.tiles[ps].show) {
+								Game.minimapaPixels[ps] = 0xFF0000;
+							}else {
+								Game.minimapaPixels[ps] = 0x000000;
+							}
+						}
 					}
-					
 				}
 				
 				if(yy == 0 || xx == 0 || xx == 99 || yy == 99 ) { //Vizualizar as bordas do mapa
@@ -339,16 +383,16 @@ public class World {
 	
 	public static boolean isFree(int xNext, int yNext, int zPlayer) {
 		
-		int x1 = (xNext + 4) / TILE_SIZE;
-		int y1 = yNext / TILE_SIZE;
+		int x1 = (xNext + 5) / TILE_SIZE;
+		int y1 = (yNext + 2) / TILE_SIZE;
 		
-		int x2 = (xNext + TILE_SIZE -4) / TILE_SIZE;
-		int y2 = yNext / TILE_SIZE;
+		int x2 = (xNext + TILE_SIZE - 6) / TILE_SIZE;
+		int y2 = (yNext + 2) / TILE_SIZE;
 		
-		int x3 = (xNext + 4) / TILE_SIZE;
+		int x3 = (xNext + 5) / TILE_SIZE;
 		int y3 = (yNext + TILE_SIZE -1) / TILE_SIZE;
 		
-		int x4 = (xNext + TILE_SIZE - 4) / TILE_SIZE;
+		int x4 = (xNext + TILE_SIZE - 6) / TILE_SIZE;
 		int y4 = (yNext + TILE_SIZE -1) / TILE_SIZE;
 		
 		if (!((tiles[x1 + (y1*World.WIDTH)] instanceof WallTile) ||
@@ -401,6 +445,13 @@ public class World {
 		return;
 	}
 	
+	public static void caregaMapa(String path) {
+		
+		//Game.world =  new World("/map.png");
+		Game.world = new World(path);
+		return;
+	}
+	
 	public void render(Graphics g) {
 		
 		int xStart = Camera.x >> 4;
@@ -413,8 +464,10 @@ public class World {
 			for(int yy = yStart; yy <= yFinal; yy++) {
 				if(xx < 0 || yy < 0 || xx >= WIDTH || yy >= HEIGHT) 
 					continue;
-				Tile tile = tiles[xx + (yy*WIDTH)];				
-				tile.render(g);
+				Tile tile = tiles[xx + (yy*WIDTH)];	
+				if(tile.mapa.contains(Game.mapaGame) && tile.regiao.contains(Game.regiaoGame)) {
+					tile.render(g);
+				}
 			}
 		}
 		

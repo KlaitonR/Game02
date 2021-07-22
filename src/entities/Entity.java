@@ -9,6 +9,8 @@ import java.util.List;
 import main.Game;
 import mobs.Mob;
 import util.Id;
+import util.Mapa;
+import util.Regiao;
 import world.Camera;
 import world.Node;
 import world.Tile;
@@ -26,6 +28,8 @@ public class Entity {
 	protected int height;
 	
 	public Id id;
+	public ArrayList<Mapa> mapa = new ArrayList<>();
+	public ArrayList<Regiao> regiao = new ArrayList<>();
 	public boolean clear;
 	public int timeClear;
 	public int maxTimeClear = 3600*4;
@@ -39,6 +43,7 @@ public class Entity {
 	public boolean show;
 	
 	public int maskx, masky, mwidth, mheigth;
+	public int maskx2, masky2, mwidth2, mheigth2;
 	
 	private BufferedImage sprite;
 	public static BufferedImage LIFE_PACK_EN = Game.spritesheet.getSprite(0, 48, 16, 16);
@@ -59,7 +64,7 @@ public class Entity {
 	static public BufferedImage PLAT_EN = Game.spritesheet.getSprite(16, 176, 16, 16);
 	static public BufferedImage FISHING_ROD_EN = Game.spritesheet.getSprite(0, 208, 16, 16);
 	static public BufferedImage FISH_EN = Game.spritesheet.getSprite(16, 192, 16, 16);
-	static public BufferedImage HOE_EN = Game.spritesheet.getSprite(16, 128, 16, 16);
+	static public BufferedImage HOE_EN = Game.spritesheet.getSprite(16, 96, 16, 16);
 	static public BufferedImage GROUND_EN = Game.spritesheet.getSprite(0, 160, 16, 16);
 	static public BufferedImage GROUND_F1_EN = Game.spritesheet.getSprite(16, 208, 16, 16);
 	static public BufferedImage GROUND_F2_EN = Game.spritesheet.getSprite(16, 160, 16, 16);
@@ -68,8 +73,6 @@ public class Entity {
 	static public BufferedImage PIG_BEEF_EN = Game.spritesheet.getSprite(32, 192, 16, 16);
 	static public BufferedImage CREATION_TABLE_EN = Game.spritesheet.getSprite(16, 304, 16, 16);
 	static public BufferedImage POTION_EN = Game.spritesheet.getSprite(0, 272, 16, 16);
-	
-	static public BufferedImage PIG_MOB = Game.spritesheet.getSprite(0, 192, 16, 16);
 	
 	public BufferedImage getSprite() {
 		return sprite;
@@ -112,11 +115,11 @@ public class Entity {
 		
 		@Override
 		public int compare(Entity n0, Entity n1) {
-			if(n1.depth < n0.depth)
-				return +1;
-			if(n1.depth > n0.depth)
-				return -1;
-			return 0;
+				if(n1.depth < n0.depth)
+					return +1;
+				if(n1.depth > n0.depth)
+					return -1;
+				return 0;
 		}
 		
 	};
@@ -204,29 +207,6 @@ public class Entity {
 		return Math.sqrt((x1-x2) * (x1-x2) + (y1-y2) * (y1 - y2));
 	}
 	
-	public void tick() {
-		
-		if(clear) {
-			timeClear++;
-		}
-		
-		if(timeClear >= maxTimeClear) {
-			World.tiles[this.psTiles].en = null;
-			Game.entities.remove(this);
-		}
-		
-	}
-	
-	public void render(Graphics g) {
-		
-//		if(show)
-			g.drawImage(sprite ,this.getX() - Camera.x, this.getY() - Camera.y , null);
-		
-//		g.setColor(Color.red);
-//		g.fillRect(this.getX() + maskx - Camera.x, this.getY() + masky - Camera.y, maskw, maskh);
-		
-	}
-	
 	public void followPath(List<Node> path) {
 		if(path != null) {
 			if(path.size() > 0) {
@@ -251,6 +231,28 @@ public class Entity {
 				
 			}
 		}
+	}
+	
+	public void tick() {
+		
+		if(clear) {
+			timeClear++;
+		}
+		
+		if(timeClear > maxTimeClear) {
+			World.tiles[this.psTiles].en = null;
+			Game.entities.remove(this);
+		}
+	}
+	
+	public void render(Graphics g) {
+		
+//			if(show)
+		g.drawImage(sprite ,this.getX() - Camera.x, this.getY() - Camera.y , null);
+		
+//		g.setColor(Color.red);
+//		g.fillRect(this.getX() + maskx - Camera.x, this.getY() + masky - Camera.y, maskw, maskh);
+		
 	}
 
 	public int getX() {

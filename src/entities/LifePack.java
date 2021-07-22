@@ -3,6 +3,8 @@ package entities;
 import java.awt.image.BufferedImage;
 
 import util.Id;
+import util.Mapa;
+import util.Regiao;
 
 public class LifePack extends Entity{
 
@@ -12,6 +14,8 @@ public class LifePack extends Entity{
 		pack = true;
 		qtPack = 4;
 		id = Id.ID_LIFEPACK;
+		mapa.add(Mapa.MAPA_FLORESTA);
+		regiao.add(Regiao.REGIAO_FLORESTA);
 		
 	}
 

@@ -3,6 +3,8 @@ package entities;
 import java.awt.image.BufferedImage;
 
 import util.Id;
+import util.Mapa;
+import util.Regiao;
 
 public class FishingRod extends Entity	{
 
@@ -10,6 +12,8 @@ public class FishingRod extends Entity	{
 		super(x, y, width, height, sprite);
 		 
 		id = Id.ID_FISHINGROD;
+		mapa.add(Mapa.MAPA_FLORESTA);
+		regiao.add(Regiao.REGIAO_FLORESTA);
 	}
 
 }

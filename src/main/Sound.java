@@ -63,7 +63,7 @@ public class Sound {
 		public static Clips music = load("/music.wav", 1);
 		public static Clips hurt = load("/hurt.wav", 1);
 		public static Clips passos = load("/passosGrama.wav", 1);
-		public static Clips shoot = load("/shootRifle.wav", 1);
+		public static Clips shoot = load("/gunShot.wav", 1);
 		public static Clips reload = load("/reloadRifle.wav", 1);
 		public static Clips missAmo = load("/missAmo.wav", 1);
 		public static Clips dropAndGetItem = load("/dropItem.wav", 1);
@@ -77,8 +77,11 @@ public class Sound {
 		public static Clips pigDeath = load("/pigDeath.wav", 1);
 		public static Clips pigGrunts = load("/pigGrunts.wav", 1);
 		public static Clips waterDrop = load("/waterDrop.wav", 1);
+		public static Clips waterRunning = load("/waterRunning.wav", 1);
 		public static Clips selectedInventory = load("/selectedInventory.wav", 1);
 		public static Clips medievalMusic = load("/medievalMusic.wav", 1);
+		public static Clips openBag = load("/openBag.wav", 1);
+		public static Clips creation = load("/creation.wav", 1);
 		
 		private static Clips load(String name, int count) {
 			try {

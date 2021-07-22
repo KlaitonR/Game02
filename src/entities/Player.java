@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import main.Game;
 import main.Sound;
+import util.Mapa;
 import world.Camera;
 import world.EntitySolid;
 import world.World;
@@ -28,7 +29,7 @@ public class Player extends Entity{
 	
 	public boolean hasGun, hasAxe, hasFishingRod, hasHoe;
 	public boolean shoot, mouseShoot, openLvls, offLvls = true;
-	public boolean useLighter, useBag, openDoor, creation, getFish, fishing, cuttingTree;
+	public boolean useLighter, useBag, openDoor, enter, enterMine, creation, getFish, fishing, cuttingTree;
 	public boolean clickInv, clickBag, clickCreation, clickCraft;
 	public boolean dropItem, getItem, useItem;
 
@@ -249,17 +250,18 @@ public class Player extends Entity{
 		}
 	}
 	
-	public int depthPlayer(int yEntity) {
+	public int depthPlayer(Entity e) {
 		
 		int yPlayer = (int)this.y;
+		int yEntity = (int)e.getY();
 		
 		if(yPlayer > yEntity - 2) { // colocar o player atras dos objetos e dar noção de profundidade
-			depth = 5;
+			depth = e.depth+1;
 			return  1;
 		
 		}else {
 			depth = 1;
-			return 5;
+			return e.depth+1;
 		}
 	}
 	
@@ -428,6 +430,25 @@ public class Player extends Entity{
 			
 	}
 	
+	private void collidingNoInteratorAndSound() {
+		
+		if(!Game.mapaGame.equals(Mapa.MAPA_CALABOUÇO)) {
+		
+			if(Game.collision.checkCollisionFishingSpotMask()) {
+				Sound.Clips.waterRunning.loop();
+			}else {
+				Sound.Clips.waterRunning.stop();
+			}
+			
+			if(Game.collision.checkCollisionWaterTile()) {
+				Sound.Clips.waterRunning.loop();
+			}else {
+				Sound.Clips.waterRunning.stop();
+			}
+		}
+		
+	}
+	
 	public void tick() {
 		
 		depth = 5;
@@ -445,20 +466,36 @@ public class Player extends Entity{
 		}
 		
 		checkKillEnemy();
-		
+
+		collidingNoInteratorAndSound();
+	
 		Game.collision.checkCollision();
 		Game.collision.checkCollisionNpc();
+		Game.collision.checkCollisionPig();
+		
+		if(Game.collision.checkCollisionTree()) 
+			Sound.Clips.cuttingTree.play();
+		
 		Game.collision.checkCollisionAmmo();
-		Game.collision.checkCollisionTree();
 		Game.collision.checkCollisionDoor();
 		Game.collision.checkColisionGround();
 		Game.collision.checkCollisionStump();
-		Game.collision.createGround();
+		Game.collision.checkCollisionMine();
+		
+		if(Game.collision.createGround())
+			Sound.Clips.digging.play();
+		
 		
 		Game.sysInv.checkDropItem();
 		Game.sysInv.checkScrollItem();
 		Game.sysInv.checkHasItem();
 		Game.sysBag.checkItemBag();
+		
+		if(Game.collision.isTargetPlayer()) {
+			Sound.Clips.pigGrunts.loop();
+		}else {
+			Sound.Clips.pigGrunts.stop();
+		}
 		
 		if(clickInv && useBag) {
 			clickInv = false;
@@ -503,7 +540,7 @@ public class Player extends Entity{
 		}
 		
 		if(openDoor)
-			Game.collision.openDoor();
+			Game.collision.openDoor();	
 		
 		checkUseItem(); //Precisa ficar por últomo pois deixa a variavel useItem false
 		
@@ -538,7 +575,8 @@ public class Player extends Entity{
 		if(rigth && World.isFree((int)(x+speed), this.getY(), this.z)
 				&& EntitySolid.solidTree((int)(x+speed), this.getY())
 				&& EntitySolid.solidSpotFishing((int)(x+speed), this.getY())
-				&& EntitySolid.solidNpc((int)(x+speed), this.getY())) {
+				&& EntitySolid.solidNpc((int)(x+speed), this.getY())
+				&& EntitySolid.solidMine((int)(x+speed), this.getY())) {
 			moved =  true;
 			dir = rightDir; //Rotação de sprites com teclado
 			x+=speed;
@@ -547,7 +585,8 @@ public class Player extends Entity{
 		}else if (left && World.isFree((int)(x-speed), this.getY(), this.z) 
 				&& EntitySolid.solidTree((int)(x-speed), this.getY())
 				&& EntitySolid.solidSpotFishing((int)(x-speed), this.getY())
-				&& EntitySolid.solidNpc((int)(x-speed), this.getY())) {
+				&& EntitySolid.solidNpc((int)(x-speed), this.getY())
+				&& EntitySolid.solidMine((int)(x-speed), this.getY())) {
 			moved =  true;
 			dir = leftDir; //Rotação de sprites com teclado
 			x-=speed;
@@ -557,7 +596,8 @@ public class Player extends Entity{
 		if(up && World.isFree(this.getX(),(int)(y-speed), this.z) 
 				&& EntitySolid.solidTree(this.getX(),(int)(y-speed))
 				&& EntitySolid.solidSpotFishing(this.getX(),(int)(y-speed))
-				&& EntitySolid.solidNpc(this.getX(),(int)(y-speed))) {
+				&& EntitySolid.solidNpc(this.getX(),(int)(y-speed))
+				&& EntitySolid.solidMine(this.getX(),(int)(y-speed))) {
 			moved =  true;
 			dir = upDir; //Rotação de sprites com teclado 
 			y-=speed;
@@ -565,7 +605,8 @@ public class Player extends Entity{
 		}else if (down && World.isFree(this.getX(), (int)(y+speed), this.z) 
 				&& EntitySolid.solidTree(this.getX(), (int)(y+speed))
 				&& EntitySolid.solidSpotFishing(this.getX(), (int)(y+speed))
-				&& EntitySolid.solidNpc(this.getX(), (int)(y+speed))) {
+				&& EntitySolid.solidNpc(this.getX(), (int)(y+speed))
+				&& EntitySolid.solidMine(this.getX(), (int)(y+speed))) {
 			moved =  true;
 			dir = downDir; //Rotação de sprites com teclado
 			y+=speed;

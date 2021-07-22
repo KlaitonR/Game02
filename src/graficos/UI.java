@@ -12,6 +12,8 @@ import java.io.InputStream;
 import entities.Npc;
 import main.Game;
 import main.Menu;
+import util.Mapa;
+import world.Camera;
 
 public class UI {
 	
@@ -128,6 +130,20 @@ public class UI {
 		g.setFont(newfont);
 		g.setColor(Color.white);
 		g.drawString((int)Game.player.life + "/" + (int)Game.player.maxLife, 30, 11);
+	}
+	
+	public void lifeMobs(Graphics g) {
+		
+		if(!Game.mapaGame.equals(Mapa.MAPA_CALABOUÇO)) {
+			for(int i=0; i<Game.mobs.size();i++) {
+				g.setColor(Color.black); 
+				g.fillRect((int)Game.mobs.get(i).x + 2 - Camera.x, (int)Game.mobs.get(i).y - 5 - Camera.y, 12, 3);
+				g.setColor(Color.red);
+				g.fillRect((int)Game.mobs.get(i).x + 3 - Camera.x, (int)Game.mobs.get(i).y - 4 - Camera.y, 10, 1);
+				g.setColor(Color.green);
+				g.fillRect((int)Game.mobs.get(i).x + 3 - Camera.x, (int)Game.mobs.get(i).y - 4 - Camera.y, (int)((Game.mobs.get(i).life/Game.mobs.get(i).maxLife)*10), 1);
+			}
+		}
 	}
 	
 	private void levelTab(Graphics g) {
@@ -397,6 +413,7 @@ public class UI {
 	public void render(Graphics g) {
 
 		lifePlayer(g);
+		lifeMobs(g);
 		timeSystem(g);
 		invSystem(g);
 		levelTab(g);

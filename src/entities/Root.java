@@ -3,6 +3,8 @@ package entities;
 import java.awt.image.BufferedImage;
 
 import util.Id;
+import util.Mapa;
+import util.Regiao;
 
 public class Root extends Entity{
 
@@ -12,6 +14,8 @@ public class Root extends Entity{
 		pack = true;
 		qtPack = 63;
 		id = Id.ID_ROOT;
+		mapa.add(Mapa.MAPA_FLORESTA);
+		regiao.add(Regiao.REGIAO_FLORESTA);
 	}
 
 }

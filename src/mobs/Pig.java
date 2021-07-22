@@ -1,6 +1,5 @@
 package mobs;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import entities.Beef;
@@ -10,6 +9,8 @@ import entities.PigBeef;
 import main.Game;
 import main.Sound;
 import util.Id;
+import util.Mapa;
+import util.Regiao;
 import world.Camera;
 import world.EntitySolid;
 import world.World;
@@ -19,8 +20,12 @@ public class Pig extends Mob {
 	public Pig(int x, int y, int width, int height, BufferedImage sprite) {
 		super(x, y, width, height, sprite);
 		
+		mapa.add(Mapa.MAPA_FLORESTA);
+		regiao.add(Regiao.REGIAO_FLORESTA);
+		
 		maxFrames = 20; maxIndex = 3;
 		maskTragetx = -73; maskTargety = -68; maskTargetw = 150; maskTargeth = 150;
+		
 		speed = Game.rand.nextDouble();
 		ps = true;
 		life = 5; maxLife = 5; exp = 100;
@@ -43,11 +48,10 @@ public class Pig extends Mob {
 			upBuf[i] = Game.spriteMobs.getSprite(0 + (i*16), 48, 16, 16);
 			downBuf[i] = Game.spriteMobs.getSprite(0 + (i*16), 32, 16, 16);
 			
-			//Arrumar
-			rightDamage[i] = Game.spriteMobs.getSprite(0 + (i*16), 64, 16, 16);
-			leftDamage[i] = Game.spriteMobs.getSprite(0 + (i*16), 80, 16, 16);
-			upDamage[i] = Game.spriteMobs.getSprite(0 + (i*16), 96, 16, 16);
-			downDamage[i] = Game.spriteMobs.getSprite(0 + (i*16), 112, 16, 16);
+			rightDamage[i] = Game.spriteMobs.getSprite(64 + (i*16), 16, 16, 16);
+			leftDamage[i] = Game.spriteMobs.getSprite(64 + (i*16), 0, 16, 16);
+			upDamage[i] = Game.spriteMobs.getSprite(64 + (i*16), 48, 16, 16);
+			downDamage[i] = Game.spriteMobs.getSprite(64 + (i*16), 32, 16, 16);
 		}
 	}
 	
@@ -59,7 +63,7 @@ public class Pig extends Mob {
 			speed +=0.15;
 		else if(speed>0.5)
 			speed -= 0.45;
-
+	
 		// MOVIMENTAÇÃO ALEATÓRIA DO INIMIGO
 		
 				if(ps) { // Não anda na diagonal
@@ -92,7 +96,7 @@ public class Pig extends Mob {
 						y -= speed;
 						dir = upDir;
 					}
-
+	
 				}else { //anda na diagonal
 					
 					if(dirRight == true && World.isFree((int)(x+speed), this.getY(), this.z) 
@@ -128,7 +132,7 @@ public class Pig extends Mob {
 				//Para esquerda e para direitra
 				if(dirRight == true && !World.isFree((int)(x+speed), this.getY(), this.z) ||
 										isColiddingMob((int)(x+speed), this.getY()) ||
-										isColiddingEntity((int)(x+speed), this.getY()) ||
+											isColiddingEntity((int)(x+speed), this.getY()) ||
 										isColiddingEnemy((int)(x+speed), this.getY())) {
 					dirRight = false;
 					dirLeft = true;
@@ -137,7 +141,7 @@ public class Pig extends Mob {
 				
 				if(dirLeft == true && !World.isFree((int)(x-speed), this.getY(), this.z) ||
 									isColiddingMob((int)(x-speed), this.getY()) ||
-									isColiddingEntity((int)(x-speed), this.getY()) ||
+										isColiddingEntity((int)(x-speed), this.getY()) ||
 									isColiddingEnemy((int)(x-speed), this.getY())) {
 					dirRight = true;
 					dirLeft = false;
@@ -148,7 +152,7 @@ public class Pig extends Mob {
 				
 				if(dirDown == true && !World.isFree(this.getX(), (int)(y+speed), this.z) ||
 									isColiddingMob(this.getX(), (int)(y+speed)) ||
-									isColiddingEntity(this.getX(), (int)(y+speed)) ||
+										isColiddingEntity(this.getX(), (int)(y+speed)) ||
 									isColiddingEnemy(this.getX(), (int)(y+speed))) {
 					dirDown = false;
 					dirUp = true;
@@ -156,7 +160,7 @@ public class Pig extends Mob {
 				
 				if(dirUp == true && !World.isFree(this.getX(), (int)(y-speed), this.z) ||
 									isColiddingMob(this.getX(), (int)(y-speed)) ||
-									isColiddingEntity(this.getX(), (int)(y-speed)) ||
+										isColiddingEntity(this.getX(), (int)(y-speed)) ||
 									isColiddingEnemy(this.getX(), (int)(y-speed))) {
 					dirDown = true;
 					dirUp = false;
@@ -179,36 +183,15 @@ public class Pig extends Mob {
 			destroySelf();
 		
 		if(isDamage) {
-		
 			damageFrames++;
-			if(this.damageFrames == 100) {
+			if(this.damageFrames == 200) {
 				damageFrames = 0; 
 				isDamage = false;
 			}
 		}
 		
 		collidingBullet();
-		
-		if(isTargetPlayer()) {
-			Sound.Clips.pigGrunts.loop();
-		}else {
-			Sound.Clips.pigGrunts.stop();
-		}
-		
-	}
-	
-	public boolean isTargetPlayer() {
-			
-		Mob m = null;
-		
-		for(int i=0; i<Game.mobs.size();i++) {
-			m = Game.mobs.get(i);
-			if(Mob.isColiddingTarget(m, Game.player)) {
-				return true;
-			}
-		}
-		
-		return false;
+
 	}
 	
 	public void collidingBullet() {
@@ -220,7 +203,7 @@ public class Pig extends Mob {
 				BulletShoot.collidingBullet =  true;
 				BulletShoot.collidingWall = false;
 				BulletShoot.collidingEnemy = true;
-				World.generateParticles(50, (int)x, (int)y, this.psTiles);
+				World.generateParticles(25, (int)x, (int)y, this.psTiles);
 				Game.bulletShootes.remove(i);
 				life--;
 				isDamage = true;
@@ -236,6 +219,7 @@ public class Pig extends Mob {
 			pigBeef.id = Id.ID_PIG_BEEF;
 			pigBeef.clear = true;
 			Game.mobs.remove(this);
+			Game.entities.remove(this);
 			Game.entities.add(pigBeef);
 			Sound.Clips.pigDeath.play();
 			Sound.Clips.pigGrunts.stop();
@@ -243,41 +227,44 @@ public class Pig extends Mob {
 	}
 	
 	public void render(Graphics g) {
-		super.render(g);
+
+//		g.setColor(Color.black);
+//		g.fillRect(this.getX() + maskx - Camera.x, this.getY() + masky - Camera.y, mwidth, mheigth);
 		
 //		g.setColor(Color.black);
 //		g.fillRect(this.getX() - Camera.x + maskTragetx, this.getY() - Camera.y + maskTargety, maskTargetw, maskTargeth);
 		
 		if(isDamage) {
 			
-			if(dir == rightDir)
+			if(dir == rightDir) {
 				g.drawImage(rightDamage[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
-			else if (dir == leftDir)
+				mwidth = 15; mheigth = 9; maskx = 1; masky = 7;
+			}else if (dir == leftDir) {
 				g.drawImage(leftDamage[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
-			else if(dir == upDir)
+				mwidth = 15; mheigth = 9; maskx = 1; masky = 7;
+			}else if(dir == upDir) {
 				g.drawImage(upDamage[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
-			else if(dir == downDir)
+				mwidth = 9; mheigth = 12; maskx = 3; masky = 4;
+			}else if(dir == downDir) {
 				g.drawImage(downDamage[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
-			
+				mwidth = 9; mheigth = 12; maskx = 3; masky = 4;
+			}
 		}else {
 		
-			if(dir == rightDir)
+			if(dir == rightDir) {
 				g.drawImage(rigthBuf[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
-			else if (dir == leftDir)
+				mwidth = 15; mheigth = 9; maskx = 1; masky = 7;
+			}else if (dir == leftDir) {
 				g.drawImage(leftBuf[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
-			else if(dir == upDir)
+				mwidth = 15; mheigth = 9; maskx = 1; masky = 7;
+			}else if(dir == upDir) {
 				g.drawImage(upBuf[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
-			else if(dir == downDir)
+				mwidth = 9; mheigth = 12; maskx = 3; masky = 4;
+			}else if(dir == downDir) {
 				g.drawImage(downBuf[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+				mwidth = 9; mheigth = 12; maskx = 3; masky = 4;
+			}
 		}		
-		
-		g.setColor(Color.black); 
-		g.fillRect((int)x + 2 - Camera.x, (int)y - 5 - Camera.y, 12, 3);
-		g.setColor(Color.red);
-		g.fillRect((int)x + 3 - Camera.x, (int)y - 4 - Camera.y, 10, 1);
-		g.setColor(Color.green);
-		g.fillRect((int)x + 3 - Camera.x, (int)y - 4 - Camera.y, (int)((life/maxLife)*10), 1);
-		
 	}
 
 }

@@ -1,11 +1,10 @@
 package entities;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-
 import util.Id;
-import world.Camera;
+import util.Mapa;
+import util.Regiao;
 
 public class Fish extends Entity {
 
@@ -20,13 +19,15 @@ public class Fish extends Entity {
 		pack = true;
 		qtPack = 63;
 		id = Id.ID_FISH;
+		mapa.add(Mapa.MAPA_FLORESTA);
+		regiao.add(Regiao.REGIAO_FLORESTA);
 
 	}
 	
 	public void render(Graphics g) {
 		
-		g.setColor(Color.black);
-		g.fillRect(this.getX() + maskx - Camera.x, this.getY() + masky - Camera.y, mwidth, mheigth);
+//		g.setColor(Color.black);
+//		g.fillRect(this.getX() + maskx - Camera.x, this.getY() + masky - Camera.y, mwidth, mheigth);
 		super.render(g);
 		
 	}

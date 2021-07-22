@@ -7,6 +7,8 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import main.Game;
 import main.Sound;
+import util.Mapa;
+import util.Regiao;
 import world.Camera;
 import world.World;
 //import java.util.Random;
@@ -77,7 +79,9 @@ import world.World;
 			
 		}
 		
-		depth = 4;
+		depth = 0;
+		mapa.add(Mapa.MAPA_FLORESTA);
+		regiao.add(Regiao.REGIAO_FLORESTA);
 	}
 	
 	public boolean isColiddingWithPlayer() {

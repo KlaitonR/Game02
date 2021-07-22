@@ -1,10 +1,13 @@
 package world;
 
+import construction.Mine;
 import entities.FishingSpot;
 import entities.Npc;
 import entities.Tree;
 
 public class EntitySolid {
+	
+	int xNext, yNext;
 
 	public static boolean solidTree(int xNext, int yNext) {
 				
@@ -75,6 +78,33 @@ public class EntitySolid {
 		}
 		return false;
 	}
+	
+	public static boolean solidMine(int xNext, int yNext) {
+		
+		int x1 = (xNext - 9) / World.TILE_SIZE;
+		int y1 = (yNext - 0) / World.TILE_SIZE;
+		
+		int x2 = (xNext + World.TILE_SIZE - 9) / World.TILE_SIZE;
+		int y2 = (yNext - 0) / World.TILE_SIZE;
+		
+		int x3 = (xNext - 9) / World.TILE_SIZE; 
+		int y3 = (yNext + World.TILE_SIZE - 14) / World.TILE_SIZE; //direita
+		
+		int x4 = (xNext + World.TILE_SIZE - 9) / World.TILE_SIZE; // para baixo
+		int y4 = (yNext + World.TILE_SIZE - 14) / World.TILE_SIZE;
+		
+//		int x5 = (xNext + (World.TILE_SIZE*2) - 9) / World.TILE_SIZE; // para baixo
+//		int y5 = (yNext + (World.TILE_SIZE*2) - 14) / World.TILE_SIZE;
+		
+		if (!((World.tiles[x1 + (y1*World.WIDTH)].en instanceof Mine) ||
+				(World.tiles[x2 + (y2*World.WIDTH)].en instanceof Mine) ||
+				(World.tiles[x3 + (y3*World.WIDTH)].en instanceof Mine) ||
+				(World.tiles[x4 + (y4*World.WIDTH)].en instanceof Mine)) ){
+			return true;
+		}
+		return false;
+	}
+	
 
 	
 }

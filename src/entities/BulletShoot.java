@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import main.Game;
+import util.Mapa;
+import util.Regiao;
 import world.Camera;
 import world.Tile;
 import world.WallTile;
@@ -23,6 +25,8 @@ public class BulletShoot extends Entity {
 		super(x, y, width, height, sprite);
 		this.dx = dx;
 		this.dy = dy;
+		mapa.addAll(Mapa.addAll());
+		regiao.addAll(Regiao.addAll());
 	}
 	
 	public void collidingTile() {

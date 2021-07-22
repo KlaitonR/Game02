@@ -1,8 +1,9 @@
 package entities;
 
 import java.awt.image.BufferedImage;
-
 import util.Id;
+import util.Mapa;
+import util.Regiao;
 
 public class Wapon extends Entity{
 
@@ -10,6 +11,8 @@ public class Wapon extends Entity{
 		super(x, y, width, height, sprite);
 		
 		id = Id.ID_WAPON;
+		mapa.add(Mapa.MAPA_FLORESTA);
+		regiao.add(Regiao.REGIAO_FLORESTA);
 		
 	}
 

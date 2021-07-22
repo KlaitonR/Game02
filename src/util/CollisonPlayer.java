@@ -1,6 +1,8 @@
 package util;
 
 import java.util.ArrayList;
+
+import construction.Mine;
 import entities.Axe;
 import entities.Beef;
 import entities.Bullet;
@@ -23,58 +25,35 @@ import entities.Tree;
 import entities.Wapon;
 import main.Game;
 import main.Sound;
+import mobs.Mob;
+import mobs.Pig;
 import world.FloorTile;
 import world.Tile;
+import world.WaterTile;
 import world.World;
 
 public class CollisonPlayer {
 	
 	public ArrayList<Entity> allCollission = new ArrayList<>();
 	
+	//Entidades coletaveis
 	public void checkCollision() {
 		for(int i = 0; i < Game.entities.size(); i++) {
 			Entity atual = Game.entities.get(i);
-			if(atual instanceof Axe ||
-				atual instanceof Beef ||
-				atual instanceof Firewood ||
-				atual instanceof Fish ||
-				atual instanceof FishingRod ||
-				atual instanceof Hoe ||
-				atual instanceof LifePack ||
-				atual instanceof Lighter ||
-				atual instanceof Potion ||
-				atual instanceof Root ||
-				atual instanceof Seed ||
-				atual instanceof Wapon) {
-				confirmCollision(atual, Game.sysInv.checkPositionGetInv());
-			}
-		}
-	}
-	
-	public void checkCollisionNpc() {
-		for(int i = 0; i < Game.entities.size(); i++) {
-			Entity atual = Game.entities.get(i);
-			if(atual instanceof Npc) {
-				atual.depth = Game.player.depthPlayer((int)atual.y);
-			}
-		}
-	}
-	
-	public void checkCollisionAmmo() {
-		
-		for(int i = 0; i < Game.entities.size(); i++) {
-			Entity atual = Game.entities.get(i);
-			
-			if(atual instanceof Bullet) {
-				if(Entity.isColidding(Game.player, atual)) {
-					
-					atual.depth = Game.player.depthPlayer((int)atual.y);
-					
-					Game.player.ammo += 10;
-					Game.entities.remove(atual);
-					Sound.Clips.missAmo.play();
-				}else {
-					allCollission.remove(atual);
+			if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+				if(atual instanceof Axe ||
+					atual instanceof Beef ||
+					atual instanceof Firewood ||
+					atual instanceof Fish ||
+					atual instanceof FishingRod ||
+					atual instanceof Hoe ||
+					atual instanceof LifePack ||
+					atual instanceof Lighter ||
+					atual instanceof Potion ||
+					atual instanceof Root ||
+					atual instanceof Seed ||
+					atual instanceof Wapon) {
+					confirmCollision(atual, Game.sysInv.checkPositionGetInv());
 				}
 			}
 		}
@@ -83,7 +62,7 @@ public class CollisonPlayer {
 	public void confirmCollision(Entity atual, int index) {
 		if(Entity.isColidding(Game.player, atual)) {
 		
-			atual.depth = Game.player.depthPlayer((int)atual.y);
+			atual.depth = Game.player.depthPlayer(atual);
 				
 			if(Game.player.getItem) {
 				if(!Game.sysInv.checkPackInv(atual)) {
@@ -102,51 +81,152 @@ public class CollisonPlayer {
 		}
 	}
 	
-	//Colisões com objetos que não irão para o inventario
-	public void checkCollisionTree(){
+	//Colisões com entidades não coletaveis
+	
+	public void checkCollisionAmmo() {
 		
 		for(int i = 0; i < Game.entities.size(); i++) {
 			Entity atual = Game.entities.get(i);
 			
-			if(atual instanceof Tree) {
-				if(Entity.isColidding(Game.player, atual)) {
-
-					atual.depth = Game.player.depthPlayer((int)atual.y);
-					
-					if(Game.player.useItem && Game.player.hasAxe) {
-						((Tree) atual).life--;
-						Sound.Clips.cuttingTree.play();
+			if(atual instanceof Bullet) {
+				if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+					if(Entity.isColidding(Game.player, atual)) {
+						
+						atual.depth = Game.player.depthPlayer(atual);
+						
+						Game.player.ammo += 10;
+						Game.entities.remove(atual);
+						Sound.Clips.missAmo.play();
+					}else {
+						allCollission.remove(atual);
 					}
 				}
 			}
 		}
 	}
 	
-	public boolean checkCollisionFishingSpot() {
+	// //Colisões com objetos que não irão para o inventario (entidades não coletaveis)
+		public void checkCollisionNpc() {
+			for(int i = 0; i < Game.entities.size(); i++) {
+				Entity atual = Game.entities.get(i);
+				if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+					if(atual instanceof Npc) {
+						if(Entity.isColidding(Game.player, atual)) {
+							atual.depth = Game.player.depthPlayer(atual);
+						}
+					}
+				}
+			}
+		}
+		
+	public void checkCollisionPig() {
+		for(int i = 0; i < Game.entities.size(); i++) {
+			Entity atual = Game.entities.get(i);
+			if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+				if(Entity.isColidding(Game.player, atual)) {
+					if(atual instanceof Pig) {
+						atual.depth = Game.player.depthPlayer(atual);
+					}
+				}
+			}
+		}
+	}
+		
+	public void checkCollisionMine() {
+		for(int i = 0; i < Game.entities.size(); i++) {
+			Entity atual = Game.entities.get(i);
+			if(atual instanceof Mine) {
+				if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+					if(Entity.isColidding(Game.player, atual)) {
+						atual.depth = Game.player.depthPlayer(atual);
+						Game.player.enterMine = true;
+					}
+				}
+			}
+		}
+	}
+		
+	public boolean checkCollisionTree(){
 		
 		for(int i = 0; i < Game.entities.size(); i++) {
 			Entity atual = Game.entities.get(i);
 			
-			if(atual instanceof FishingSpot) {
+			if(atual instanceof Tree) {
 				if(Entity.isColidding(Game.player, atual)) {
-					return true;
+					if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+						atual.depth = Game.player.depthPlayer(atual);
+						
+						if(Game.player.useItem && Game.player.hasAxe) {
+							((Tree) atual).life--;
+							return true;
+						}
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean checkCollisionFishingSpot() {
+		
+		for(int i = 0; i < Game.entities.size(); i++) {
+			Entity atual = Game.entities.get(i);
+			if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+				if(atual instanceof FishingSpot) {
+					if(Entity.isColidding(Game.player, atual)) {
+						return true;
+					}
 				}
 			}
 		}
 		return false;
 	}
 	
+	public boolean checkCollisionFishingSpotMask() {
+		
+		for(int i = 0; i < Game.entities.size(); i++) {
+			Entity atual = Game.entities.get(i);
+			if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+				if(atual instanceof FishingSpot) {
+					if(FishingSpot.isColidding(atual, Game.player)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean checkCollisionWaterTile() {
+			
+			for(int i = 0; i < World.tiles.length; i++) {
+				Tile atual = World.tiles[i];
+				if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+				if(atual instanceof WaterTile) {
+						if(Tile.isColidding(atual, Game.player)) {
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+	
 	public void getFish() {
 		
 		int index = Game.sysInv.checkPositionGetInv();
-		
-		Fish fish =  new Fish(0, 0, 16, 16, Entity.FISH_EN);
+		Fish fish = new Fish(0, 0, 16, 16, Entity.FISH_EN);
 		fish.tipo = "peixe";
 		
 		if(!Game.sysInv.checkPackInv(fish)) {
 			if (index >= 0 && index <= Game.sysInv.inventario.length) {
 				Game.sysInv.inventario[index] = fish;
 				Game.sysInv.inv[index] = fish.getSprite();
+			}else {
+				fish.setX(Game.player.getX());
+				fish.setY(Game.player.getY());
+				Game.entities.add(fish);
 			}
 		}else {
 			fish = null;
@@ -158,11 +238,13 @@ public class CollisonPlayer {
 		for(int i = 0; i < Game.entities.size(); i++) {
 			Entity atual = Game.entities.get(i);
 			
-			if(atual instanceof Door) {
-				if(Entity.isColidding(Game.player, atual)) {
-					if(Game.player.useItem) {
-						Game.player.openDoor =  true;
-						Game.player.doorCollision = (Door) atual;
+			if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+				if(atual instanceof Door) {
+					if(Entity.isColidding(Game.player, atual)) {
+						if(Game.player.useItem) {
+							Game.player.openDoor =  true;
+							Game.player.doorCollision = (Door) atual;
+						}
 					}
 				}
 			}
@@ -194,50 +276,53 @@ public class CollisonPlayer {
 		Game.player.updateCamera();
 	}
 	
-	public void createGround() {
+	public boolean createGround() {
 		
 		for(int i = 0; i < World.tiles.length; i++) {
 				
-			Tile t = World.tiles[i];
-				
-			if(World.isColiddingFloorTileToGround(Game.player, t) 
-					&& Game.player.hasHoe 
-					&& Game.player.useItem 
-					&& t instanceof FloorTile
-					&& !(t.en instanceof Ground)){
-				Ground gd = new Ground(t.getX(), t.getY(), 16, 16, Entity.GROUND_EN, t.psTiles);
-				gd.tipo = "terreno";
-				gd.show = true;
-				gd.psTiles = t.psTiles;
-				World.tiles[t.psTiles].en = gd;
-				Game.entities.add(gd);
-				Sound.Clips.digging.play();
+			Tile atual = World.tiles[i];
+			if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+				if(World.isColiddingFloorTileToGround(Game.player, atual) 
+						&& Game.player.hasHoe 
+						&& Game.player.useItem 
+						&& atual instanceof FloorTile
+						&& !(atual.en instanceof Ground)){
+					Ground gd = new Ground(atual.getX(), atual.getY(), 16, 16, Entity.GROUND_EN, atual.psTiles);
+					gd.tipo = "terreno";
+					gd.show = true;
+					gd.psTiles = atual.psTiles;
+					World.tiles[atual.psTiles].en = gd;
+					Game.entities.add(gd);
+					return true;
+				}
 			}
 		}
+		return false;
 	}
 	
 	public void checkColisionGround() {
 		
 		for(int i = 0; i < Game.entities.size(); i++) {
 			Entity atual = Game.entities.get(i);
-			
-			if(atual instanceof Ground) {
-				if(Entity.isColidding(Game.player, atual)) {
-					
-					Game.player.depthPlayer((int)atual.y);
-					
-					if(Game.sysInv.inventario[Game.sysInv.handIndexItem] != null) {
-						if(Game.player.useItem && Game.sysInv.inventario[Game.sysInv.handIndexItem] instanceof Seed) {
-							if(Game.sysInv.inventario[Game.sysInv.handIndexItem].tipo.equals("semente de carvalho")) {
-								((Ground) atual).tipo = "terreno de carvalho";
-							}else if (Game.sysInv.inventario[Game.sysInv.handIndexItem].tipo.equals("semente de pinheiro")) {
-								((Ground) atual).tipo = "terreno de pinheiro";
-							}
-							
-							((Ground) atual).plant = true;
-							Game.sysInv.inventario[Game.sysInv.handIndexItem] = null;
-							Game.sysInv.inv[Game.sysInv.handIndexItem] = null;
+			if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+				if(atual instanceof Ground) {
+					if(Entity.isColidding(Game.player, atual)) {
 						
+						Game.player.depthPlayer(atual);
+						
+						if(Game.sysInv.inventario[Game.sysInv.handIndexItem] != null) {
+							if(Game.player.useItem && Game.sysInv.inventario[Game.sysInv.handIndexItem] instanceof Seed) {
+								if(Game.sysInv.inventario[Game.sysInv.handIndexItem].tipo.equals("semente de carvalho")) {
+									((Ground) atual).tipo = "terreno de carvalho";
+								}else if (Game.sysInv.inventario[Game.sysInv.handIndexItem].tipo.equals("semente de pinheiro")) {
+									((Ground) atual).tipo = "terreno de pinheiro";
+								}
+								
+								((Ground) atual).plant = true;
+								Game.sysInv.inventario[Game.sysInv.handIndexItem] = null;
+								Game.sysInv.inv[Game.sysInv.handIndexItem] = null;
+							
+							}
 						}
 					}
 				}
@@ -260,19 +345,33 @@ public class CollisonPlayer {
 		for(int i = 0; i < Game.entities.size(); i++) {
 			
 			Entity atual = Game.entities.get(i);
-			
-			if(atual instanceof Stump) {
-				
-				if(Entity.isColidding(Game.player, atual)) {
-	
-					atual.depth = Game.player.depthPlayer((int)atual.y);
+			if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+				if(atual instanceof Stump) {
 					
-					if(Game.player.useItem && Game.player.hasHoe) {
-						((Stump) atual).destroySelf();
+					if(Entity.isColidding(Game.player, atual)) {
+		
+						atual.depth = Game.player.depthPlayer(atual);
+						
+						if(Game.player.useItem && Game.player.hasHoe) {
+							((Stump) atual).destroySelf();
+						}
 					}
 				}
 			}
 		}
+	}
+	
+	public boolean isTargetPlayer() {
+		for(int i=0; i<Game.mobs.size();i++) {
+			Mob atual = Game.mobs.get(i);
+			if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+				if(Mob.isColiddingTarget(atual, Game.player)) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 
 }

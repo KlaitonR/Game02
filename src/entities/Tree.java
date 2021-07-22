@@ -10,7 +10,6 @@ import world.World;
 public class Tree extends Entity{
 	
 	public int life = 5;
-//	public boolean isColliding;
 
 	public Tree(double x, double y, int width, int height, BufferedImage sprite) {
 		super(x, y, width, height, sprite);

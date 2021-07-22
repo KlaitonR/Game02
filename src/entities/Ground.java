@@ -4,6 +4,8 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import main.Game;
+import util.Mapa;
+import util.Regiao;
 import world.FloorTile;
 import world.Tile;
 import world.World;
@@ -21,6 +23,8 @@ public class Ground extends Entity{
 		super(x, y, width, height, sprite);
 		this.psTiles = ps;
 		depth = 0;
+		mapa.add(Mapa.MAPA_FLORESTA);
+		regiao.add(Regiao.REGIAO_FLORESTA);
 	}
 	
 	public void plant() {

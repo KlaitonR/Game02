@@ -3,6 +3,8 @@ package entities;
 import java.awt.image.BufferedImage;
 
 import util.Id;
+import util.Mapa;
+import util.Regiao;
 
 public class Lighter extends Entity{
 	
@@ -10,6 +12,8 @@ public class Lighter extends Entity{
 		super(x, y, width, height, sprite);
 
 		id = Id.ID_LIGHTER;
+		mapa.add(Mapa.MAPA_FLORESTA);
+		regiao.add(Regiao.REGIAO_FLORESTA);
 		
 	}
 

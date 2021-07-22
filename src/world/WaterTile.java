@@ -2,8 +2,9 @@ package world;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-
 import main.Game;
+import util.Mapa;
+import util.Regiao;
 
 public class WaterTile extends Tile{
 	
@@ -12,6 +13,14 @@ public class WaterTile extends Tile{
 
 	public WaterTile(int x, int y, BufferedImage sprite) {
 		super(x, y, sprite);
+		
+		maskx = -22;
+		masky = -22;
+		mwidth = 60;
+		mheigth = 60;
+		
+		mapa.addAll(Mapa.addAll());
+		regiao.addAll(Regiao.addAll());
 		
 		moveWater = new BufferedImage[5];
 		
@@ -23,6 +32,9 @@ public class WaterTile extends Tile{
 	
 	public void render(Graphics g) {
 		super.render(g);
+		
+//		g.setColor(Color.black);
+//		g.fillRect(this.getX() - Camera.x + maskx, this.getY() - Camera.y + masky, mwidth, mheigth);
 		
 		frames++;
 		if(frames == maxFrames) {

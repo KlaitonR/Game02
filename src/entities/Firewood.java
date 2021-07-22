@@ -2,6 +2,9 @@ package entities;
 
 import java.awt.image.BufferedImage;
 
+import util.Mapa;
+import util.Regiao;
+
 public class Firewood extends Entity{
 	
 	public Firewood(double x, double y, int width, int height, BufferedImage sprite) {
@@ -10,6 +13,8 @@ public class Firewood extends Entity{
 		depth = 1;
 		pack = true;
 		qtPack = 63;
+		mapa.add(Mapa.MAPA_FLORESTA);
+		regiao.add(Regiao.REGIAO_FLORESTA);
 		
 	}
 

@@ -34,6 +34,8 @@ import graficos.UI;
 import mobs.Mob;
 import util.CollisonPlayer;
 import util.CreationItem;
+import util.Mapa;
+import util.Regiao;
 import util.SystemBag;
 import util.SystemCreation;
 import util.SystemInventory;
@@ -59,7 +61,11 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	static public Spritsheet spritesheet;
 	static public Spritsheet spritePlayer;
 	static public Spritsheet spriteMobs;
+	static public Spritsheet spriteContruction;
 	static public Spritsheet spriteButton;
+	
+	static public Mapa mapaGame;
+	static public Regiao regiaoGame;
 	
 	public static World world;
 	public static Player player;
@@ -107,7 +113,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	private boolean restartGame;
 	
 	private double timer;
-	public static int hour = 17, minute = 0, second, darken;
+	public static int hour = 8, minute = 0, second, darken;
 	private boolean dusk, dawn;
 	private int controlDarken;
 	
@@ -170,19 +176,25 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		spritesheet =  new Spritsheet("/spritesheet.png");
 		spritePlayer =  new Spritsheet("/spritePlayer.png");
 		spriteMobs =  new Spritsheet("/spriteMobs.png");
+		spriteContruction = new Spritsheet("/spriteConstruction.png");
 		player  = new Player(0, 0, 16, 16, spritePlayer.getSprite(0, 0, 16, 16));
+		player.mapa.addAll(Mapa.addAll());
+		player.regiao.addAll(Regiao.addAll());
 		sysInv = new SystemInventory();
 		sysBag = new SystemBag();
 		sysCre = new SystemCreation();
 		createItem = new CreationItem();
 		collision = new CollisonPlayer();
 		entities.add(player);
+		mapaGame = Mapa.MAPA_FLORESTA;
+		regiaoGame = Regiao.REGIAO_FLORESTA;
 		world =  new World("/level1.png");
 		
 		minimapa = new BufferedImage(World.WIDTH, World.HEIGHT, BufferedImage.TYPE_INT_RGB);
 		minimapaPixels = ((DataBufferInt)minimapa.getRaster().getDataBuffer()).getData();
 		
 		menu = new Menu();
+		
 		
 //		try {
 //			newfont = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(70f);
@@ -256,28 +268,33 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			restartGame = false;
 			
 			if(estado_cena == jogando) {
+				
+				for(int i=0; i<mobs.size(); i++) {
+					if(!entities.contains(mobs.get(i))) {
+						entities.add(mobs.get(i));
+					}
+				}
+				
 				for(int i = 0; i<entities.size(); i++) {
-//					if(entities.get(i) instanceof Enemy) {
-						
-//					}else {
 					Entity e = entities.get(i);
-					e.tick();
-//					}
+					if(e.mapa.contains(Game.mapaGame) && e.regiao.contains(Game.regiaoGame)) {
+						e.tick();
+					}
 				}
 				
 				for(int i = 0; i<bulletShootes.size(); i++) {
-					bulletShootes.get(i).tick();
+					BulletShoot b = bulletShootes.get(i);
+					if(b.mapa.contains(Game.mapaGame) && b.regiao.contains(Game.regiaoGame)) {
+						bulletShootes.get(i).tick();
+					}
 				}
 				
 				if(particles != null) {
 					for(int i = 0; i<particles.size(); i++) {
-						particles.get(i).tick();
-					}
-				}
-				
-				if(mobs != null) {
-					for(int i = 0; i<mobs.size(); i++) {
-						mobs.get(i).tick();
+						Particle p = particles.get(i);
+						if(p.mapa.contains(Game.mapaGame) && p.regiao.contains(Game.regiaoGame)) {
+							particles.get(i).tick();
+						}
 					}
 				}
 				
@@ -317,6 +334,14 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 //				player.levelRoom = newWorld;
 //				World.restarGame(newWorld);
 //			}
+			
+			if(player.enter && player.enterMine) {
+				mapaGame = Mapa.MAPA_CALABOUÇO;
+				regiaoGame = Regiao.REGIAO_CALABOUÇO;
+				World.caregaMapa("/cal.png");
+				minimapa = new BufferedImage(World.WIDTH, World.HEIGHT, BufferedImage.TYPE_INT_RGB);
+				minimapaPixels = ((DataBufferInt)minimapa.getRaster().getDataBuffer()).getData();
+			}
 			
 		}else if (gameState.equals("GAME OVER")) {
 			framesGameOver++;
@@ -442,26 +467,35 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		
 		world.render(g);
 		Collections.sort(entities, Entity.nodeSorter);
-		Collections.sort(mobs, Entity.nodeSorter);
 		
 		for(int i = 0; i<mobs.size(); i++) {
-			mobs.get(i).render(g);
+			Mob m = mobs.get(i);
+			if(m.mapa.contains(Game.mapaGame) && m.regiao.contains(Game.regiaoGame)) {
+				m.render(g);
+			}
 		}
 		
 		for(int i = 0; i<entities.size(); i++) {
 			Entity e = entities.get(i);
-			
 //			if(e.show)
+			if(e.mapa.contains(Game.mapaGame) && e.regiao.contains(Game.regiaoGame)) {
 				e.render(g);
+			}
 		}
 		
 		for(int i = 0; i<bulletShootes.size(); i++) {
-			bulletShootes.get(i).render(g);
+			BulletShoot b = bulletShootes.get(i);
+			if(b.mapa.contains(Game.mapaGame) && b.regiao.contains(Game.regiaoGame)) {
+				bulletShootes.get(i).render(g);
+			}
 		}
 		
 		if(particles != null) {
 			for(int i = 0; i<particles.size(); i++) {
-				particles.get(i).render(g);
+				Particle p = particles.get(i);
+				if(p.mapa.contains(Game.mapaGame) && p.regiao.contains(Game.regiaoGame)) {
+					particles.get(i).render(g);
+				}
 			}
 		}
 
@@ -661,7 +695,9 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 						player.useBag = true;
 					else
 						player.useBag = false;
-					}
+					Sound.Clips.openBag.play();
+				}
+				
 			}
 			
 			if(e.getKeyCode() == KeyEvent.VK_K) {
@@ -670,7 +706,12 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 						player.creation = true;
 					else
 						player.creation = false;
+					Sound.Clips.selectedInventory.play();
 				}
+			}
+			
+			if(e.getKeyCode() == KeyEvent.VK_Z){
+				player.enter = true;
 			}
 			
 //			if(e.getKeyCode() == KeyEvent.VK_ENTER) { 
@@ -727,6 +768,10 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			if(e.getKeyCode() == KeyEvent.VK_Q){
 				sysInv.scrollItemLef = false;
 			}
+			
+			if(e.getKeyCode() == KeyEvent.VK_Z){
+				player.enter = false;
+			}
 		
 		}
 		
@@ -767,11 +812,13 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			player.openLvls = true;
 			player.offLvls = false;
 			player.mouseShoot =  false;
+			Sound.Clips.selectedInventory.play();
 			
 		}else if(!player.offLvls && player.mx >= 2 && player.my >= 59 && player.mx <= 147 && player.my <= 74) {
 			player.offLvls = true;
 			player.openLvls = false;
 			player.mouseShoot =  false;
+			Sound.Clips.selectedInventory.play();
 		}
 		
 		if(player.useBag) {

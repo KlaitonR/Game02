@@ -4,6 +4,8 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import main.Game;
 import main.Sound;
+import util.Mapa;
+import util.Regiao;
 
 public class Npc extends Entity{
 	
@@ -25,6 +27,9 @@ public class Npc extends Entity{
 		
 		depth = 7;
 		frases[0] = "Você irá morrer fazendeiro!";
+		
+		mapa.add(Mapa.MAPA_FLORESTA);
+		regiao.add(Regiao.REGIAO_FLORESTA);
 		
 	}
 	

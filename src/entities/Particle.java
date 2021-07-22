@@ -6,11 +6,13 @@ import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import main.Game;
+import util.Mapa;
+import util.Regiao;
 import world.Camera;
 
 public class Particle extends Entity{
 
-	public int lifeTime = 5;
+	public int lifeTime = 3;
 	public int curLife = 0;
 	public int spd = 2;
 	public double dx = 0;
@@ -21,6 +23,8 @@ public class Particle extends Entity{
 		
 		dx = new Random().nextGaussian();
 		dy = new Random().nextGaussian();
+		mapa.addAll(Mapa.addAll());
+		regiao.addAll(Regiao.addAll());
 	
 	}
 	
