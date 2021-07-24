@@ -20,6 +20,7 @@ import entities.Npc;
 import entities.Potion;
 import entities.Root;
 import entities.Seed;
+import entities.Staircase;
 import entities.Stump;
 import entities.Tree;
 import entities.Wapon;
@@ -41,7 +42,7 @@ public class CollisonPlayer {
 		for(int i = 0; i < Game.entities.size(); i++) {
 			Entity atual = Game.entities.get(i);
 			if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
-				if(atual instanceof Axe ||
+				if(atual instanceof Axe || 
 					atual instanceof Beef ||
 					atual instanceof Firewood ||
 					atual instanceof Fish ||
@@ -139,7 +140,20 @@ public class CollisonPlayer {
 				if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
 					if(Entity.isColidding(Game.player, atual)) {
 						atual.depth = Game.player.depthPlayer(atual);
-						Game.player.enterMine = true;
+						Game.player.enterRoom = true;
+					}
+				}
+			}
+		}
+	}
+	
+	public void checkCollisionStaircase() {
+		for(int i = 0; i < Game.entities.size(); i++) {
+			Entity atual = Game.entities.get(i);
+			if(atual instanceof Staircase) {
+				if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+					if(Entity.isColidding(Game.player, atual)) {
+						Game.player.enterRoom = true;
 					}
 				}
 			}
@@ -200,8 +214,8 @@ public class CollisonPlayer {
 	
 	public boolean checkCollisionWaterTile() {
 			
-			for(int i = 0; i < World.tiles.length; i++) {
-				Tile atual = World.tiles[i];
+			for(int i = 0; i < Game.world.tiles.length; i++) {
+				Tile atual = Game.world.tiles[i];
 				if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
 				if(atual instanceof WaterTile) {
 						if(Tile.isColidding(atual, Game.player)) {
@@ -278,9 +292,9 @@ public class CollisonPlayer {
 	
 	public boolean createGround() {
 		
-		for(int i = 0; i < World.tiles.length; i++) {
+		for(int i = 0; i <Game.world.tiles.length; i++) {
 				
-			Tile atual = World.tiles[i];
+			Tile atual = Game.world.tiles[i];
 			if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
 				if(World.isColiddingFloorTileToGround(Game.player, atual) 
 						&& Game.player.hasHoe 
@@ -291,7 +305,7 @@ public class CollisonPlayer {
 					gd.tipo = "terreno";
 					gd.show = true;
 					gd.psTiles = atual.psTiles;
-					World.tiles[atual.psTiles].en = gd;
+					Game.world.tiles[atual.psTiles].en = gd;
 					Game.entities.add(gd);
 					return true;
 				}
@@ -364,14 +378,15 @@ public class CollisonPlayer {
 	public boolean isTargetPlayer() {
 		for(int i=0; i<Game.mobs.size();i++) {
 			Mob atual = Game.mobs.get(i);
-			if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
-				if(Mob.isColiddingTarget(atual, Game.player)) {
-					return true;
+			if(atual instanceof Pig) {
+				if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+					if(Mob.isColiddingTarget(atual, Game.player)) {
+						return true;
+					}
 				}
 			}
 		}
 		
 		return false;
 	}
-
 }

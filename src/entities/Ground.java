@@ -2,13 +2,11 @@ package entities;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-
 import main.Game;
 import util.Mapa;
 import util.Regiao;
 import world.FloorTile;
 import world.Tile;
-import world.World;
 
 public class Ground extends Entity{
 	
@@ -55,7 +53,7 @@ public class Ground extends Entity{
 				Game.entities.add(tr);
 				tr.show = true;
 				tr.psTiles = psTiles;
-				World.tiles[psTiles].en = tr;
+				Game.world.tiles[psTiles].en = tr;
 				plant = false;
 				Game.entities.remove(this);
 				
@@ -75,8 +73,8 @@ public class Ground extends Entity{
 		}
 		
 		if(life == 0) {
-			World.tiles[psTiles] = new FloorTile((int)x, (int)y, Tile.TILE_FLOOR);
-			World.tiles[psTiles].show = true;
+			Game.world.tiles[psTiles] = new FloorTile((int)x, (int)y, Tile.TILE_FLOOR);
+			Game.world.tiles[psTiles].show = true;
 			Game.entities.remove(this);
 		}
 		

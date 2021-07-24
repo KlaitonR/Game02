@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+
+import construction.Mine;
 import entities.BulletShoot;
 import entities.Enemy;
 import entities.Entity;
@@ -51,8 +53,10 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	static public final int HEIGHT = 160; 
 	static public final int SCALE  = 3;
 	
+	
 	private BufferedImage image;
 	
+	static public ArrayList <World> worlds;
 	static public ArrayList <Entity> entities;
 	static public ArrayList <Enemy> enemies;
 	static public ArrayList <Mob> mobs;
@@ -93,9 +97,6 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public BufferedImage lightmap3;
 	public int [] lightMapPixels4;
 	public BufferedImage lightmap4;
-	
-	public static int [] minimapaPixels;
-	public static BufferedImage minimapa;
 	
 	double mx, my;
 	
@@ -168,6 +169,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		lightmap4.getRGB(0, 0, lightmap4.getWidth(), lightmap4.getHeight(), lightMapPixels4, 0 , lightmap4.getWidth());
 		pixels4 = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
 		
+		worlds = new ArrayList<World>();
 		entities =  new ArrayList<Entity>();
 		enemies =  new ArrayList<Enemy>();
 		mobs = new ArrayList<Mob>();
@@ -189,12 +191,10 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		mapaGame = Mapa.MAPA_FLORESTA;
 		regiaoGame = Regiao.REGIAO_FLORESTA;
 		world =  new World("/level1.png");
-		
-		minimapa = new BufferedImage(World.WIDTH, World.HEIGHT, BufferedImage.TYPE_INT_RGB);
-		minimapaPixels = ((DataBufferInt)minimapa.getRaster().getDataBuffer()).getData();
-		
+		world.mapa = mapaGame;
+		world.regiao = regiaoGame;
+		worlds.add(world);
 		menu = new Menu();
-		
 		
 //		try {
 //			newfont = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(70f);
@@ -282,6 +282,13 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 					}
 				}
 				
+				for(int i = 0; i<mobs.size(); i++) {
+					Entity e = mobs.get(i);
+					if(e.mapa.contains(Game.mapaGame) && e.regiao.contains(Game.regiaoGame)) {
+						e.tick();
+					}
+				}
+				
 				for(int i = 0; i<bulletShootes.size(); i++) {
 					BulletShoot b = bulletShootes.get(i);
 					if(b.mapa.contains(Game.mapaGame) && b.regiao.contains(Game.regiaoGame)) {
@@ -335,13 +342,47 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 //				World.restarGame(newWorld);
 //			}
 			
-			if(player.enter && player.enterMine) {
+			boolean criarNovoMundo = false;
+			
+			if(player.enter && player.enterRoom && mapaGame.equals(Mapa.MAPA_FLORESTA)) {
+				
 				mapaGame = Mapa.MAPA_CALABOUÇO;
 				regiaoGame = Regiao.REGIAO_CALABOUÇO;
-				World.caregaMapa("/cal.png");
-				minimapa = new BufferedImage(World.WIDTH, World.HEIGHT, BufferedImage.TYPE_INT_RGB);
-				minimapaPixels = ((DataBufferInt)minimapa.getRaster().getDataBuffer()).getData();
+				
+				for(int i=0; i<worlds.size();i++) {
+					if(!worlds.get(i).mapa.equals(Mapa.MAPA_CALABOUÇO)) {
+						criarNovoMundo = true;
+						break;
+					}else if (worlds.get(i).mapa.equals(Mapa.MAPA_CALABOUÇO)) {
+						world = worlds.get(i);
+						break;
+					}
+				}
+				
+				if(criarNovoMundo) {
+					World w = new World("/cal.png");
+					world = w;
+					worlds.add(world);
+					player.dir = player.rightDir;
+				}
+				
+			//Mapa inicial, sempre começara iniciado, não a necessidade de verificar se ele existe
+			}else if (player.enter && player.enterRoom && !mapaGame.equals(Mapa.MAPA_FLORESTA)) {
+				mapaGame = Mapa.MAPA_FLORESTA;
+				regiaoGame = Regiao.REGIAO_FLORESTA;
+				world = worlds.get(0);
+				for(int i=0; i<entities.size();i++) {
+					if(entities.get(i) instanceof Mine) {
+						player.setX(entities.get(i).getX() + 5);
+						player.setY(entities.get(i).getY() + 20);
+						break;
+					}
+				}
 			}
+			
+			player.enterRoom = false;
+			player.enter = false;
+			criarNovoMundo = false;
 			
 		}else if (gameState.equals("GAME OVER")) {
 			framesGameOver++;
@@ -529,8 +570,11 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		
 		if(gameState.equals("NORMAL") || Menu.pause) {
 			
-			World.renderMiniMap();
-			g.drawImage(minimapa, 1070, 40, Toolkit.getDefaultToolkit().getScreenSize().width/5, Toolkit.getDefaultToolkit().getScreenSize().height/3, null);
+			for(int i=0; i<worlds.size(); i++) {
+				if(mapaGame.equals(worlds.get(i).mapa)) {
+					g.drawImage(worlds.get(i).minimapa, 1070, 40, Toolkit.getDefaultToolkit().getScreenSize().width/5, Toolkit.getDefaultToolkit().getScreenSize().height/3, null);
+				}
+			}
 			
 			Graphics2D g2 = (Graphics2D) g;
 			
@@ -711,7 +755,8 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			}
 			
 			if(e.getKeyCode() == KeyEvent.VK_Z){
-				player.enter = true;
+				if(!player.creation && !player.useBag)
+					player.enter = true;
 			}
 			
 //			if(e.getKeyCode() == KeyEvent.VK_ENTER) { 

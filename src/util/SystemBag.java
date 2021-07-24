@@ -177,4 +177,25 @@ public class SystemBag {
 		return false;
 	}
 	
-}
+	public void checkBagpackItemMap() {
+			
+		if(bagpack != null) {
+			for(int i=0; i<4;i++) {
+				for(int y=0; y<6; y++) {
+					if(bagpack[i][y] != null) {
+						if(!bagpack[i][y].mapa.contains(Game.mapaGame)) {
+							bagpack[i][y].mapa.add(Game.mapaGame);
+							bagpack[i][y].regiao.add(Game.regiaoGame);
+							if(!bagpack[i][y].itensPack.isEmpty()) {
+								for(int z=0; z<bagpack[i][y].itensPack.size();z++) {
+									bagpack[i][y].itensPack.get(z).mapa.add(Game.mapaGame);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	}

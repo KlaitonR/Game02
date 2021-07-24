@@ -119,22 +119,22 @@ import world.World;
 				
 				if(ps) { // Não anda na diagonal
 				
-					if(dirRight == true && World.isFree((int)(x+speed), this.getY(), this.z) && !isColiddingEnemy((int)(x+speed), this.getY())) {
+					if(dirRight == true && Game.world.isFree((int)(x+speed), this.getY(), this.z) && !isColiddingEnemy((int)(x+speed), this.getY())) {
 						moved = true;
 						x += speed;
 						dir = rightDir;
 						
-					}else if(dirLeft == true && World.isFree((int)(x-speed), this.getY(), this.z) && !isColiddingEnemy((int)(x-speed), this.getY())){
+					}else if(dirLeft == true && Game.world.isFree((int)(x-speed), this.getY(), this.z) && !isColiddingEnemy((int)(x-speed), this.getY())){
 						moved =  true;
 						x -= speed;
 						dir = leftDir;
 					}
 					
-					if(dirDown == true && World.isFree(this.getX(), (int)(y+speed), this.z) && !isColiddingEnemy(this.getX(), (int)(y+speed))) {
+					if(dirDown == true && Game.world.isFree(this.getX(), (int)(y+speed), this.z) && !isColiddingEnemy(this.getX(), (int)(y+speed))) {
 						moved = true;
 						y += speed;
 						dir = downDir;
-					}else if (dirUp == true && World.isFree(this.getX(), (int)(y-speed), this.z) && !isColiddingEnemy(this.getX(), (int)(y-speed))) {
+					}else if (dirUp == true && Game.world.isFree(this.getX(), (int)(y-speed), this.z) && !isColiddingEnemy(this.getX(), (int)(y-speed))) {
 						moved = true;
 						y -= speed;
 						dir = upDir;
@@ -142,20 +142,20 @@ import world.World;
 
 				}else { //anda na diagonal
 					
-					if(dirRight == true && World.isFree((int)(x+speed), this.getY(), this.z) && !isColiddingEnemy((int)(x+speed), this.getY())) {
+					if(dirRight == true && Game.world.isFree((int)(x+speed), this.getY(), this.z) && !isColiddingEnemy((int)(x+speed), this.getY())) {
 						moved = true;
 						x += speed;
 						dir = rightDir;
 						
-					}else if(dirLeft == true && World.isFree((int)(x-speed), this.getY(), this.z) && !isColiddingEnemy((int)(x-speed), this.getY())){
+					}else if(dirLeft == true && Game.world.isFree((int)(x-speed), this.getY(), this.z) && !isColiddingEnemy((int)(x-speed), this.getY())){
 						moved =  true;
 						x -= speed;
 						dir = leftDir;
-					} else if(dirDown == true && World.isFree(this.getX(), (int)(y+speed), this.z) && !isColiddingEnemy(this.getX(), (int)(y+speed))) {
+					} else if(dirDown == true && Game.world.isFree(this.getX(), (int)(y+speed), this.z) && !isColiddingEnemy(this.getX(), (int)(y+speed))) {
 						moved = true;
 						y += speed;
 						dir = downDir;
-					}else if (dirUp == true && World.isFree(this.getX(), (int)(y-speed), this.z) && !isColiddingEnemy(this.getX(), (int)(y-speed))) {
+					}else if (dirUp == true && Game.world.isFree(this.getX(), (int)(y-speed), this.z) && !isColiddingEnemy(this.getX(), (int)(y-speed))) {
 						moved = true;
 						y -= speed;
 						dir = upDir;
@@ -165,13 +165,13 @@ import world.World;
 				//Mudar de direção ao colidir
 				
 				//Para esquerda e para direitra
-				if(dirRight == true && !World.isFree((int)(x+speed), this.getY(), this.z)) {
+				if(dirRight == true && !Game.world.isFree((int)(x+speed), this.getY(), this.z)) {
 					dirRight = false;
 					dirLeft = true;
 					ps = false;
 				}
 				
-				if(dirLeft == true && !World.isFree((int)(x-speed), this.getY(), this.z)) {
+				if(dirLeft == true && !Game.world.isFree((int)(x-speed), this.getY(), this.z)) {
 					dirRight = true;
 					dirLeft = false;
 					ps = true;
@@ -191,12 +191,12 @@ import world.World;
 				
 				//Para baixo e para cima
 				
-				if(dirDown == true && !World.isFree(this.getX(), (int)(y+speed), this.z)) {
+				if(dirDown == true && !Game.world.isFree(this.getX(), (int)(y+speed), this.z)) {
 					dirDown = false;
 					dirUp = true;
 				}
 				
-				if(dirUp == true && !World.isFree(this.getX(), (int)(y-speed), this.z)) {
+				if(dirUp == true && !Game.world.isFree(this.getX(), (int)(y-speed), this.z)) {
 					dirDown = true;
 					dirUp = false;
 				}
@@ -213,21 +213,21 @@ import world.World;
 				
 			}else { //Se entrar na área de target ou causar dano (SEGUE O PLAYER)
 			
-				if((int)x < Game.player.getX() && World.isFree((int)(x+speed), this.getY(), this.z) && !isColiddingEnemy((int)(x+speed), this.getY())) {
+				if((int)x < Game.player.getX() && Game.world.isFree((int)(x+speed), this.getY(), this.z) && !isColiddingEnemy((int)(x+speed), this.getY())) {
 					moved = true;
 					x += speed;
 					dir =  rightDir;
-				}else if ((int)x > Game.player.getX() && World.isFree((int)(x-speed), this.getY(), this.z) && !isColiddingEnemy((int)(x-speed), this.getY())){
+				}else if ((int)x > Game.player.getX() && Game.world.isFree((int)(x-speed), this.getY(), this.z) && !isColiddingEnemy((int)(x-speed), this.getY())){
 					moved =  true;
 					x -= speed;
 					dir = leftDir;
 				}
 				
-				if((int)y < Game.player.getY() && World.isFree(this.getX(), (int)(y+speed), this.z) && !isColiddingEnemy(this.getX(), (int)(y+speed))) {
+				if((int)y < Game.player.getY() && Game.world.isFree(this.getX(), (int)(y+speed), this.z) && !isColiddingEnemy(this.getX(), (int)(y+speed))) {
 					moved = true;
 					y += speed;
 					dir = downDir;
-				}else if ((int)y > Game.player.getY() && World.isFree(this.getX(), (int)(y-speed), this.z) && !isColiddingEnemy(this.getX(), (int)(y-speed))){
+				}else if ((int)y > Game.player.getY() && Game.world.isFree(this.getX(), (int)(y-speed), this.z) && !isColiddingEnemy(this.getX(), (int)(y-speed))){
 					moved = true;
 					y -= speed;
 					dir = upDir;

@@ -31,14 +31,14 @@ public class BulletShoot extends Entity {
 	
 	public void collidingTile() {
 		
-		for(int i=0; i < World.tiles.length; i++) {
-			Tile t =  World.tiles[i];
+		for(int i=0; i < Game.world.tiles.length; i++) {
+			Tile t =  Game.world.tiles[i];
 			if(t instanceof WallTile) {
 				if(Entity.isColiddingTile(this, t)) {
 					BulletShoot.collidingBullet = false;
 					collidingWall = true;
 					collidingEnemy = false;
-					World.generateParticles(50, (int)x, (int)y, World.tiles[i].psTiles);
+					World.generateParticles(50, (int)x, (int)y,Game.world.tiles[i].psTiles);
 					Game.bulletShootes.remove(this);
 					collidingWall = true;
 					collidingEnemy = false;

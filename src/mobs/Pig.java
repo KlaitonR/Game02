@@ -1,4 +1,4 @@
-package mobs;
+ package mobs;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -68,14 +68,14 @@ public class Pig extends Mob {
 		
 				if(ps) { // Não anda na diagonal
 				
-					if(dirRight == true && World.isFree((int)(x+speed), this.getY(), this.z) 
+					if(dirRight == true && Game.world.isFree((int)(x+speed), this.getY(), this.z) 
 							&& !isColiddingMob((int)(x+speed), this.getY())
 							&& EntitySolid.solidTree((int)(x+speed), this.getY())) {
 						moved = true;
 						x += speed;
 						dir = rightDir;
 						
-					}else if(dirLeft == true && World.isFree((int)(x-speed), this.getY(), this.z) 
+					}else if(dirLeft == true && Game.world.isFree((int)(x-speed), this.getY(), this.z) 
 							&& !isColiddingMob((int)(x-speed), this.getY())
 							&& EntitySolid.solidTree((int)(x-speed), this.getY())){
 						moved =  true;
@@ -83,13 +83,13 @@ public class Pig extends Mob {
 						dir = leftDir;
 					}
 					
-					if(dirDown == true && World.isFree(this.getX(), (int)(y+speed), this.z) 
+					if(dirDown == true && Game.world.isFree(this.getX(), (int)(y+speed), this.z) 
 							&& !isColiddingMob(this.getX(), (int)(y+speed))
 							&& EntitySolid.solidTree(this.getX(), (int)(y+speed))) {
 						moved = true;
 						y += speed;
 						dir = downDir;
-					}else if (dirUp == true && World.isFree(this.getX(), (int)(y-speed), this.z) 
+					}else if (dirUp == true && Game.world.isFree(this.getX(), (int)(y-speed), this.z) 
 							&& !isColiddingMob(this.getX(), (int)(y-speed))
 							&& EntitySolid.solidTree(this.getX(), (int)(y-speed))) {
 						moved = true;
@@ -99,26 +99,26 @@ public class Pig extends Mob {
 	
 				}else { //anda na diagonal
 					
-					if(dirRight == true && World.isFree((int)(x+speed), this.getY(), this.z) 
+					if(dirRight == true && Game.world.isFree((int)(x+speed), this.getY(), this.z) 
 							&& !isColiddingMob((int)(x+speed), this.getY())
 							&& EntitySolid.solidTree((int)(x+speed), this.getY())) {
 						moved = true;
 						x += speed;
 						dir = rightDir;
 						
-					}else if(dirLeft == true && World.isFree((int)(x-speed), this.getY(), this.z) 
+					}else if(dirLeft == true && Game.world.isFree((int)(x-speed), this.getY(), this.z) 
 							&& !isColiddingMob((int)(x-speed), this.getY())
 							&& EntitySolid.solidTree((int)(x-speed), this.getY())){
 						moved =  true;
 						x -= speed;
 						dir = leftDir;
-					} else if(dirDown == true && World.isFree(this.getX(), (int)(y+speed), this.z) 
+					} else if(dirDown == true && Game.world.isFree(this.getX(), (int)(y+speed), this.z) 
 							&& !isColiddingMob(this.getX(), (int)(y+speed))
 							&& EntitySolid.solidTree(this.getX(), (int)(y+speed))) {
 						moved = true;
 						y += speed;
 						dir = downDir;
-					}else if (dirUp == true && World.isFree(this.getX(), (int)(y-speed), this.z) 
+					}else if (dirUp == true && Game.world.isFree(this.getX(), (int)(y-speed), this.z) 
 							&& !isColiddingMob(this.getX(), (int)(y-speed))
 							&& EntitySolid.solidTree(this.getX(), (int)(y-speed))) {
 						moved = true;
@@ -130,18 +130,18 @@ public class Pig extends Mob {
 				//Mudar de direção ao colidir
 				
 				//Para esquerda e para direitra
-				if(dirRight == true && !World.isFree((int)(x+speed), this.getY(), this.z) ||
+				if(dirRight == true && !Game.world.isFree((int)(x+speed), this.getY(), this.z) ||
 										isColiddingMob((int)(x+speed), this.getY()) ||
-											isColiddingEntity((int)(x+speed), this.getY()) ||
+										isColiddingEntity((int)(x+speed), this.getY()) ||
 										isColiddingEnemy((int)(x+speed), this.getY())) {
 					dirRight = false;
 					dirLeft = true;
 					ps = false;
 				}
 				
-				if(dirLeft == true && !World.isFree((int)(x-speed), this.getY(), this.z) ||
+				if(dirLeft == true && !Game.world.isFree((int)(x-speed), this.getY(), this.z) ||
 									isColiddingMob((int)(x-speed), this.getY()) ||
-										isColiddingEntity((int)(x-speed), this.getY()) ||
+									isColiddingEntity((int)(x-speed), this.getY()) ||
 									isColiddingEnemy((int)(x-speed), this.getY())) {
 					dirRight = true;
 					dirLeft = false;
@@ -150,17 +150,17 @@ public class Pig extends Mob {
 				
 				//Para baixo e para cima
 				
-				if(dirDown == true && !World.isFree(this.getX(), (int)(y+speed), this.z) ||
+				if(dirDown == true && !Game.world.isFree(this.getX(), (int)(y+speed), this.z) ||
 									isColiddingMob(this.getX(), (int)(y+speed)) ||
-										isColiddingEntity(this.getX(), (int)(y+speed)) ||
+									isColiddingEntity(this.getX(), (int)(y+speed)) ||
 									isColiddingEnemy(this.getX(), (int)(y+speed))) {
 					dirDown = false;
 					dirUp = true;
 				}
 				
-				if(dirUp == true && !World.isFree(this.getX(), (int)(y-speed), this.z) ||
+				if(dirUp == true && !Game.world.isFree(this.getX(), (int)(y-speed), this.z) ||
 									isColiddingMob(this.getX(), (int)(y-speed)) ||
-										isColiddingEntity(this.getX(), (int)(y-speed)) ||
+									isColiddingEntity(this.getX(), (int)(y-speed)) ||
 									isColiddingEnemy(this.getX(), (int)(y-speed))) {
 					dirDown = true;
 					dirUp = false;

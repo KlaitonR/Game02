@@ -5,7 +5,6 @@ import java.awt.image.BufferedImage;
 import main.Game;
 import main.Sound;
 import util.Id;
-import world.World;
 
 public class Tree extends Entity{
 	
@@ -78,7 +77,7 @@ public class Tree extends Entity{
 			sd2.id = Id.ID_SEED_PINE;
 		}
 		
-		World.tiles[psTiles].en = null;
+		Game.world.tiles[psTiles].en = null;
 		Game.entities.remove(this);
 		
 		Sound.Clips.cuttingTree.stop();

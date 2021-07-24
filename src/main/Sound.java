@@ -26,7 +26,6 @@ public class Sound {
 				clips[i] = AudioSystem.getClip();
 				clips[i].open(AudioSystem.getAudioInputStream(new ByteArrayInputStream(buffer)));
 				size = clips.length;
-				System.out.println(size);
 			}
 		}
 		

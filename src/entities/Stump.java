@@ -21,7 +21,6 @@ public class Stump extends Entity{
 		root.tipo = "raiz";
 		root.clear = true;
 		Game.entities.add(root);
-		
 		Game.entities.remove(this);
 		
 	}

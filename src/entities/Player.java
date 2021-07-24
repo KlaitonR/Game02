@@ -8,7 +8,6 @@ import main.Sound;
 import util.Mapa;
 import world.Camera;
 import world.EntitySolid;
-import world.World;
 
 public class Player extends Entity{
 	
@@ -29,7 +28,7 @@ public class Player extends Entity{
 	
 	public boolean hasGun, hasAxe, hasFishingRod, hasHoe;
 	public boolean shoot, mouseShoot, openLvls, offLvls = true;
-	public boolean useLighter, useBag, openDoor, enter, enterMine, creation, getFish, fishing, cuttingTree;
+	public boolean useLighter, useBag, openDoor, enter, enterRoom, creation, getFish, fishing, cuttingTree;
 	public boolean clickInv, clickBag, clickCreation, clickCraft;
 	public boolean dropItem, getItem, useItem;
 
@@ -275,12 +274,12 @@ public class Player extends Entity{
 		for(int i = 0; i < 4; i++) {
 			for(int j = 0; j < 4; j++) {
 				
-				ps1 = (int)xx+(i)+(yy+j)*World.WIDTH;
-				ps2 = (int)xx-(i)+(yy+j)*World.WIDTH;
-				ps3 = (int)xx+(i)+(yy-j)*World.WIDTH;
-				ps4 = (int)xx-(i)+(yy-j)*World.WIDTH;
+				ps1 = (int)xx+(i)+(yy+j)*Game.world.WIDTH;
+				ps2 = (int)xx-(i)+(yy+j)*Game.world.WIDTH;
+				ps3 = (int)xx+(i)+(yy-j)*Game.world.WIDTH;
+				ps4 = (int)xx-(i)+(yy-j)*Game.world.WIDTH;
 				
-				if(ps1 < World.tiles.length && ps2 < World.tiles.length && ps3 < World.tiles.length && ps4 < World.tiles.length
+				if(ps1 < Game.world.tiles.length && ps2 < Game.world.tiles.length && ps3 < Game.world.tiles.length && ps4 < Game.world.tiles.length
 						&& ps1 > 0 && ps2 > 0 && ps3 > 0 && ps4 > 0) {
 					
 					revealEntity(ps1, ps2, ps3, ps4);
@@ -289,10 +288,10 @@ public class Player extends Entity{
 					revealParticle(ps1, ps2, ps3, ps4);
 					revealMobs(ps1, ps2, ps3, ps4);
 					
-					World.tiles[ps1].show = true;
-					World.tiles[ps2].show = true;
-					World.tiles[ps3].show = true;
-					World.tiles[ps4].show = true;
+					Game.world.tiles[ps1].show = true;
+					Game.world.tiles[ps2].show = true;
+					Game.world.tiles[ps3].show = true;
+					Game.world.tiles[ps4].show = true;
 				}
 			}
 		}
@@ -315,9 +314,9 @@ public class Player extends Entity{
 			int xx = (int) (Game.enemies.get(i).x/16);
 			int yy = (int) (Game.enemies.get(i).y/16);
 			
-			int ps = (int)xx+(yy)*World.WIDTH;
+			int ps = (int)xx+(yy)*Game.world.WIDTH;
 			
-			if(World.tiles[ps].show) {
+			if(Game.world.tiles[ps].show) {
 				Game.enemies.get(i).show = true;
 			}else {
 				Game.enemies.get(i).show = false;
@@ -332,9 +331,9 @@ public class Player extends Entity{
 			int xx = (int) (Game.mobs.get(i).x/16);
 			int yy = (int) (Game.mobs.get(i).y/16);
 			
-			int ps = (int)xx+(yy)*World.WIDTH;
+			int ps = (int)xx+(yy)*Game.world.WIDTH;
 			
-			if(World.tiles[ps].show) {
+			if(Game.world.tiles[ps].show) {
 				Game.mobs.get(i).show = true;
 			}else {
 				Game.mobs.get(i).show = false;
@@ -349,9 +348,9 @@ public class Player extends Entity{
 			int xx = (int) (Game.bulletShootes.get(i).x/16);
 			int yy = (int) (Game.bulletShootes.get(i).y/16);
 			
-			int ps = (int)xx+(yy)*World.WIDTH;
+			int ps = (int)xx+(yy)*Game.world.WIDTH;
 			
-			if(World.tiles[ps].show) {
+			if(Game.world.tiles[ps].show) {
 				Game.bulletShootes.get(i).show = true;
 			}else {
 				Game.bulletShootes.get(i).show = false;
@@ -366,9 +365,9 @@ public class Player extends Entity{
 				int xx = (int) (Game.particles.get(i).x/16);
 				int yy = (int) (Game.particles.get(i).y/16);
 				
-				int ps = (int)xx+(yy)*World.WIDTH;
+				int ps = (int)xx+(yy)*Game.world.WIDTH;
 				
-				if(World.tiles[ps].show) {
+				if(Game.world.tiles[ps].show) {
 					Game.particles.get(i).show = true;
 				}else {
 					Game.particles.get(i).show = false;
@@ -465,6 +464,9 @@ public class Player extends Entity{
 			Game.sysCre.closeCreation((int)x, (int)y);
 		}
 		
+		Game.sysInv.checkInventoryItemMap();
+		Game.sysBag.checkBagpackItemMap();
+		
 		checkKillEnemy();
 
 		collidingNoInteratorAndSound();
@@ -481,6 +483,7 @@ public class Player extends Entity{
 		Game.collision.checkColisionGround();
 		Game.collision.checkCollisionStump();
 		Game.collision.checkCollisionMine();
+		Game.collision.checkCollisionStaircase();
 		
 		if(Game.collision.createGround())
 			Sound.Clips.digging.play();
@@ -572,44 +575,35 @@ public class Player extends Entity{
 		
 		moved = false;
 		
-		if(rigth && World.isFree((int)(x+speed), this.getY(), this.z)
-				&& EntitySolid.solidTree((int)(x+speed), this.getY())
-				&& EntitySolid.solidSpotFishing((int)(x+speed), this.getY())
-				&& EntitySolid.solidNpc((int)(x+speed), this.getY())
-				&& EntitySolid.solidMine((int)(x+speed), this.getY())) {
-			moved =  true;
-			dir = rightDir; //Rotação de sprites com teclado
-			x+=speed;
-			
-			
-		}else if (left && World.isFree((int)(x-speed), this.getY(), this.z) 
-				&& EntitySolid.solidTree((int)(x-speed), this.getY())
-				&& EntitySolid.solidSpotFishing((int)(x-speed), this.getY())
-				&& EntitySolid.solidNpc((int)(x-speed), this.getY())
-				&& EntitySolid.solidMine((int)(x-speed), this.getY())) {
-			moved =  true;
-			dir = leftDir; //Rotação de sprites com teclado
-			x-=speed;
+		if(!creation && !useBag) {
 		
-		}
+			if(rigth && Game.world.isFree((int)(x+speed), this.getY(), this.z)
+					&& EntitySolid.solidCollision((int)(x+speed), this.getY())) {
+				moved =  true;
+				dir = rightDir; //Rotação de sprites com teclado
+				x+=speed;
+				
+				
+			}else if (left && Game.world.isFree((int)(x-speed), this.getY(), this.z) 
+					&& EntitySolid.solidCollision((int)(x-speed), this.getY())) {
+				moved =  true;
+				dir = leftDir; //Rotação de sprites com teclado
+				x-=speed;
 			
-		if(up && World.isFree(this.getX(),(int)(y-speed), this.z) 
-				&& EntitySolid.solidTree(this.getX(),(int)(y-speed))
-				&& EntitySolid.solidSpotFishing(this.getX(),(int)(y-speed))
-				&& EntitySolid.solidNpc(this.getX(),(int)(y-speed))
-				&& EntitySolid.solidMine(this.getX(),(int)(y-speed))) {
-			moved =  true;
-			dir = upDir; //Rotação de sprites com teclado 
-			y-=speed;
-
-		}else if (down && World.isFree(this.getX(), (int)(y+speed), this.z) 
-				&& EntitySolid.solidTree(this.getX(), (int)(y+speed))
-				&& EntitySolid.solidSpotFishing(this.getX(), (int)(y+speed))
-				&& EntitySolid.solidNpc(this.getX(), (int)(y+speed))
-				&& EntitySolid.solidMine(this.getX(), (int)(y+speed))) {
-			moved =  true;
-			dir = downDir; //Rotação de sprites com teclado
-			y+=speed;
+			}
+				
+			if(up && Game.world.isFree(this.getX(),(int)(y-speed), this.z) 
+					&& EntitySolid.solidCollision(this.getX(),(int)(y-speed))) {
+				moved =  true;
+				dir = upDir; //Rotação de sprites com teclado 
+				y-=speed;
+	
+			}else if (down && Game.world.isFree(this.getX(), (int)(y+speed), this.z) 
+					&& EntitySolid.solidCollision(this.getX(), (int)(y+speed))) {
+				moved =  true;
+				dir = downDir; //Rotação de sprites com teclado
+				y+=speed;
+			}
 		}
 		
 		if(moved) {
@@ -788,8 +782,8 @@ public class Player extends Entity{
 	}
 	
 	public void updateCamera() {
-		Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/2), 0, World.WIDTH*16 - Game.WIDTH);
-		Camera.y =  Camera.clamp(this.getY() - (Game.HEIGHT/2), 0, World.HEIGHT*16 - Game.HEIGHT);
+		Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/2), 0, Game.world.WIDTH*16 - Game.WIDTH);
+		Camera.y =  Camera.clamp(this.getY() - (Game.HEIGHT/2), 0, Game.world.HEIGHT*16 - Game.HEIGHT);
 	}
 	
 	@Override

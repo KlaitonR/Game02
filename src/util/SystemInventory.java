@@ -9,7 +9,6 @@ import entities.Lighter;
 import entities.Wapon;
 import main.Game;
 import main.Sound;
-import world.World;
 
 public class SystemInventory {
 	
@@ -92,7 +91,9 @@ public class SystemInventory {
 						inventario[hi].show =  true;
 						Game.entities.add(inventario[hi]);	
 						inventario[hi].clear = true;
-						World.tiles[inventario[hi].xTile + (inventario[hi].yTile*World.WIDTH)].en = inventario[hi];
+//						Game.world.tiles[inventario[hi].xTile + (inventario[hi].yTile*Game.world.WIDTH)].en = inventario[hi];
+						
+						checkInventoryItemDropMap(inventario[hi]);
 						
 						//verificações de itens 
 						if(inventario[hi] instanceof Lighter) {
@@ -108,6 +109,24 @@ public class SystemInventory {
 					}
 				}
 			}
+		}
+		
+		public void checkInventoryItemDropMap(Entity e) {
+			
+			e.mapa.clear();
+			e.regiao.clear();
+			e.mapa.add(Game.mapaGame);
+			e.regiao.add(Game.regiaoGame);
+			
+			if(!e.itensPack.isEmpty()) {
+				for(int i=0; i<e.itensPack.size();i++) {
+					e.itensPack.get(i).mapa.clear();
+					e.itensPack.get(i).regiao.clear();
+					e.itensPack.get(i).mapa.add(Game.mapaGame);
+					e.itensPack.get(i).regiao.add(Game.regiaoGame);
+				}
+			}
+			
 		}
 		
 		public void checkScrollItem() {
@@ -321,6 +340,27 @@ public class SystemInventory {
 				}
 			}
 		}
+	}
+	
+	public void checkInventoryItemMap() {
+		
+		if(inventario != null) {
+			for(int i=0; i<inventario.length;i++) {
+				if(inventario[i] != null) {
+					if(!inventario[i].mapa.contains(Game.mapaGame)) {
+						inventario[i].mapa.add(Game.mapaGame);
+						inventario[i].regiao.add(Game.regiaoGame);
+						if(!inventario[i].itensPack.isEmpty()) {
+							for(int y=0; y<inventario[i].itensPack.size();y++) {
+								inventario[i].itensPack.get(y).mapa.add(Game.mapaGame);
+								inventario[i].itensPack.get(y).regiao.add(Game.regiaoGame);
+							}
+						}
+					}
+				}
+			}
+		}
+		
 	}
 	
 }

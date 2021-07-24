@@ -1,12 +1,10 @@
 package util;
 
 import java.awt.image.BufferedImage;
-
 import entities.Entity;
 import entities.Potion;
 import main.Game;
 import main.Sound;
-import world.World;
 
 public class SystemCreation {
 	
@@ -158,7 +156,7 @@ public class SystemCreation {
 				slot[i].setY(y);
 				slot[i].show = true;
 				Game.entities.add(slot[i]);
-				World.tiles[slot[i].xTile + (slot[i].yTile*World.WIDTH)].en = slot[i];
+				Game.world.tiles[slot[i].xTile + (slot[i].yTile*Game.world.WIDTH)].en = slot[i];
 				slot[i] = null;
 				itens[i] = null;
 				Sound.Clips.dropAndGetItem.play();
@@ -174,7 +172,7 @@ public class SystemCreation {
 				slot[index].setY(y);
 				slot[index].show = true;
 				Game.entities.add(slot[index]);
-				World.tiles[slot[index].xTile + (slot[index].yTile*World.WIDTH)].en = slot[index];
+				Game.world.tiles[slot[index].xTile + (slot[index].yTile*Game.world.WIDTH)].en = slot[index];
 				slot[index] = null;
 				itens[index] = null;
 				Sound.Clips.dropAndGetItem.play();

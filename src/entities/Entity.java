@@ -15,7 +15,6 @@ import world.Camera;
 import world.Node;
 import world.Tile;
 import world.Vector2i;
-import world.World;
 
 public class Entity {
 	
@@ -73,6 +72,7 @@ public class Entity {
 	static public BufferedImage PIG_BEEF_EN = Game.spritesheet.getSprite(32, 192, 16, 16);
 	static public BufferedImage CREATION_TABLE_EN = Game.spritesheet.getSprite(16, 304, 16, 16);
 	static public BufferedImage POTION_EN = Game.spritesheet.getSprite(0, 272, 16, 16);
+	static public BufferedImage ESCADA_EN = Game.spritesheet.getSprite(0, 240, 16, 16);
 	
 	public BufferedImage getSprite() {
 		return sprite;
@@ -142,7 +142,7 @@ public class Entity {
 	public static boolean isColiddingTile(Entity e, Tile t) {
 		
 		Rectangle eMask = new Rectangle(e.getX() + e.getMaskx(), e.getY() + e.getMasky(), e.getMaskw(), e.getMaskh());
-		Rectangle tMask = new Rectangle(t.getX(), t.getY(), World.TILE_SIZE, World.TILE_SIZE);
+		Rectangle tMask = new Rectangle(t.getX(), t.getY(), Game.world.TILE_SIZE, Game.world.TILE_SIZE);
 		
 		return eMask.intersects(tMask);
 		
@@ -240,7 +240,7 @@ public class Entity {
 		}
 		
 		if(timeClear > maxTimeClear) {
-			World.tiles[this.psTiles].en = null;
+			Game.world.tiles[this.psTiles].en = null;
 			Game.entities.remove(this);
 		}
 	}
