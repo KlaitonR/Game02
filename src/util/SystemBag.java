@@ -15,6 +15,10 @@ public class SystemBag {
 		public void checkClickPositionItemBag(int[] index) {
 			clickSelectIndexBag = index;
 		}
+		
+		public int[] getIndexClickBag() {
+			return clickSelectIndexBag;
+		}
 	
 	//verifica a primeira posição vazia na mochila
 		public int[] checkPositionPutBag() {

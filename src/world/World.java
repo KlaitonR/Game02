@@ -8,7 +8,6 @@ import java.awt.image.DataBufferInt;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
-
 import construction.Construction;
 import construction.Mine;
 import entities.Axe;
@@ -223,7 +222,7 @@ public class World {
 			}
 			
 			if(!Game.mapaGame.equals(Mapa.MAPA_CALABOUÇO)) {
-//				createMobs();
+				createMobs();
 			
 				npc = new Npc(144, 80, 16, 16, Game.spritesheet.getSprite(224, 0, 16, 16));
 				Game.entities.add(npc);
@@ -304,8 +303,8 @@ public class World {
 	
 	public void renderMiniMap() {
 		
-//		for(int i =0; i < Game.minimapaPixels.length; i++) {
-//			Game.minimapaPixels[i] = 0xEFD551;
+//		for(int i =0; i < minimapaPixels.length; i++) {
+//			minimapaPixels[i] = 0xEFD551;
 //		}
 		
 		for(int xx = 0; xx< WIDTH; xx++) {
@@ -465,13 +464,6 @@ public class World {
 		return;
 	}
 	
-	public void recaregaMapa() {
-		
-//		minimapa = new BufferedImage(World.WIDTH, World.HEIGHT, BufferedImage.TYPE_INT_RGB);
-//		minimapaPixels = ((DataBufferInt)minimapa.getRaster().getDataBuffer()).getData();
-		
-	}
-	
 	public void render(Graphics g) {
 		
 		int xStart = Camera.x >> 4;
@@ -491,10 +483,12 @@ public class World {
 			}
 		}
 		
-		renderMiniMap();
+		if(Game.player.openMap)
+			renderMiniMap();
 		
 //		g.setColor(Color.black);
 //		g.fillRect(xStart - Camera.x  , yStart - Camera.y , xFinal, yFinal);
 		
 	}
+	
 }

@@ -27,7 +27,7 @@ public class Player extends Entity{
 	private int damageFrames;
 	
 	public boolean hasGun, hasAxe, hasFishingRod, hasHoe;
-	public boolean shoot, mouseShoot, openLvls, offLvls = true;
+	public boolean shoot, mouseShoot, openLvls, offLvls = true, openMap, offMap = true;
 	public boolean useLighter, useBag, openDoor, enter, enterRoom, creation, getFish, fishing, cuttingTree;
 	public boolean clickInv, clickBag, clickCreation, clickCraft;
 	public boolean dropItem, getItem, useItem;

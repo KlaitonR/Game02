@@ -68,7 +68,7 @@ public class Ground extends Entity{
 		
 		cont++;
 		
-		if(!plant && cont >= 60){
+		if(!plant && cont >= 900){
 			life --;
 		}
 		
