@@ -841,7 +841,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		player.mx = e.getX()/3;
 		player.my = e.getY()/3;
 		
-//		System.out.println("x: " + player.mx + "    y:" + player.my);
+		System.out.println("x: " + player.mx + "    y:" + player.my);
 		
 		if(!player.openLvls && player.mx >= 10 && player.my >= 43 && player.mx <= 37 && player.my <= 63) {
 			player.openLvls = true;
@@ -1047,50 +1047,50 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		}
 			
 		if (player.creation) {
-				
+			
 			player.mouseShoot = false;
-				 
-			//Mascaras do inventario
-			if(player.mx >= 82 && player.my >= 212 && player.mx <= 136 && player.my <= 240) { 
+			
+			//inventario
+			if(player.mx >= 138 && player.my >= 218 && player.mx <= 170 && player.my <= 245) { 
 				sysInv.checkClickPositionItemInv(0);
 				player.clickInv = true;
-					
-			}else if (player.mx >= 139 && player.my >= 212 && player.mx <= 193 && player.my <= 240) {
+				
+			}else if (player.mx >= 174 && player.my >= 218 && player.mx <= 206 && player.my <= 245) {
 				sysInv.checkClickPositionItemInv(1);
 				player.clickInv = true;
-					
-			}else if (player.mx >= 196 && player.my >= 212 && player.mx <= 250 && player.my <= 240) {
+				
+			}else if (player.mx >= 210 && player.my >= 218 && player.mx <= 242 && player.my <= 245) {
 				sysInv.checkClickPositionItemInv(2);
 				player.clickInv = true;
-					
-			}else if (player.mx >= 253 && player.my >= 212 && player.mx <= 306 && player.my <= 240) {
+				
+			}else if (player.mx >= 245 && player.my >= 218 && player.mx <= 278 && player.my <= 245) {
 				sysInv.checkClickPositionItemInv(3);
 				player.clickInv = true;
-					
-			}else if (player.mx >= 309 && player.my >= 212 && player.mx <= 364 && player.my <= 240) {
+				
+			}else if (player.mx >= 282 && player.my >= 218 && player.mx <= 314 && player.my <= 245) {
 				sysInv.checkClickPositionItemInv(4);
 				player.clickInv = true;
 				
 			}
-				
+				 
 			//mascaras do Creation
-			if(player.mx >= 147 && player.my >= 108 && player.mx <= 184 && player.my <= 140) { 
+			if(player.mx >= 147 && player.my >= 91 && player.mx <= 179 && player.my <= 117) { 
 				sysCre.checkClickPositionItemCreation(0);
 				player.clickCreation = true;
 					
-			}else if(player.mx >= 204 && player.my >= 108 && player.mx <= 240 && player.my <= 140) { 
+			}else if(player.mx >= 208 && player.my >= 92 && player.mx <= 239 && player.my <= 117) { 
 				sysCre.checkClickPositionItemCreation(1);
 				player.clickCreation = true;
 					
-			}else if(player.mx >= 147 && player.my >= 163 && player.mx <= 184 && player.my <= 194) { 
+			}else if(player.mx >= 147 && player.my >= 140 && player.mx <= 179 && player.my <= 164) { 
 				sysCre.checkClickPositionItemCreation(2);
 				player.clickCreation = true;
 					
-			}else if(player.mx >= 204 && player.my >= 163 && player.mx <= 240 && player.my <= 194) { 
+			}else if(player.mx >= 207 && player.my >= 140 && player.mx <= 239 && player.my <= 165) { 
 				sysCre.checkClickPositionItemCreation(3);
 				player.clickCreation = true;
 					
-			}else if(player.mx >= 280 && player.my >= 136 && player.mx <= 315 && player.my <= 167) { 
+			}else if(player.mx >= 270 && player.my >= 116 && player.mx <= 302 && player.my <= 140) { 
 				sysCre.checkClickPositionItemCreation(4);
 				player.clickCraft = true;
 			}

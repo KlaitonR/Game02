@@ -10,7 +10,6 @@ import java.io.InputStream;
 import entities.Npc;
 import main.Game;
 import main.Menu;
-import main.Sound;
 import util.Mapa;
 import world.Camera;
 
@@ -27,15 +26,16 @@ public class UI {
 	public UI(Spritsheet spritButton) {
 		
 		spriteUI =  new Spritsheet("/spriteUI.png");
-		UI = new BufferedImage[7];
+		UI = new BufferedImage[8];
 		
-		UI[0] = spriteUI.getSprite(0, 0, 128, 48);
-		UI[1] = spriteUI.getSprite(0, 48, 32, 32);
-		UI[2] = spriteUI.getSprite(0, 80, 80, 128);
-		UI[3] = spriteUI.getSprite(32, 48, 32, 32);
-		UI[4] = spriteUI.getSprite(64, 48, 16, 16);
-		UI[5] = spriteUI.getSprite(80, 48, 16, 16);
-		UI[6] = spriteUI.getSprite(0, 208, 80, 96);
+		UI[0] = spriteUI.getSprite(0, 0, 128, 48); //Inventario
+		UI[1] = spriteUI.getSprite(0, 48, 32, 32); //Seleção do inventário
+		UI[2] = spriteUI.getSprite(0, 80, 80, 128); //Mochila
+		UI[3] = spriteUI.getSprite(32, 48, 32, 32); //Selecção da mochila
+		UI[4] = spriteUI.getSprite(64, 48, 16, 16); //Icone nível
+		UI[5] = spriteUI.getSprite(80, 48, 16, 16); //Icone mapa
+		UI[6] = spriteUI.getSprite(0, 208, 80, 96); //Aba de níveis
+		UI[7] = spriteUI.getSprite(0, 304, 96, 64); //Craft
 		
 		button = new BufferedImage[2];
 		button[0] = Game.spriteButton.getSprite(0, 0, 5, 5);
@@ -268,142 +268,54 @@ public class UI {
 		if(index != null)
 			g.drawImage(UI[3], 87 + (index[1]*19), 21 + (index[0]*18) , null);
 		
-		if(Game.player.clickBag) {
-			Sound.Clips.selectedInventory.play();
-		}
-		
 	}
 	
 	public void systemCreation(Graphics g) {
 		
-		g.setColor(new Color(0xA0A0A0));
-		g.fillRect(75, 65, 100, 65);
-				
-		//Janela de Criação
-		//barra esquerda
-		g.setColor(Color.black); 
-		g.fillRect(175, 57, 1, 73);
-		//barra direita
-		g.setColor(Color.black); 
-		g.fillRect(74, 65, 1, 65);
-		//barra de cima
-		g.setColor(Color.black); 
-		g.fillRect(74, 57, 101, 8);
-		//baara de baixo
-		g.setColor(Color.black); 
-		g.fillRect(74, 130, 102, 1);
-		
-		g.setFont(newfont);
-		g.setColor(Color.white);
-		g.drawString("Criação", 111, 64);
-		
-		//Espaço para criar Itens 01
-		g.setColor(new Color(0xC0C0C0));
-		g.fillRect(80, 70, 20, 20);
-	
-		//barra direita
-		g.setColor(new Color(0x404040)); 
-		g.fillRect(80, 70, 1, 20);
-		//barra de cima
-		g.setColor(new Color(0x404040)); 
-		g.fillRect(80, 70, 20, 1);
-		
-		//Espaço para criar Itens 02
-		g.setColor(new Color(0xC0C0C0));
-		g.fillRect(110, 70, 20, 20);
-			
-		//barra direita
-		g.setColor(new Color(0x404040)); 
-		g.fillRect(110, 70, 1, 20);
-		//barra de cima
-		g.setColor(new Color(0x404040)); 
-		g.fillRect(110, 70, 20, 1);
-		
-		//Espaço para criar Itens 03
-		g.setColor(new Color(0xC0C0C0));
-		g.fillRect(80, 105, 20, 20);
-							
-		//barra direita
-		g.setColor(new Color(0x404040)); 
-		g.fillRect(80, 105, 1, 20);
-		//barra de cima
-		g.setColor(new Color(0x404040)); 
-		g.fillRect(80, 105, 20, 1);
-		
-		//Espaço para criar Itens 04
-		g.setColor(new Color(0xC0C0C0));
-		g.fillRect(110, 105, 20, 20);
-					
-		//barra direita
-		g.setColor(new Color(0x404040)); 
-		g.fillRect(110, 105, 1, 20);
-		//barra de cima
-		g.setColor(new Color(0x404040)); 
-		g.fillRect(110, 105, 20, 1);
-		
-		//Espaço para criar Itens 05
-		g.setColor(new Color(0xC0C0C0));
-		g.fillRect(150, 88, 20, 20);
-							
-		//barra direita
-		g.setColor(new Color(0x404040)); 
-		g.fillRect(150, 88, 1, 20);
-		//barra de cima
-		g.setColor(new Color(0x404040)); 
-		g.fillRect(150, 88, 20, 1);
-		
-		//Sinal de +
-		g.setFont(fontSystemCreat);
-		g.setColor(Color.white);
-		g.drawString("+", 102, 102);
-		
-		//Sinal de =
-		g.setFont(fontSystemCreat);
-		g.setColor(Color.white);
-		g.drawString("=", 138, 102);
+		g.drawImage(UI[7], 75 , 50, null);	
 		
 		//Apenas renderizando oque foi colocado no buffer do inventari
 							
-		g.drawImage(Game.sysCre.itens[0], 83, 72, null);
+		g.drawImage(Game.sysCre.itens[0], 83, 60, null);
 		
-		g.drawImage(Game.sysCre.itens[1], 113, 72, null);
+		g.drawImage(Game.sysCre.itens[1], 115, 60, null);
 		
-		g.drawImage(Game.sysCre.itens[2], 83, 107, null);
+		g.drawImage(Game.sysCre.itens[2], 83, 90, null);
 		
-		g.drawImage(Game.sysCre.itens[3], 113, 107, null);
+		g.drawImage(Game.sysCre.itens[3], 115, 90, null);
 		
-		g.drawImage(Game.sysCre.itens[4], 153, 90, null);
+		g.drawImage(Game.sysCre.itens[4], 148, 75, null);
 					
 		if(Game.sysCre.slot[0] != null &&
 				Game.sysCre.slot[0] != null &&
 						Game.sysCre.slot[0].itensPack.size()+1 > 1 ){
 			g.setFont(new Font("arial", Font.BOLD, 9));
-			g.setColor(Color.white);
-			g.drawString((Game.sysCre.slot[0].itensPack.size() + 1) + "", 83, 89);
+			g.setColor(Color.yellow);
+			g.drawString((Game.sysCre.slot[0].itensPack.size() + 1) + "", 83, 75);
 		}
 		
 		if(Game.sysCre.slot[1] != null &&
 				Game.sysCre.slot[1] != null &&
 						Game.sysCre.slot[1].itensPack.size()+1 > 1 ){
 			g.setFont(new Font("arial", Font.BOLD, 9));
-			g.setColor(Color.white);
-			g.drawString((Game.sysCre.slot[1].itensPack.size() + 1) + "", 113, 89);
+			g.setColor(Color.yellow);
+			g.drawString((Game.sysCre.slot[1].itensPack.size() + 1) + "", 115, 75);
 		}
 		
 		if(Game.sysCre.slot[2] != null &&
 				Game.sysCre.slot[2] != null &&
 						Game.sysCre.slot[2].itensPack.size()+1 > 1 ){
 			g.setFont(new Font("arial", Font.BOLD, 9));
-			g.setColor(Color.white);
-			g.drawString((Game.sysCre.slot[2].itensPack.size() + 1) + "", 83, 124);
+			g.setColor(Color.yellow);
+			g.drawString((Game.sysCre.slot[2].itensPack.size() + 1) + "", 83, 105);
 		}
 		
 		if(Game.sysCre.slot[3] != null &&
 				Game.sysCre.slot[3] != null &&
 						Game.sysCre.slot[3].itensPack.size()+1 > 1 ){
 			g.setFont(new Font("arial", Font.BOLD, 9));
-			g.setColor(Color.white);
-			g.drawString((Game.sysCre.slot[3].itensPack.size() + 1) + "", 113, 124);
+			g.setColor(Color.yellow);
+			g.drawString((Game.sysCre.slot[3].itensPack.size() + 1) + "", 115, 105);
 		}
 		
 		if(Game.sysCre.slot[4] != null &&
@@ -411,7 +323,7 @@ public class UI {
 						Game.sysCre.slot[4].itensPack.size()+1 > 1 ){
 			g.setFont(new Font("arial", Font.BOLD, 9));
 			g.setColor(Color.white);
-			g.drawString((Game.sysCre.slot[4].itensPack.size() + 1) + "", 152, 106);
+			g.drawString((Game.sysCre.slot[4].itensPack.size() + 1) + "", 157, 106);
 		}
 		
 	}
