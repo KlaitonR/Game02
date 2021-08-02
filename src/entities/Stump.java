@@ -2,6 +2,7 @@ package entities;
 
 import java.awt.image.BufferedImage;
 
+import entities.itens.Root;
 import main.Game;
 import util.Mapa;
 import util.Regiao;

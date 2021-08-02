@@ -2,7 +2,7 @@ package util;
 
 import java.awt.image.BufferedImage;
 import entities.Entity;
-import entities.Potion;
+import entities.itens.Potion;
 import main.Game;
 import main.Sound;
 

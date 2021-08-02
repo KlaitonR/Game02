@@ -3,6 +3,10 @@ package entities;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+
+import entities.itens.LifePack;
+import entities.itens.Lighter;
+import entities.spots.FishingSpot;
 import main.Game;
 import main.Sound;
 import util.Mapa;
@@ -264,6 +268,21 @@ public class Player extends Entity{
 		}
 	}
 	
+	public int depthPlayer64x64(Entity e) {
+		
+		int yPlayer = (int)this.y;
+		int yEntity = (int)e.getY() + 16;
+		
+		if(yPlayer > yEntity - 2) { // colocar o player atras dos objetos e dar noção de profundidade
+			depth = e.depth+1;
+			return  1;
+		
+		}else {
+			depth = 1;
+			return e.depth+1;
+		}
+	}
+	
 	public void revealMap() {
 		
 		int xx = (int) (x/16);
@@ -483,11 +502,12 @@ public class Player extends Entity{
 		Game.collision.checkColisionGround();
 		Game.collision.checkCollisionStump();
 		Game.collision.checkCollisionMine();
+		Game.collision.checkCollisionHouse();
+		Game.collision.checkCollisionStatue();
 		Game.collision.checkCollisionStaircase();
 		
 		if(Game.collision.createGround())
 			Sound.Clips.digging.play();
-		
 		
 		Game.sysInv.checkDropItem();
 		Game.sysInv.checkScrollItem();

@@ -2,32 +2,34 @@ package util;
 
 import java.util.ArrayList;
 
-import construction.Mine;
-import entities.Axe;
-import entities.Beef;
-import entities.Bullet;
 import entities.Door;
 import entities.Entity;
-import entities.Firewood;
-import entities.Fish;
-import entities.FishingRod;
-import entities.FishingSpot;
 import entities.Ground;
-import entities.Hoe;
-import entities.LifePack;
-import entities.Lighter;
-import entities.Npc;
-import entities.Potion;
-import entities.Root;
-import entities.Seed;
 import entities.Staircase;
 import entities.Stump;
 import entities.Tree;
-import entities.Wapon;
+import entities.NPC.Npc;
+import entities.construction.House;
+import entities.construction.Mine;
+import entities.construction.Statue;
+import entities.itens.Axe;
+import entities.itens.Beef;
+import entities.itens.Bullet;
+import entities.itens.Firewood;
+import entities.itens.Fish;
+import entities.itens.FishingRod;
+import entities.itens.Hoe;
+import entities.itens.LifePack;
+import entities.itens.Lighter;
+import entities.itens.Potion;
+import entities.itens.Root;
+import entities.itens.Seed;
+import entities.itens.Wapon;
+import entities.mobs.Mob;
+import entities.mobs.Pig;
+import entities.spots.FishingSpot;
 import main.Game;
 import main.Sound;
-import mobs.Mob;
-import mobs.Pig;
 import world.FloorTile;
 import world.Tile;
 import world.WaterTile;
@@ -147,6 +149,33 @@ public class CollisonPlayer {
 		}
 	}
 	
+	public void checkCollisionHouse() {
+		for(int i = 0; i < Game.entities.size(); i++) {
+			Entity atual = Game.entities.get(i);
+			if(atual instanceof House) {
+				if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+					if(Entity.isColidding(Game.player, atual)) {
+						atual.depth = Game.player.depthPlayer64x64(atual);
+//						Game.player.enterRoom = true;
+					}
+				}
+			}
+		}
+	}
+	
+	public void checkCollisionStatue() {
+		for(int i = 0; i < Game.entities.size(); i++) {
+			Entity atual = Game.entities.get(i);
+			if(atual instanceof Statue) {
+				if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+					if(Entity.isColidding(Game.player, atual)) {
+						atual.depth = Game.player.depthPlayer64x64(atual);
+					}
+				}
+			}
+		}
+	}
+	
 	public void checkCollisionStaircase() {
 		for(int i = 0; i < Game.entities.size(); i++) {
 			Entity atual = Game.entities.get(i);
@@ -169,7 +198,6 @@ public class CollisonPlayer {
 				if(Entity.isColidding(Game.player, atual)) {
 					if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
 						atual.depth = Game.player.depthPlayer(atual);
-						
 						if(Game.player.useItem && Game.player.hasAxe) {
 							((Tree) atual).life--;
 							return true;
@@ -300,10 +328,10 @@ public class CollisonPlayer {
 						&& Game.player.hasHoe 
 						&& Game.player.useItem 
 						&& atual instanceof FloorTile
-						&& !(atual.en instanceof Ground)){
+						&& (atual.en == null)){
 					Ground gd = new Ground(atual.getX(), atual.getY(), 16, 16, Entity.GROUND_EN, atual.psTiles);
 					gd.tipo = "terreno";
-					gd.show = true;
+//					gd.show = true;
 					gd.psTiles = atual.psTiles;
 					Game.world.tiles[atual.psTiles].en = gd;
 					Game.entities.add(gd);
@@ -322,8 +350,6 @@ public class CollisonPlayer {
 				if(atual instanceof Ground) {
 					if(Entity.isColidding(Game.player, atual)) {
 						
-						Game.player.depthPlayer(atual);
-						
 						if(Game.sysInv.inventario[Game.sysInv.handIndexItem] != null) {
 							if(Game.player.useItem && Game.sysInv.inventario[Game.sysInv.handIndexItem] instanceof Seed) {
 								if(Game.sysInv.inventario[Game.sysInv.handIndexItem].tipo.equals("semente de carvalho")) {
@@ -333,9 +359,14 @@ public class CollisonPlayer {
 								}
 								
 								((Ground) atual).plant = true;
-								Game.sysInv.inventario[Game.sysInv.handIndexItem] = null;
-								Game.sysInv.inv[Game.sysInv.handIndexItem] = null;
-							
+								
+								if(!Game.sysInv.inventario[Game.sysInv.handIndexItem].itensPack.isEmpty()) {
+									Game.sysInv.inventario[Game.sysInv.handIndexItem].itensPack.remove(0);
+									return;
+								}else {
+									Game.sysInv.inventario[Game.sysInv.handIndexItem] = null;
+									Game.sysInv.inv[Game.sysInv.handIndexItem] = null;
+								}
 							}
 						}
 					}

@@ -24,16 +24,15 @@ import java.util.Collections;
 import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-
-import construction.Mine;
 import entities.BulletShoot;
 import entities.Enemy;
 import entities.Entity;
 import entities.Particle;
 import entities.Player;
+import entities.construction.Mine;
+import entities.mobs.Mob;
 import graficos.Spritsheet;
 import graficos.UI;
-import mobs.Mob;
 import util.CollisonPlayer;
 import util.CreationItem;
 import util.Mapa;
@@ -96,6 +95,8 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public BufferedImage lightmap3;
 	public int [] lightMapPixels4;
 	public BufferedImage lightmap4;
+	public int [] lightCalaboucoMapPixels;
+	public BufferedImage lightCalaboucoMap;
 	
 	double mx, my;
 	
@@ -349,10 +350,10 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 				regiaoGame = Regiao.REGIAO_CALABOUÇO;
 				
 				for(int i=0; i<worlds.size();i++) {
-					if(!worlds.get(i).mapa.equals(Mapa.MAPA_CALABOUÇO)) {
+					if(!worlds.get(i).mapa.equals(Mapa.MAPA_CALABOUÇO)) { //para criar esse novo mundo
 						criarNovoMundo = true;
 						break;
-					}else if (worlds.get(i).mapa.equals(Mapa.MAPA_CALABOUÇO)) {
+					}else if (worlds.get(i).mapa.equals(Mapa.MAPA_CALABOUÇO)) { // Se o mundo já foi criado
 						world = worlds.get(i);
 						break;
 					}
@@ -373,7 +374,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 				for(int i=0; i<entities.size();i++) {
 					if(entities.get(i) instanceof Mine) {
 						player.setX(entities.get(i).getX() + 5);
-						player.setY(entities.get(i).getY() + 20);
+						player.setY(entities.get(i).getY() + 30);
 						break;
 					}
 				}
@@ -488,6 +489,17 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 				if(lightMapPixels4[xx + (yy * Game.WIDTH)] == 0xFFFFFFFF) {
 					int pixel4 = Pixel.getLightBlend(pixels4[xx+yy*WIDTH], 0x808080, 0);
 					pixels4[xx+ (yy*Game.WIDTH)] = pixel4;
+				}
+			}
+		}
+	}
+	
+	public void applayLightCalabouco() {
+		for (int xx = 0; xx< Game.WIDTH; xx++) {
+			for(int yy = 0; yy < Game.HEIGHT; yy++) {
+				if(lightMapPixels[xx + (yy * Game.WIDTH)] == 0xFFFFFFFF) {
+					int pixel = Pixel.getLightBlend(pixels[xx+yy*WIDTH], 0xBCBCBC, 0);
+					pixels[xx+ (yy*Game.WIDTH)] = pixel;
 				}
 			}
 		}
@@ -841,7 +853,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		player.mx = e.getX()/3;
 		player.my = e.getY()/3;
 		
-		System.out.println("x: " + player.mx + "    y:" + player.my);
+//		System.out.println("x: " + player.mx + "    y:" + player.my);
 		
 		if(!player.openLvls && player.mx >= 10 && player.my >= 43 && player.mx <= 37 && player.my <= 63) {
 			player.openLvls = true;

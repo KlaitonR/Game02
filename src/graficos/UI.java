@@ -7,7 +7,8 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import entities.Npc;
+
+import entities.NPC.Npc;
 import main.Game;
 import main.Menu;
 import util.Mapa;
@@ -26,7 +27,7 @@ public class UI {
 	public UI(Spritsheet spritButton) {
 		
 		spriteUI =  new Spritsheet("/spriteUI.png");
-		UI = new BufferedImage[8];
+		UI = new BufferedImage[10];
 		
 		UI[0] = spriteUI.getSprite(0, 0, 128, 48); //Inventario
 		UI[1] = spriteUI.getSprite(0, 48, 32, 32); //Seleção do inventário
@@ -36,6 +37,8 @@ public class UI {
 		UI[5] = spriteUI.getSprite(80, 48, 16, 16); //Icone mapa
 		UI[6] = spriteUI.getSprite(0, 208, 80, 96); //Aba de níveis
 		UI[7] = spriteUI.getSprite(0, 304, 96, 64); //Craft
+		UI[8] = spriteUI.getSprite(64, 64, 16, 16); //Icone Munição
+		UI[9] = spriteUI.getSprite(0, 368, 80, 16); //Life Player
 		
 		button = new BufferedImage[2];
 		button[0] = Game.spriteButton.getSprite(0, 0, 5, 5);
@@ -98,7 +101,7 @@ public class UI {
 				Game.sysInv.inventario[i] != null &&
 				Game.sysInv.inventario[i].itensPack.size()+1 > 1 ){
 					g.setFont(new Font("arial", Font.BOLD, 9));
-					g.setColor(Color.yellow);
+					g.setColor(Color.white);
 					g.drawString((Game.sysInv.inventario[i].itensPack.size() + 1) + "", 76 + (i*19), 154);
 			}
 					
@@ -109,19 +112,21 @@ public class UI {
 	}
 	
 	private void lifePlayer(Graphics g) {
-		g.setColor(Color.black); 
-		g.fillRect(7, 3, 72, 10);
+
 		g.setColor(Color.red);
-		g.fillRect(8, 4, 70, 8);
+		g.fillRect(8, 4, 65, 8);
 		g.setColor(Color.green);
-		g.fillRect(8, 4, (int)((Game.player.life/Game.player.maxLife)*70), 8);
-		g.setFont(newfont);
-		g.setColor(Color.white);
-		g.drawString((int)Game.player.life + "/" + (int)Game.player.maxLife, 30, 11);
+		g.fillRect(8, 4, (int)((Game.player.life/Game.player.maxLife)*65), 8);
+//		g.setFont(newfont);
+//		g.setColor(Color.white);
+//		g.drawString((int)Game.player.life + "/" + (int)Game.player.maxLife, 25, 11);
 		
-		g.setFont(newfont);
-		g.setColor(Color.white);
-		g.drawString((int)Game.player.life + "/" + (int)Game.player.maxLife, 30, 11);
+//		g.setFont(newfont);
+//		g.setColor(Color.white);
+//		g.drawString((int)Game.player.life + "/" + (int)Game.player.maxLife, 25, 11);
+		
+		g.drawImage(UI[9], 3, 1, null);
+		
 	}
 	
 	public void lifeMobs(Graphics g) {
@@ -290,7 +295,7 @@ public class UI {
 				Game.sysCre.slot[0] != null &&
 						Game.sysCre.slot[0].itensPack.size()+1 > 1 ){
 			g.setFont(new Font("arial", Font.BOLD, 9));
-			g.setColor(Color.yellow);
+			g.setColor(Color.white);
 			g.drawString((Game.sysCre.slot[0].itensPack.size() + 1) + "", 83, 75);
 		}
 		
@@ -298,7 +303,7 @@ public class UI {
 				Game.sysCre.slot[1] != null &&
 						Game.sysCre.slot[1].itensPack.size()+1 > 1 ){
 			g.setFont(new Font("arial", Font.BOLD, 9));
-			g.setColor(Color.yellow);
+			g.setColor(Color.white);
 			g.drawString((Game.sysCre.slot[1].itensPack.size() + 1) + "", 115, 75);
 		}
 		
@@ -306,7 +311,7 @@ public class UI {
 				Game.sysCre.slot[2] != null &&
 						Game.sysCre.slot[2].itensPack.size()+1 > 1 ){
 			g.setFont(new Font("arial", Font.BOLD, 9));
-			g.setColor(Color.yellow);
+			g.setColor(Color.white);
 			g.drawString((Game.sysCre.slot[2].itensPack.size() + 1) + "", 83, 105);
 		}
 		
@@ -314,7 +319,7 @@ public class UI {
 				Game.sysCre.slot[3] != null &&
 						Game.sysCre.slot[3].itensPack.size()+1 > 1 ){
 			g.setFont(new Font("arial", Font.BOLD, 9));
-			g.setColor(Color.yellow);
+			g.setColor(Color.white);
 			g.drawString((Game.sysCre.slot[3].itensPack.size() + 1) + "", 115, 105);
 		}
 		
@@ -330,6 +335,9 @@ public class UI {
 	
 	public void systemDialog(Graphics g) {
 		if(Npc.showMessage) {
+			
+			Game.player.useBag = false;
+			Game.player.creation = false;
 			
 			g.setColor(Color.black);
 			g.fillRect(48, 90, 146, 35);
@@ -348,9 +356,10 @@ public class UI {
 	
 	public void render(Graphics g) {
 		
+		g.drawImage(UI[8], 205, 1, null);
 		g.setFont(new Font("arial", Font.BOLD, 8));
 		g.setColor(Color.yellow);
-		g.drawString("Munição: " + Game.player.ammo, 185, 7);
+		g.drawString("" + Game.player.ammo, 220, 7);
 //		g.setColor(Color.darkGray); 
 //		g.drawString("Level " + Game.CUR_LEVEL, 10, 745);
 

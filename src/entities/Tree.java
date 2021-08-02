@@ -2,6 +2,9 @@ package entities;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+
+import entities.itens.Firewood;
+import entities.itens.Seed;
 import main.Game;
 import main.Sound;
 import util.Id;
@@ -75,6 +78,17 @@ public class Tree extends Entity{
 			sd1.id = Id.ID_SEED_PINE;
 			sd2.tipo = "semente de pinheiro";
 			sd2.id = Id.ID_SEED_PINE;
+		}else if (this instanceof Willow) {
+			fireWood1.tipo = "lenha de salgueiro";
+			fireWood1.id = Id.ID_FIREWOOD_WILLOW;
+			fireWood2.tipo = "lenha de salgueiro";
+			fireWood2.id = Id.ID_FIREWOOD_WILLOW;
+			fireWood3.tipo = "lenha de salgueiro";
+			fireWood3.id = Id.ID_FIREWOOD_WILLOW;
+			sd1.tipo = "semente de salgueiro";
+			sd1.id = Id.ID_SEED_WILLOW;
+			sd2.tipo = "semente de salgueiro";
+			sd2.id = Id.ID_SEED_WILLOW;
 		}
 		
 		Game.world.tiles[psTiles].en = null;

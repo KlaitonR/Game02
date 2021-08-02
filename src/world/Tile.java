@@ -17,6 +17,10 @@ public class Tile {
 	public ArrayList<Regiao> regiao = new ArrayList<>();
 	
 	static public BufferedImage TILE_FLOOR = Game.spritesheet.getSprite(0, 0, 16, 16);
+	static public BufferedImage TILE_FLOOR2 = Game.spritesheet.getSprite(0, 176, 16, 16);
+	static public BufferedImage TILE_FLOOR3 = Game.spritesheet.getSprite(16, 176, 16, 16);
+	static public BufferedImage TILE_FLOOR4 = Game.spritesheet.getSprite(32, 176, 16, 16);
+	static public BufferedImage TILE_FLOOR5 = Game.spritesheet.getSprite(48, 176, 16, 16);
 	static public BufferedImage TILE_WALL = Game.spritesheet.getSprite(16, 0, 16, 16);
 	static public BufferedImage TILE_EARTH = Game.spritesheet.getSprite(0, 16, 16, 16);
 	static public BufferedImage TILE_FLOOR_CAL_SOLID = Game.spritesheet.getSprite(16, 48, 16, 16);

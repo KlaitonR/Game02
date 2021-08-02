@@ -20,7 +20,7 @@ public class Ground extends Entity{
 	public Ground(double x, double y, int width, int height, BufferedImage sprite, int ps) {
 		super(x, y, width, height, sprite);
 		this.psTiles = ps;
-		depth = 0;
+		depth = 10;
 		mapa.add(Mapa.MAPA_FLORESTA);
 		regiao.add(Regiao.REGIAO_FLORESTA);
 	}
@@ -28,6 +28,8 @@ public class Ground extends Entity{
 	public void plant() {
 		
 		if(plant && time < f3) {
+			Tree tr = null;
+			Game.world.tiles[this.psTiles].en = tr;
 			time++;
 			depth = 1;
 			if(time < f1 && time > 0) {
@@ -40,11 +42,10 @@ public class Ground extends Entity{
 			
 			if (time == f3 && !Game.collision.checkColisionGroundToTree(this)) {
 				
-				Tree tr = null;
-				
 				if(tipo.equals("terreno de carvalho")) {
 					 tr = new Oak(this.x, this.y, 16, 16, Entity.CARVALHO_EN);
 					 tr.tipo = "carvalho";
+					 
 				}else if (tipo.equals("terreno de pinheiro")){
 					tr = new Pine(this.x, this.y, 16, 16, Entity.PINHEIRO_EN);
 					tr.tipo = "pinheiro";
@@ -52,13 +53,12 @@ public class Ground extends Entity{
 				
 				Game.entities.add(tr);
 				tr.show = true;
-				tr.psTiles = psTiles;
-				Game.world.tiles[psTiles].en = tr;
+				tr.psTiles = this.psTiles;
 				plant = false;
 				Game.entities.remove(this);
 				
 			}else if(time == f3){
-				time--;
+				time = f2;
 			}
 		}
 		

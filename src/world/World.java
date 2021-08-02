@@ -8,32 +8,36 @@ import java.awt.image.DataBufferInt;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
-import construction.Construction;
-import construction.Mine;
-import entities.Axe;
-import entities.Bullet;
+
 import entities.BulletShoot;
 import entities.Door;
 import entities.Enemy;
 import entities.Entity;
 import entities.Staircase;
-import entities.FishingRod;
-import entities.FishingSpot;
-import entities.Hoe;
-import entities.LifePack;
-import entities.Lighter;
-import entities.Npc;
 import entities.Oak;
 import entities.Particle;
 import entities.Pine;
 import entities.Player;
 import entities.Stump;
 import entities.Tree;
-import entities.Wapon;
+import entities.Willow;
+import entities.NPC.Npc;
+import entities.construction.Construction;
+import entities.construction.House;
+import entities.construction.Mine;
+import entities.construction.Statue;
+import entities.itens.Axe;
+import entities.itens.Bullet;
+import entities.itens.FishingRod;
+import entities.itens.Hoe;
+import entities.itens.LifePack;
+import entities.itens.Lighter;
+import entities.itens.Wapon;
+import entities.mobs.Mob;
+import entities.mobs.Pig;
+import entities.spots.FishingSpot;
 import graficos.Spritsheet;
 import main.Game;
-import mobs.Mob;
-import mobs.Pig;
 import util.Mapa;
 import util.Regiao;
 
@@ -64,14 +68,18 @@ public class World {
 			minimapa = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 			minimapaPixels = ((DataBufferInt)minimapa.getRaster().getDataBuffer()).getData();
 			
-//			if(Game.entities.isEmpty()) {
+			//Construções que precisam alidar os tiles ao redor
+			Mine mine = null;
+			House house = null;
 			
 			for(int xx = 0; xx < map.getWidth(); xx++) {
 				for(int yy = 0; yy < map.getHeight(); yy++) {
 			
 					int pixelAtual = pixels[xx + (yy*map.getWidth())];
+					
 					tiles[xx + (yy*WIDTH)] = new FloorTile(xx*16, yy*16, Tile.TILE_FLOOR);
 					tiles[xx + (yy*WIDTH)].psTiles = xx + (yy*WIDTH);
+					tiles[xx + (yy*WIDTH)].en = null;
 					
 					if(Game.mapaGame.equals(Mapa.MAPA_CALABOUÇO)) {
 						tiles[xx + (yy*WIDTH)] = new EarthTile(xx*16, yy*16, Tile.TILE_EARTH);
@@ -79,9 +87,24 @@ public class World {
 					}
 					
 					if(pixelAtual == 0xFF000000) { //chão
-						tiles[xx + (yy*WIDTH)] = new FloorTile(xx*16, yy*16, Tile.TILE_FLOOR);
+						
+						int rand = Game.rand.nextInt(100);
+						
+						if(rand <= 10) {
+							tiles[xx + (yy*WIDTH)] = new FloorTile(xx*16, yy*16, Tile.TILE_FLOOR2);
+						}else if(rand > 5 && rand <= 10){
+							tiles[xx + (yy*WIDTH)] = new FloorTile(xx*16, yy*16, Tile.TILE_FLOOR3);
+						}else if(rand > 10 && rand <= 15){
+							tiles[xx + (yy*WIDTH)] = new FloorTile(xx*16, yy*16, Tile.TILE_FLOOR4);
+						}else if(rand > 15 && rand <= 20){
+							tiles[xx + (yy*WIDTH)] = new FloorTile(xx*16, yy*16, Tile.TILE_FLOOR5);
+						}else if(rand > 20){
+							tiles[xx + (yy*WIDTH)] = new FloorTile(xx*16, yy*16, Tile.TILE_FLOOR);
+						}
+						
 						tiles[xx + (yy*WIDTH)].psTiles = xx + (yy*WIDTH);
 						tiles[xx + (yy*WIDTH)].en = null;
+						
 						
 					}else if(pixelAtual == 0xFFFFFFFF) { //Parede
 						tiles[xx + (yy*WIDTH)] = new WallTile(xx*16, yy*16, Tile.TILE_WALL);
@@ -133,10 +156,14 @@ public class World {
 						
 						Tree tree = null;
 						
-						if(Game.rand.nextInt(11) <=5) {
-							 tree = new Oak(xx*16, yy*16, 16, 16, Entity.CARVALHO_EN);
+						if(xx>=50 && yy <= 50) {
+							tree = new Willow(xx*16, yy*16, 16, 16, Entity.SALGUEIRO_EN);
 						}else {
-							tree = new Pine(xx*16, yy*16, 16, 16, Entity.PINHEIRO_EN);
+							if(Game.rand.nextInt(11) <=5) {
+								 tree = new Oak(xx*16, yy*16, 16, 16, Entity.CARVALHO_EN);
+							}else {
+								tree = new Pine(xx*16, yy*16, 16, 16, Entity.PINHEIRO_EN);
+							}
 						}
 						
 						Game.entities.add(tree);
@@ -193,11 +220,12 @@ public class World {
 						tiles[xx + (yy*WIDTH)].en = hoe;
 						
 					}else if (pixelAtual == 0xFF15F44E){ //Mina
-						Mine mine = new Mine(xx*16, yy*16, 32, 32, Construction.MINE_EN);
+						mine = new Mine(xx*16, yy*16, 32, 32, Construction.MINE_EN);
 						mine.tipo = "mina";
 						Game.entities.add(mine);
 						mine.psTiles = xx + (yy*WIDTH);
-						tiles[xx + (yy*WIDTH)].en = mine;
+						mine.xTile = xx;
+						mine.yTile = yy;
 						
 					}else if (pixelAtual == 0xFFA84300) { //FloorCAL
 						tiles[xx + (yy*WIDTH)] = new EarthTile(xx*16, yy*16, Tile.TILE_EARTH);
@@ -217,6 +245,22 @@ public class World {
 						Game.entities.add(s);
 						s.psTiles = xx + (yy*WIDTH);
 						tiles[xx + (yy*WIDTH)].en = s;
+						
+					}else if (pixelAtual == 0xFF870000){ //CASA
+						house = new House(xx*16, yy*16, 32, 32, Construction.HOUSE_EN);
+						house.tipo = "casa";
+						Game.entities.add(house);
+						house.psTiles = xx + (yy*WIDTH);
+						house.xTile = xx;
+						house.yTile = yy;
+						
+					}else if (pixelAtual == 0xFFC0C0C0){ //ESTATUA
+						Statue statue = new Statue(xx*16, yy*16, 64, 64, Construction.STATUE_EN);
+						statue.tipo = "estatua";
+						Game.entities.add(statue);
+						statue.psTiles = xx + (yy*WIDTH);
+						tiles[xx + (yy*WIDTH)].en = statue;
+				
 					}
 				}
 			}
@@ -229,9 +273,10 @@ public class World {
 //				xx + (yy*WIDTH)
 //				9 + (5*100) = 509
 				tiles[509].en = npc;
+				
+				confirmTilesConstruction32x32(house);
+				confirmTilesConstruction32x32(mine);
 			}
-			
-//			}
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -288,6 +333,15 @@ public class World {
 		
 	}
 	
+	public void confirmTilesConstruction32x32(Entity entity) {
+//		xx + (yy*WIDTH)
+//		13 + (3*100) = posisão da casa, posição do pixel no mapa desenhado
+		tiles[entity.psTiles].en = entity;
+		tiles[(entity.xTile+1) + (entity.yTile*WIDTH)].en = entity;
+		tiles[entity.xTile + ((entity.yTile+1)*WIDTH)].en = entity;
+		tiles[(entity.xTile+1) + ((entity.yTile+1)*WIDTH)].en = entity;
+	}
+	
 	public void createMobs() {
 	
 		for(int i = 0; i<tiles.length; i++) {
@@ -299,6 +353,11 @@ public class World {
 				}
 			}
 		}
+	}
+	
+	public void clearWorld(Tile tile) {
+		if(!Game.entities.contains(tile.en))
+			tile.en = null;
 	}
 	
 	public void renderMiniMap() {
@@ -474,12 +533,15 @@ public class World {
 		
 		for(int xx = xStart; xx <= xFinal; xx++) {
 			for(int yy = yStart; yy <= yFinal; yy++) {
+				
 				if(xx < 0 || yy < 0 || xx >= WIDTH || yy >= HEIGHT) 
 					continue;
+				
 				Tile tile = tiles[xx + (yy*WIDTH)];	
-				if(tile.mapa.contains(Game.mapaGame) && tile.regiao.contains(Game.regiaoGame)) {
+				if(tile.mapa.contains(Game.mapaGame) && tile.regiao.contains(Game.regiaoGame)) 
 					tile.render(g);
-				}
+				
+				clearWorld(tile);
 			}
 		}
 		

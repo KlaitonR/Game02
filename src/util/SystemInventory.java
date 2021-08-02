@@ -1,12 +1,13 @@
 package util;
 
 import java.awt.image.BufferedImage;
-import entities.Axe;
+
 import entities.Entity;
-import entities.FishingRod;
-import entities.Hoe;
-import entities.Lighter;
-import entities.Wapon;
+import entities.itens.Axe;
+import entities.itens.FishingRod;
+import entities.itens.Hoe;
+import entities.itens.Lighter;
+import entities.itens.Wapon;
 import main.Game;
 import main.Sound;
 
@@ -277,7 +278,7 @@ public class SystemInventory {
 								Game.entities.remove(atual);
 								return true;
 								
-							}else { // Se superar, calcula os itens que sobrarão
+							}else { // Se superar, calcula os itens que sobraram
 								
 								//verifica se o pack é apenas o item, ou se tem algo na lista
 								//Se não tiver nada na lista, apenas ignora e retorna false
