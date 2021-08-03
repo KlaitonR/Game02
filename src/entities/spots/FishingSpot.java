@@ -15,6 +15,8 @@ public class FishingSpot extends Entity{
 	public static int fishingTime, maxFishingfTime = Game.rand.nextInt(600) + 400;
 	private int frames, maxFrames = 20, index, maxIndex = 4;
 	private BufferedImage [] moveFishing;
+	private BufferedImage [] moveFishingSwamp;
+	public boolean swamp;
 
 	public FishingSpot(double x, double y, int width, int height, BufferedImage sprite) {
 		super(x, y, width, height, sprite);
@@ -30,9 +32,11 @@ public class FishingSpot extends Entity{
 		mheigth2 = 60;
 		
 		moveFishing = new BufferedImage[5];
+		moveFishingSwamp = new BufferedImage[5];
 		
 		for(int i = 0; i<5; i++) {
 			moveFishing[i] = Game.spritesheet.getSprite(240 + (i*16), 16, 16, 16);
+			moveFishingSwamp[i] = Game.spritesheet.getSprite(240 + (i*16), 48, 16, 16);
 		}
 		
 		mapa.add(Mapa.MAPA_FLORESTA);
@@ -62,8 +66,19 @@ public class FishingSpot extends Entity{
 				index = 0;
 		}
 		
-		g.drawImage(moveFishing[index] ,this.getX() - Camera.x, this.getY() - Camera.y , null);
-		
+		if(swamp) {
+			g.drawImage(moveFishingSwamp[index] ,this.getX() - Camera.x, this.getY() - Camera.y , null);
+			if(moveFishing[0] != null) {
+				moveFishing[0] = null;
+				moveFishing[1] = null;
+				moveFishing[2] = null;
+				moveFishing[3] = null;
+				moveFishing[4] = null;
+			}
+		}else {
+			g.drawImage(moveFishing[index] ,this.getX() - Camera.x, this.getY() - Camera.y , null);
+		}
+
 	}
 
 }

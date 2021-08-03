@@ -37,6 +37,7 @@ import util.CollisonPlayer;
 import util.CreationItem;
 import util.Mapa;
 import util.Regiao;
+import util.SysTime;
 import util.SystemBag;
 import util.SystemCreation;
 import util.SystemInventory;
@@ -125,6 +126,8 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public int darkenScena = 255;
 	
 	public int timeCena = 0, maxTimeCena = 60*3;
+	
+	SysTime sysTime;
 
 	public Game() {
 	
@@ -185,6 +188,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		sysInv = new SystemInventory();
 		sysBag = new SystemBag();
 		sysCre = new SystemCreation();
+		sysTime = new SysTime();
 		createItem = new CreationItem();
 		collision = new CollisonPlayer();
 		entities.add(player);
@@ -451,6 +455,10 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 				dusk = false;
 			}	
 		}
+
+		//CHUVA
+		sysTime.tick(timer);
+		
 	}
 	
 //	public void drawRectangleExemple(int xoff, int yoff) {
@@ -569,7 +577,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		g.dispose();
 		g = bs.getDrawGraphics();
 		g.drawImage(image, 0, 0,Toolkit.getDefaultToolkit().getScreenSize().width, Toolkit.getDefaultToolkit().getScreenSize().height, null);
-		
+	
 //		g.setFont(newfont);
 //		g.setColor(Color.red);
 //		g.drawString("teste", 90, 90);
@@ -578,6 +586,10 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			
 			if(player.openMap)
 				g.drawImage(world.minimapa, 1070, 40, Toolkit.getDefaultToolkit().getScreenSize().width/5, Toolkit.getDefaultToolkit().getScreenSize().height/3, null);
+			
+			//CHUVA
+			if(sysTime.mapa.contains(world.mapa) && sysTime.regiao.contains(world.regiao));
+				g.drawImage(sysTime.imageChuva(), 0, 0,Toolkit.getDefaultToolkit().getScreenSize().width, Toolkit.getDefaultToolkit().getScreenSize().height, null);
 			
 			Graphics2D g2 = (Graphics2D) g;
 			

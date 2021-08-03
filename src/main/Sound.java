@@ -82,7 +82,8 @@ public class Sound {
 		public static Clips openBag = load("/openBag.wav", 1);
 		public static Clips creation = load("/creation.wav", 1);
 		public static Clips paper = load("/folha.wav", 1);
-		
+		public static Clips chuva = load("/chuva.wav", 1);
+		public static Clips trovao = load("/trovao.wav", 1);
 		
 		private static Clips load(String name, int count) {
 			try {

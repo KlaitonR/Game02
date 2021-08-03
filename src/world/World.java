@@ -182,8 +182,15 @@ public class World {
 					}
 					
 					else if(pixelAtual == 0xFF0094FF) { // Água
-						tiles[xx + (yy*WIDTH)] = new WaterTile(xx*16, yy*16, Tile.TILE_WATER);
+						
+						WaterTile water = new WaterTile(xx*16, yy*16, null);
+						tiles[xx + (yy*WIDTH)] = water;
 						tiles[xx + (yy*WIDTH)].psTiles = xx + (yy*WIDTH);
+						
+						if(xx>=50 && yy <= 50) {
+							water.swamp = true;
+						}
+						
 					}
 					
 					else if(pixelAtual == 0xFF4C1E00) { // Terra
@@ -203,6 +210,10 @@ public class World {
 						tiles[xx + (yy*WIDTH)].en = fs;
 						fs.psTiles = xx + (yy*WIDTH);
 						tiles[xx + (yy*WIDTH)].en = fs;
+
+						if(xx>=50 && yy <= 50) {
+							fs.swamp = true;
+						}
 						
 					}else if (pixelAtual == 0xFF5B7F00) {//Vara de pesca
 						FishingRod fr = new FishingRod(xx*16, yy*16, 16, 16, Entity.FISHING_ROD_EN);

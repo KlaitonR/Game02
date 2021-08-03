@@ -25,7 +25,6 @@ public class Tile {
 	static public BufferedImage TILE_EARTH = Game.spritesheet.getSprite(0, 16, 16, 16);
 	static public BufferedImage TILE_FLOOR_CAL_SOLID = Game.spritesheet.getSprite(16, 48, 16, 16);
 	static public BufferedImage TILE_WALL_CAL = Game.spritesheet.getSprite(0, 304, 16, 16);
-	static public BufferedImage TILE_WATER;
 	
 	public boolean show;
 	public boolean open;
