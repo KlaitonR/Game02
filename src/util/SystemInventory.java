@@ -7,6 +7,7 @@ import entities.itens.Axe;
 import entities.itens.FishingRod;
 import entities.itens.Hoe;
 import entities.itens.Lighter;
+import entities.itens.Pickaxe;
 import entities.itens.Wapon;
 import main.Game;
 import main.Sound;
@@ -184,6 +185,12 @@ public class SystemInventory {
 				Game.player.hasHoe = true;
 			}else {
 				Game.player.hasHoe = false;
+			}
+			
+			if(handItem instanceof Pickaxe && inventario[handIndexItem] instanceof Pickaxe) {
+				Game.player.hasPickaxe = true;
+			}else {
+				Game.player.hasPickaxe = false;
 			}
 			
 		}

@@ -16,14 +16,13 @@ public class Stump extends Entity{
 	}
 	
 	public void destroySelf() {
-		
 		Root root = new Root(x+5, y-7, 16, 16, Entity.RAIZ_EN);
 		root.show = true;
 		root.tipo = "raiz";
 		root.clear = true;
+		Game.collision.createGroundOnStump(this.getX(), this.getY(), psTiles);
 		Game.entities.add(root);
 		Game.entities.remove(this);
-		
 	}
 
 

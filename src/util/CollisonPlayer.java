@@ -1,7 +1,6 @@
 package util;
 
 import java.util.ArrayList;
-
 import entities.Door;
 import entities.Entity;
 import entities.Ground;
@@ -21,6 +20,8 @@ import entities.itens.FishingRod;
 import entities.itens.Hoe;
 import entities.itens.LifePack;
 import entities.itens.Lighter;
+import entities.itens.Ore;
+import entities.itens.Pickaxe;
 import entities.itens.Potion;
 import entities.itens.Root;
 import entities.itens.Seed;
@@ -28,6 +29,7 @@ import entities.itens.Wapon;
 import entities.mobs.Mob;
 import entities.mobs.Pig;
 import entities.spots.FishingSpot;
+import entities.spots.MiningSite;
 import main.Game;
 import main.Sound;
 import world.FloorTile;
@@ -55,7 +57,9 @@ public class CollisonPlayer {
 					atual instanceof Potion ||
 					atual instanceof Root ||
 					atual instanceof Seed ||
-					atual instanceof Wapon) {
+					atual instanceof Wapon ||
+					atual instanceof Pickaxe ||
+					atual instanceof Ore) {
 					confirmCollision(atual, Game.sysInv.checkPositionGetInv());
 				}
 			}
@@ -189,26 +193,26 @@ public class CollisonPlayer {
 		}
 	}
 		
-	public boolean checkCollisionTree(){
-		
-		for(int i = 0; i < Game.entities.size(); i++) {
-			Entity atual = Game.entities.get(i);
-			
-			if(atual instanceof Tree) {
-				if(Entity.isColidding(Game.player, atual)) {
-					if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
-						atual.depth = Game.player.depthPlayer(atual);
-						if(Game.player.useItem && Game.player.hasAxe) {
-							((Tree) atual).life--;
-							return true;
-						}
-					}
-				}
-			}
-		}
-		
-		return false;
-	}
+//	public boolean checkCollisionTree(){
+//		
+//		for(int i = 0; i < Game.entities.size(); i++) {
+//			Entity atual = Game.entities.get(i);
+//			
+//			if(atual instanceof Tree) {
+//				if(Entity.isColidding(Game.player, atual)) {
+//					if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+//						atual.depth = Game.player.depthPlayer(atual);
+//						if(Game.player.useItem && Game.player.hasAxe) {
+//							((Tree) atual).life--;
+//							return true;
+//						}
+//					}
+//				}
+//			}
+//		}
+//		
+//		return false;
+//	}
 	
 	public boolean checkCollisionFishingSpot() {
 		
@@ -240,39 +244,51 @@ public class CollisonPlayer {
 		return false;
 	}
 	
-	public boolean checkCollisionWaterTile() {
-			
-			for(int i = 0; i < Game.world.tiles.length; i++) {
-				Tile atual = Game.world.tiles[i];
-				if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
-				if(atual instanceof WaterTile) {
-						if(Tile.isColidding(atual, Game.player)) {
-							return true;
-						}
+	public Tree checkCollisionTree() {
+		
+		for(int i = 0; i < Game.entities.size(); i++) {
+			Entity atual = Game.entities.get(i);
+			if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+				if(atual instanceof Tree) {
+					if(Entity.isColidding(Game.player, atual)) {
+						atual.depth = Game.player.depthPlayer(atual);
+						return (Tree)atual;
 					}
 				}
 			}
-			return false;
 		}
+		return null;
+	}
 	
-	public void getFish() {
+	public MiningSite checkCollisionMiningSite() {
 		
-		int index = Game.sysInv.checkPositionGetInv();
-		Fish fish = new Fish(0, 0, 16, 16, Entity.FISH_EN);
-		fish.tipo = "peixe";
-		
-		if(!Game.sysInv.checkPackInv(fish)) {
-			if (index >= 0 && index <= Game.sysInv.inventario.length) {
-				Game.sysInv.inventario[index] = fish;
-				Game.sysInv.inv[index] = fish.getSprite();
-			}else {
-				fish.setX(Game.player.getX());
-				fish.setY(Game.player.getY());
-				Game.entities.add(fish);
+		for(int i = 0; i < Game.entities.size(); i++) {
+			Entity atual = Game.entities.get(i);
+			if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+				if(atual instanceof MiningSite) {
+					if(Entity.isColidding(Game.player, atual)) {
+						atual.depth = Game.player.depthPlayer(atual);
+						return (MiningSite)atual;
+					}
+				}
 			}
-		}else {
-			fish = null;
 		}
+		return null;
+	}
+	
+	public boolean checkCollisionWaterTile() {
+		
+		for(int i = 0; i < Game.world.tiles.length; i++) {
+			Tile atual = Game.world.tiles[i];
+			if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+			if(atual instanceof WaterTile) {
+					if(Tile.isColidding(atual, Game.player)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 	
 	public void checkCollisionDoor() {
@@ -340,6 +356,17 @@ public class CollisonPlayer {
 			}
 		}
 		return false;
+	}
+	
+	public boolean createGroundOnStump(int x, int y, int ps) {
+		
+		Ground gd = new Ground(x, y, 16, 16, Entity.GROUND_EN, ps);
+		gd.tipo = "terreno";
+		gd.psTiles = ps;
+		Game.world.tiles[ps].en = gd;
+		Game.entities.add(gd);
+		return true;
+	
 	}
 	
 	public void checkColisionGround() {

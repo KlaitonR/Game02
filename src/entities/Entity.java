@@ -50,15 +50,6 @@ public class Entity {
 	public static BufferedImage WEAPON_EN = Game.spritesheet.getSprite(0, 64, 16, 16);
 	public static BufferedImage BULLET_EN = Game.spritesheet.getSprite(0, 32, 16, 16);
 	public static BufferedImage ENEMY_EN = Game.spritesheet.getSprite(6*16, 16, 16, 16);
-	public static BufferedImage CARVALHO_EN = Game.spritesheet.getSprite(48, 0, 16, 16);
-	public static BufferedImage PINHEIRO_EN = Game.spritesheet.getSprite(64, 0, 16, 16);
-	public static BufferedImage SALGUEIRO_EN = Game.spritesheet.getSprite(80, 0, 16, 16);
-	public static BufferedImage FIREWOOD_CARVALHO_EN = Game.spritesheet.getSprite(48, 16, 16, 16);
-	public static BufferedImage FIREWOOD_PINHEIRO_EN = Game.spritesheet.getSprite(64, 16, 16, 16);
-	public static BufferedImage FIREWOOD_SALGUEIRO_EN = Game.spritesheet.getSprite(80, 16, 16, 16);
-	static public BufferedImage SEED_CARVALHO_EN = Game.spritesheet.getSprite(48, 32, 16, 16);
-	static public BufferedImage SEED_PINHEIRO_EN = Game.spritesheet.getSprite(64, 32, 16, 16);
-	static public BufferedImage SEED_SALGUEIRO_EN = Game.spritesheet.getSprite(80, 32, 16, 16);
 	static public BufferedImage STUMP_EN = Game.spritesheet.getSprite(32, 0, 16, 16);
 	public static BufferedImage RAIZ_EN = Game.spritesheet.getSprite(32, 16, 16, 16);
 	public static BufferedImage AXE_EN = Game.spritesheet.getSprite(0, 96, 16, 16);
@@ -77,6 +68,7 @@ public class Entity {
 	static public BufferedImage CREATION_TABLE_EN = Game.spritesheet.getSprite(16, 304, 16, 16);
 	static public BufferedImage POTION_EN = Game.spritesheet.getSprite(0, 272, 16, 16);
 	static public BufferedImage ESCADA_EN = Game.spritesheet.getSprite(0, 240, 16, 16);
+	static public BufferedImage PICARETA_EN = Game.spritesheet.getSprite(0, 80, 16, 16);
 	
 	public BufferedImage getSprite() {
 		return sprite;

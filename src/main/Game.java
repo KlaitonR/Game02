@@ -31,16 +31,20 @@ import entities.Particle;
 import entities.Player;
 import entities.construction.Mine;
 import entities.mobs.Mob;
+import entities.objectMap.GramaAgua;
+import entities.objectMap.VitoriaRegia;
 import graficos.Spritsheet;
 import graficos.UI;
 import util.CollisonPlayer;
 import util.CreationItem;
+import util.GetResource;
 import util.Mapa;
 import util.Regiao;
 import util.SysTime;
 import util.SystemBag;
 import util.SystemCreation;
 import util.SystemInventory;
+import world.WaterTile;
 import world.World;
 
 public class Game extends Canvas implements Runnable, KeyListener, MouseListener, MouseMotionListener {
@@ -77,6 +81,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public static CreationItem createItem;
 	public static SystemInventory sysInv;
 	public static SystemBag sysBag;
+	public static GetResource getResource;
 	public Menu menu;
 	public static UI ui;
 
@@ -131,7 +136,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 
 	public Game() {
 	
-		Sound.Clips.medievalMusic.loop();
+//		Sound.Clips.medievalMusic.loop();
 		rand = new Random();
 		
 		addKeyListener(this);
@@ -148,10 +153,10 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		
 		try {
-			lightmap = ImageIO.read(getClass().getResource("/lightmap.png"));
-			lightmap2 = ImageIO.read(getClass().getResource("/lightmap2.png"));
-			lightmap3 = ImageIO.read(getClass().getResource("/lightmap3.png"));
-			lightmap4 = ImageIO.read(getClass().getResource("/lightmap4.png"));
+			lightmap = ImageIO.read(getClass().getResource("/images/lightmap.png"));
+			lightmap2 = ImageIO.read(getClass().getResource("/images/lightmap2.png"));
+			lightmap3 = ImageIO.read(getClass().getResource("/images/lightmap3.png"));
+			lightmap4 = ImageIO.read(getClass().getResource("/images/lightmap4.png"));
 		}catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -178,10 +183,10 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		mobs = new ArrayList<Mob>();
 		bulletShootes = new  ArrayList<BulletShoot>();
 		particles =  new ArrayList<Particle>();
-		spritesheet =  new Spritsheet("/spritesheet.png");
-		spritePlayer =  new Spritsheet("/spritePlayer.png");
-		spriteMobs =  new Spritsheet("/spriteMobs.png");
-		spriteContruction = new Spritsheet("/spriteConstruction.png");
+		spritesheet =  new Spritsheet("/spritesSheet/spritesheet.png");
+		spritePlayer =  new Spritsheet("/spritesSheet/spritePlayer.png");
+		spriteMobs =  new Spritsheet("/spritesSheet/spriteMobs.png");
+		spriteContruction = new Spritsheet("/spritesSheet/spriteConstruction.png");
 		player  = new Player(0, 0, 16, 16, spritePlayer.getSprite(0, 0, 16, 16));
 		player.mapa.addAll(Mapa.addAll());
 		player.regiao.addAll(Regiao.addAll());
@@ -191,10 +196,11 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		sysTime = new SysTime();
 		createItem = new CreationItem();
 		collision = new CollisonPlayer();
+		getResource = new GetResource();
 		entities.add(player);
 		mapaGame = Mapa.MAPA_FLORESTA;
 		regiaoGame = Regiao.REGIAO_FLORESTA;
-		world =  new World("/level1.png");
+		world =  new World("/maps/level1.png");
 		world.mapa = mapaGame;
 		world.regiao = regiaoGame;
 		worlds.add(world);
@@ -364,7 +370,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 				}
 				
 				if(criarNovoMundo) {
-					World w = new World("/cal.png");
+					World w = new World("/maps/cal.png");
 					world = w;
 					worlds.add(world);
 					player.dir = player.rightDir;
@@ -454,11 +460,41 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 				dawn = false;
 				dusk = false;
 			}	
+			
+			tickWaterFrames();
+			
+			//CHUVA 
+			sysTime.tick(timer);
+			
 		}
-
-		//CHUVA
-		sysTime.tick(timer);
 		
+	}
+	
+	public void tickWaterFrames() {
+		WaterTile.frames++;
+		if(WaterTile.frames == WaterTile.maxFrames) {
+			WaterTile.frames = 0;
+			WaterTile.index++;
+			if(WaterTile.index > WaterTile.maxIndex)
+				WaterTile.index = 0;
+			
+			for(int i=0; i<entities.size(); i++) {
+				Entity e = entities.get(i);
+				if(e instanceof VitoriaRegia || e instanceof GramaAgua) {
+					
+					if(WaterTile.index == 1) {
+						e.setX(e.getX() + 1);
+					}else if (WaterTile.index == 2) {
+						e.setX(e.getX() - 1);
+					}else if (WaterTile.index == 3) {
+						e.setX(e.getX() - 1);
+					}else if (WaterTile.index == 4) {
+						e.setX(e.getX() + 1);
+					}
+				}
+			}
+			
+		}
 	}
 	
 //	public void drawRectangleExemple(int xoff, int yoff) {
@@ -522,10 +558,12 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		}
 		
 		Graphics g = image.getGraphics();
-		g.setColor(new Color(0,0,0));
-		g.fillRect(0, 0, Toolkit.getDefaultToolkit().getScreenSize().width, Toolkit.getDefaultToolkit().getScreenSize().height);
+		//renderizar tela preta atras do mundo
+//		g.setColor(new Color(0,0,0));
+//		g.fillRect(0, 0, Toolkit.getDefaultToolkit().getScreenSize().width, Toolkit.getDefaultToolkit().getScreenSize().height);
 		
 		world.render(g);
+		//depth
 		Collections.sort(entities, Entity.nodeSorter);
 		
 		for(int i = 0; i<mobs.size(); i++) {
@@ -562,6 +600,37 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		if(Game.player.useLighter)
 			applayLight();
 		
+		//CHUVA
+		if(sysTime.chovendo) {
+			if(sysTime.mapa.contains(world.mapa) && sysTime.regiao.contains(world.regiao))
+				g.drawImage(sysTime.imageChuva(), 0, 0, WIDTH, HEIGHT, null);
+		}
+		
+		if(gameState.equals("NORMAL")) {
+			Graphics2D g2 = (Graphics2D) g;
+			
+			if(dusk && !player.useLighter) { // se estiver anoitecendo 
+				if (darken < 235) {
+					g2.setColor(new Color(0,0,0, darken));
+				}else {
+					g2.setColor(new Color(0,0,0,235));
+				}
+				g2.fillRect(0, 0, WIDTH, HEIGHT);
+			
+			}
+			
+			if(dawn && !player.useLighter) { // se estiver amanhecendo 
+				if(235 - darken >= 0) {
+					g2.setColor(new Color(0,0,0, 235 - darken));
+				}else {
+					g2.setColor(new Color(0,0,0,0));
+				}
+		
+				g2.fillRect(0, 0, WIDTH, HEIGHT);
+		
+			}
+		}
+		
 		if(estado_cena == jogando)
 			ui.render(g);
 		
@@ -576,7 +645,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		
 		g.dispose();
 		g = bs.getDrawGraphics();
-		g.drawImage(image, 0, 0,Toolkit.getDefaultToolkit().getScreenSize().width, Toolkit.getDefaultToolkit().getScreenSize().height, null);
+		g.drawImage(image, 0, 0, Toolkit.getDefaultToolkit().getScreenSize().width, Toolkit.getDefaultToolkit().getScreenSize().height, null);
 	
 //		g.setFont(newfont);
 //		g.setColor(Color.red);
@@ -586,33 +655,6 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			
 			if(player.openMap)
 				g.drawImage(world.minimapa, 1070, 40, Toolkit.getDefaultToolkit().getScreenSize().width/5, Toolkit.getDefaultToolkit().getScreenSize().height/3, null);
-			
-			//CHUVA
-			if(sysTime.mapa.contains(world.mapa) && sysTime.regiao.contains(world.regiao));
-				g.drawImage(sysTime.imageChuva(), 0, 0,Toolkit.getDefaultToolkit().getScreenSize().width, Toolkit.getDefaultToolkit().getScreenSize().height, null);
-			
-			Graphics2D g2 = (Graphics2D) g;
-			
-			if(dusk && !player.useLighter) { // se estiver anoitecendo 
-				if (darken < 235) {
-					g2.setColor(new Color(0,0,0, darken));
-				}else {
-					g2.setColor(new Color(0,0,0,235));
-				}
-				g2.fillRect(0, 0, Toolkit.getDefaultToolkit().getScreenSize().width, Toolkit.getDefaultToolkit().getScreenSize().height);
-			
-			}
-			
-			if(dawn && !player.useLighter) { // se estiver amanhecendo 
-				if(235 - darken >= 0) {
-					g2.setColor(new Color(0,0,0, 235 - darken));
-				}else {
-					g2.setColor(new Color(0,0,0,0));
-				}
-		
-				g2.fillRect(0, 0, Toolkit.getDefaultToolkit().getScreenSize().width, Toolkit.getDefaultToolkit().getScreenSize().height);
-		
-			}
 		}
 		
 		if(gameState.equals("GAME OVER")) {
@@ -713,11 +755,13 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			}
 			
 			if(e.getKeyCode() == KeyEvent.VK_X) {
-				player.shoot = true;
+				if(gameState.equals("NORMAL"))
+					player.shoot = true;
 			}
 			
 			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-				player.jump = true;
+				if(gameState.equals("NORMAL"))
+					player.jump = true;
 				
 			}
 			
@@ -728,50 +772,61 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			}
 			
 			if(e.getKeyCode() == KeyEvent.VK_R) {
-				player.useItem = true;
+				if(gameState.equals("NORMAL"))
+					player.useItem = true;
 			}
 			
 			if(e.getKeyCode() == KeyEvent.VK_F){
-				player.dropItem = true;
+				if(gameState.equals("NORMAL"))
+					player.dropItem = true;
 			}
 			
 			if(e.getKeyCode() == KeyEvent.VK_G){
-				player.getItem = true;
+				if(gameState.equals("NORMAL"))
+					player.getItem = true;
 			}
 			
 			if(e.getKeyCode() == KeyEvent.VK_Q){
-				sysInv.scrollItemLef = true;
+				if(gameState.equals("NORMAL"))
+					sysInv.scrollItemLef = true;
 			}
 			
 			if(e.getKeyCode() == KeyEvent.VK_E) {
-				sysInv.scrollItemDir = true;
+				if(gameState.equals("NORMAL"))
+					sysInv.scrollItemDir = true;
 			}
 			
 			if(e.getKeyCode() == KeyEvent.VK_B) {
 				
-				if(!player.creation) {
-					if(!player.useBag)
-						player.useBag = true;
-					else
-						player.useBag = false;
-					Sound.Clips.openBag.play();
+				if(gameState.equals("NORMAL")) {
+					if(!player.creation) {
+						if(!player.useBag)
+							player.useBag = true;
+						else
+							player.useBag = false;
+						Sound.Clips.openBag.play();
+					}
 				}
 				
 			}
 			
 			if(e.getKeyCode() == KeyEvent.VK_K) {
-				if(!player.useBag) {
-					if(!player.creation)
-						player.creation = true;
-					else
-						player.creation = false;
-					Sound.Clips.selectedInventory.play();
+				if(gameState.equals("NORMAL")) {
+					if(!player.useBag) {
+						if(!player.creation)
+							player.creation = true;
+						else
+							player.creation = false;
+						Sound.Clips.selectedInventory.play();
+					}
 				}
 			}
 			
 			if(e.getKeyCode() == KeyEvent.VK_Z){
-				if(!player.creation && !player.useBag)
-					player.enter = true;
+				if(gameState.equals("NORMAL")) {
+					if(!player.creation && !player.useBag)
+						player.enter = true;
+				}
 			}
 			
 //			if(e.getKeyCode() == KeyEvent.VK_ENTER) { 
@@ -865,33 +920,38 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		player.mx = e.getX()/3;
 		player.my = e.getY()/3;
 		
+		player.mxShoot = e.getX()/5.4;
+		player.myShoot = e.getY()/4.7;
+		
 //		System.out.println("x: " + player.mx + "    y:" + player.my);
 		
-		if(!player.openLvls && player.mx >= 10 && player.my >= 43 && player.mx <= 37 && player.my <= 63) {
-			player.openLvls = true;
-			player.offLvls = false;
-			player.mouseShoot =  false;
-			Sound.Clips.selectedInventory.play();
+		if(gameState.equals("NORMAL")) {
+			if(!player.openLvls && player.mx >= 10 && player.my >= 43 && player.mx <= 37 && player.my <= 63) {
+				player.openLvls = true;
+				player.offLvls = false;
+				player.mouseShoot =  false;
+				Sound.Clips.selectedInventory.play();
+				
+			}else if(!player.offLvls && player.mx >= 10 && player.my >= 43 && player.mx <= 37 && player.my <= 63) {
+				player.offLvls = true;
+				player.openLvls = false;
+				player.mouseShoot =  false;
+				Sound.Clips.selectedInventory.play();
+			}
 			
-		}else if(!player.offLvls && player.mx >= 10 && player.my >= 43 && player.mx <= 37 && player.my <= 63) {
-			player.offLvls = true;
-			player.openLvls = false;
-			player.mouseShoot =  false;
-			Sound.Clips.selectedInventory.play();
-		}
-		
-		if(!player.openMap && player.mx >= 11 && player.my >= 64 && player.mx <= 37 && player.my <= 83) {
-			player.openMap = true;
-			player.offMap = false;
-			player.mouseShoot =  false;
-			Sound.Clips.paper.play();
-
-		}else if (!player.offMap && player.mx >= 11 && player.my >= 64 && player.mx <= 37 && player.my <= 83) {
-			player.offMap = true;
-			player.openMap = false;
-			player.mouseShoot =  false;
-			Sound.Clips.paper.play();
-
+			if(!player.openMap && player.mx >= 11 && player.my >= 64 && player.mx <= 37 && player.my <= 83) {
+				player.openMap = true;
+				player.offMap = false;
+				player.mouseShoot =  false;
+				Sound.Clips.paper.play();
+	
+			}else if (!player.offMap && player.mx >= 11 && player.my >= 64 && player.mx <= 37 && player.my <= 83) {
+				player.offMap = true;
+				player.openMap = false;
+				player.mouseShoot =  false;
+				Sound.Clips.paper.play();
+	
+			}
 		}
 		
 		if(player.useBag) {
@@ -1148,8 +1208,9 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public void mouseMoved(MouseEvent e) {
 		
 		if(player != null) {
-			player.moveMx = (e.getX() / 3);
-			player.moveMy = (e.getY() / 3);
+			player.moveMx = ((e.getX()/5.6));
+			player.moveMy = ((e.getY()/4.8));
+			
 		}
 	}
 

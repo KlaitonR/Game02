@@ -43,11 +43,11 @@ public class Ground extends Entity{
 			if (time == f3 && !Game.collision.checkColisionGroundToTree(this)) {
 				
 				if(tipo.equals("terreno de carvalho")) {
-					 tr = new Oak(this.x, this.y, 16, 16, Entity.CARVALHO_EN);
+					 tr = new TreeOak(this.x, this.y, 16, 16, Tree.CARVALHO_EN);
 					 tr.tipo = "carvalho";
 					 
 				}else if (tipo.equals("terreno de pinheiro")){
-					tr = new Pine(this.x, this.y, 16, 16, Entity.PINHEIRO_EN);
+					tr = new TreePine(this.x, this.y, 16, 16, Tree.PINHEIRO_EN);
 					tr.tipo = "pinheiro";
 				}
 				

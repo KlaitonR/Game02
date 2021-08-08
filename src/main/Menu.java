@@ -73,7 +73,7 @@ public class Menu {
 				try {
 					while((singleLine = reader.readLine()) != null) {
 						String[] trans = singleLine.split(":");
-						char[] val = trans[1].toCharArray();
+						char[] val = trans[0].toCharArray();
 						trans[1] = ""; 
 						for(int i=0; i < val.length; i++) {
 							val[i] -= encode;

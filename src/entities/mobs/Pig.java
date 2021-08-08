@@ -60,10 +60,10 @@ public class Pig extends Mob {
 		
 		moved = false;
 		
-		if(speed<0.3) 
+		if(speed<0.1) 
 			speed +=0.15;
-		else if(speed>0.5)
-			speed -= 0.45;
+		else if(speed>0.4)
+			speed -= 0.35;
 	
 		// MOVIMENTAÇÃO ALEATÓRIA DO INIMIGO
 		

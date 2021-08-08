@@ -22,9 +22,18 @@ public class Tile {
 	static public BufferedImage TILE_FLOOR4 = Game.spritesheet.getSprite(32, 176, 16, 16);
 	static public BufferedImage TILE_FLOOR5 = Game.spritesheet.getSprite(48, 176, 16, 16);
 	static public BufferedImage TILE_WALL = Game.spritesheet.getSprite(16, 0, 16, 16);
+	static public BufferedImage TILE_WALL_TREE1 = Game.spritesheet.getSprite(32, 304, 16, 16);
+	static public BufferedImage TILE_WALL_TREE2 = Game.spritesheet.getSprite(48, 304, 16, 16);
+	static public BufferedImage TILE_WALL_CERCA_HORIZONTAL = Game.spritesheet.getSprite(64, 304, 16, 16);
+	static public BufferedImage TILE_WALL_CERCA_VERTICAL = Game.spritesheet.getSprite(80, 304, 16, 16);
+	static public BufferedImage TILE_WALL_CERCA_DIREITA = Game.spritesheet.getSprite(96, 304, 16, 16);
+	static public BufferedImage TILE_WALL_CERCA_ESQUERDA = Game.spritesheet.getSprite(112, 304, 16, 16);
 	static public BufferedImage TILE_EARTH = Game.spritesheet.getSprite(0, 16, 16, 16);
 	static public BufferedImage TILE_FLOOR_CAL_SOLID = Game.spritesheet.getSprite(16, 48, 16, 16);
 	static public BufferedImage TILE_WALL_CAL = Game.spritesheet.getSprite(0, 304, 16, 16);
+	
+	public boolean right, left, up, down;
+	public int xTile, yTile;
 	
 	public boolean show;
 	public boolean open;

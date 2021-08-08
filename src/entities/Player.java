@@ -3,10 +3,10 @@ package entities;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-
 import entities.itens.LifePack;
 import entities.itens.Lighter;
 import entities.spots.FishingSpot;
+import entities.spots.MiningSite;
 import main.Game;
 import main.Sound;
 import util.Mapa;
@@ -19,20 +19,21 @@ public class Player extends Entity{
 	public int rightDir = 0, leftDir = 1, upDir = 2, downDir = 3;
 	public int dir = rightDir;
 	
-	public double speed, moveMx, moveMy, mx, my;
+	public double speed, moveMx, moveMy, mx, my, mxShoot, myShoot;
 	
 	public boolean jump;
 	public boolean isJumping, jumpUp, jumpDown;
 	public int jumpFrames = 25, jumpCur, jumpSp = 1, z;
 	
 	public int frames, maxFrames = 5, index, maxIndex = 3;
-	public boolean moved;
+	public boolean moved, movedMouse;
 	public boolean isDamage;
 	private int damageFrames;
 	
-	public boolean hasGun, hasAxe, hasFishingRod, hasHoe;
+	public boolean hasGun, hasAxe, hasFishingRod, hasHoe, hasPickaxe;
 	public boolean shoot, mouseShoot, openLvls, offLvls = true, openMap, offMap = true;
-	public boolean useLighter, useBag, openDoor, enter, enterRoom, creation, getFish, fishing, cuttingTree;
+	public boolean useLighter, useBag, openDoor, enter, enterRoom, creation, getFish, fishing,
+	cuttingTree, getFirewood, getOre, mining;
 	public boolean clickInv, clickBag, clickCreation, clickCraft;
 	public boolean dropItem, getItem, useItem;
 
@@ -88,6 +89,11 @@ public class Player extends Entity{
 	private BufferedImage [] leftPlayerWithHoe;
 	private BufferedImage [] upPlayerWithHoe;
 	private BufferedImage [] downPlayerWithHoe; 
+	
+	private BufferedImage [] rightPlayerWithPickaxe;
+	private BufferedImage [] leftPlayerWithPickaxe;
+	private BufferedImage [] upPlayerWithPickaxe;
+	private BufferedImage [] downPlayerWithPickaxe; 
 	
 	private BufferedImage [] rightPlayerDamageWithHoe;
 	private BufferedImage [] leftPlayerDamageWithHoe;
@@ -169,6 +175,11 @@ public class Player extends Entity{
 		upPlayerDamageWithHoe = new BufferedImage[4];
 		downPlayerDamageWithHoe = new BufferedImage[4];
 		
+		rightPlayerWithPickaxe = new BufferedImage[4];
+		leftPlayerWithPickaxe = new BufferedImage[4];
+		upPlayerWithPickaxe = new BufferedImage[4];
+		downPlayerWithPickaxe = new BufferedImage[4];
+		
 		for(int i = 0; i<4; i++) {
 			rightPlayer[i] = Game.spritePlayer.getSprite(0 + (i*16), 0, 16, 16);
 			leftPlayer[i] = Game.spritePlayer.getSprite(0 + (i*16), 16, 16, 16);
@@ -220,6 +231,10 @@ public class Player extends Entity{
 			upPlayerDamageWithHoe[i] = Game.spritePlayer.getSprite(128 + (i*16), 96, 16, 16);
 			downPlayerDamageWithHoe[i] = Game.spritePlayer.getSprite(128 + (i*16), 112, 16, 16);
 			
+			rightPlayerWithPickaxe[i] = Game.spritePlayer.getSprite(192 + (i*16), 0, 16, 16);
+			leftPlayerWithPickaxe[i] = Game.spritePlayer.getSprite(192 + (i*16), 16, 16, 16);
+			upPlayerWithPickaxe[i] = Game.spritePlayer.getSprite(192 + (i*16), 32, 16, 16);
+			downPlayerWithPickaxe[i] = Game.spritePlayer.getSprite(192 + (i*16), 48, 16, 16);
 		}
 		
 		rightPlayerJumping = Game.spritePlayer.getSprite(0, 256, 16, 16);
@@ -467,6 +482,193 @@ public class Player extends Entity{
 		
 	}
 	
+	public void sysShootWithKeyBord() {
+//		Atirar com o teclado e rotacionar sprite com teclado 
+//		if(shoot) {
+//			
+//			shoot = false;
+//			
+//			if(hasGun && ammo > 0) {
+//				ammo--;
+//				int dx = 0;
+//				int dy = 0;
+//				int px = 0;
+//				int py = 0;
+//				
+//				if(dir == rightDir) {
+//					dx = 1;
+//					px = 12;
+//					py = 7;
+//				}else if (dir == leftDir){
+//					dx = -1;
+//					px = 0;
+//					py = 7;
+//				}
+//				
+//				if (dir == downDir) {
+//					dy = 1;
+//					px = 6;
+//					py = 6;
+//				}else if (dir == upDir){
+//					dy = -1;
+//					px = 5;
+//					py = 0;
+//				}
+//				
+//				if(dir == rightDir || dir == leftDir) {
+//					BulletShoot bulletShoot = new BulletShoot(this.getX() + px, this.getY() + py, 3, 3, null, dx, 0);
+//					Game.bulletShootes.add(bulletShoot);
+//				}
+//				
+//				if(dir == downDir || dir == upDir) {
+//					BulletShoot bulletShoot = new BulletShoot(this.getX() + px, this.getY() + py, 3, 3, null, 0, dy);
+//					Game.bulletShootes.add(bulletShoot);
+//				}
+//			}
+//		}
+		
+//		Atirar com o mouse e rotacionar sprite com teclado
+//		if(mouseShoot) {
+//			
+//			mouseShoot = false;
+//			
+//			if(hasGun && ammo > 0) {
+//				Sound.Clips.shoot.play();
+//				ammo--;
+//				int dx = 0;
+//				int dy = 0;
+//				int px = 0;
+//				int py = 0;
+//				
+//				if(dir == rightDir) {
+//					dx = 1;
+//					px = 12;
+//					py = 7;
+//				}else if (dir == leftDir){
+//					dx = -1;
+//					px = 0;
+//					py = 7;
+//				}
+//				
+//				if (dir == downDir) {
+//					dy = 1;
+//					px = 6;
+//					py = 6;
+//				}else if (dir == upDir){
+//					dy = -1;
+//					px = 5;
+//					py = 0;
+//				}
+//				
+//				if(dir == rightDir || dir == leftDir) {
+//					BulletShoot bulletShoot = new BulletShoot(this.getX() + px, this.getY() + py, 3, 3, null, dx, 0);
+//					Game.bulletShootes.add(bulletShoot);
+//				}
+//				
+//				if(dir == downDir || dir == upDir) {
+//					BulletShoot bulletShoot = new BulletShoot(this.getX() + px, this.getY() + py, 3, 3, null, 0, dy);
+//					Game.bulletShootes.add(bulletShoot);
+//				}
+//			}else if (hasGun && ammo <= 0) {
+//				Sound.Clips.missAmo.play();
+//			}
+//		}
+	}
+	
+	public void colectResource() {
+		
+		//CORTANDO LENHA
+		Tree tr = Game.collision.checkCollisionTree();
+		
+		if(tr != null && hasAxe && useItem) {
+			cuttingTree = true;
+		}
+		
+		if(cuttingTree && hasAxe) {
+			if(tr == null) {
+				cuttingTree = false;
+				Sound.Clips.cuttingTree.stop(); 
+			}else {
+				if(Tree.cuttingTime == Tree.maxCuttingTime) {
+					Tree.cuttingTime = 0;
+					getFirewood = true;
+					Sound.Clips.fallingTree.play(); 
+				}else {
+					getFirewood = false;
+					Tree.cuttingTime++;
+				}
+				Sound.Clips.cuttingTree.loop(); 
+			}
+			
+			if(getFirewood) 
+				Game.getResource.getFirewood(tr);
+	
+		}else {
+			Sound.Clips.cuttingTree.stop();
+		}
+		
+		//PESCANDO
+		if(Game.collision.checkCollisionFishingSpot() && hasFishingRod && useItem) {
+			fishing = true;
+		}
+	
+		if(fishing && hasFishingRod) {
+			
+			if(!Game.collision.checkCollisionFishingSpot()) {
+				fishing = false;
+				Sound.Clips.fishing.stop();
+			}else {
+				if(FishingSpot.fishingTime == FishingSpot.maxFishingfTime) {
+					FishingSpot.fishingTime = 0;
+					getFish = true;
+					Sound.Clips.waterDrop.play();
+				}else {
+					getFish = false;
+					FishingSpot.fishingTime++;
+				}
+				Sound.Clips.fishing.loop();
+			}
+			
+			if(getFish) 
+				Game.getResource.getFish();
+			
+		}else {
+			Sound.Clips.fishing.stop();
+		}
+		
+		//MINEIRANDO
+		MiningSite ms = Game.collision.checkCollisionMiningSite();
+		
+		if(ms != null && hasPickaxe && useItem) {
+			mining = true;
+		}
+		
+		if(mining && hasPickaxe) {
+			
+			if(ms == null) {
+				mining = false;
+				Sound.Clips.pickaxe.stop(); 
+			}else {
+				if(MiningSite.miningTime == MiningSite.maxMiningTime) {
+					MiningSite.miningTime = 0;
+					getOre = true;
+					Sound.Clips.pickaxeDirt.play(); 
+				}else {
+					getOre = false;
+					MiningSite.miningTime++;
+				}
+				Sound.Clips.pickaxe.loop(); 
+			}
+			
+			if(getOre) 
+				Game.getResource.getOre(ms);
+	
+		}else {
+			Sound.Clips.pickaxe.stop();
+		}
+		
+	}
+	
 	public void tick() {
 		
 		depth = 5;
@@ -494,9 +696,6 @@ public class Player extends Entity{
 		Game.collision.checkCollisionNpc();
 		Game.collision.checkCollisionPig();
 		
-		if(Game.collision.checkCollisionTree()) 
-			Sound.Clips.cuttingTree.play();
-		
 		Game.collision.checkCollisionAmmo();
 		Game.collision.checkCollisionDoor();
 		Game.collision.checkColisionGround();
@@ -505,6 +704,7 @@ public class Player extends Entity{
 		Game.collision.checkCollisionHouse();
 		Game.collision.checkCollisionStatue();
 		Game.collision.checkCollisionStaircase();
+		Game.collision.checkCollisionMiningSite();
 		
 		if(Game.collision.createGround())
 			Sound.Clips.digging.play();
@@ -536,31 +736,7 @@ public class Player extends Entity{
 			Game.sysBag.getItemBag();
 		}
 		
-		if(Game.collision.checkCollisionFishingSpot() && hasFishingRod && useItem) {
-			fishing = true;
-		}
-		
-		if(fishing && hasFishingRod) {
-			
-			if(!Game.collision.checkCollisionFishingSpot()) {
-				fishing = false;
-				Sound.Clips.fishing.stop();
-			}else {
-				if(FishingSpot.fishingTime == FishingSpot.maxFishingfTime) {
-					FishingSpot.fishingTime = 0;
-					getFish = true;
-					Sound.Clips.waterDrop.play();
-				}else {
-					getFish = false;
-					FishingSpot.fishingTime++;
-				}
-				Sound.Clips.fishing.loop();
-			}
-			
-			if(getFish) {
-				Game.collision.getFish();
-			}
-		}
+		colectResource();
 		
 		if(openDoor)
 			Game.collision.openDoor();	
@@ -655,147 +831,8 @@ public class Player extends Entity{
 			}
 		}
 		
-//		Atirar com o teclado e rotacionar sprite com teclado 
-//		if(shoot) {
-//			
-//			shoot = false;
-//			
-//			if(hasGun && ammo > 0) {
-//				ammo--;
-//				int dx = 0;
-//				int dy = 0;
-//				int px = 0;
-//				int py = 0;
-//				
-//				if(dir == rightDir) {
-//					dx = 1;
-//					px = 12;
-//					py = 7;
-//				}else if (dir == leftDir){
-//					dx = -1;
-//					px = 0;
-//					py = 7;
-//				}
-//				
-//				if (dir == downDir) {
-//					dy = 1;
-//					px = 6;
-//					py = 6;
-//				}else if (dir == upDir){
-//					dy = -1;
-//					px = 5;
-//					py = 0;
-//				}
-//				
-//				if(dir == rightDir || dir == leftDir) {
-//					BulletShoot bulletShoot = new BulletShoot(this.getX() + px, this.getY() + py, 3, 3, null, dx, 0);
-//					Game.bulletShootes.add(bulletShoot);
-//				}
-//				
-//				if(dir == downDir || dir == upDir) {
-//					BulletShoot bulletShoot = new BulletShoot(this.getX() + px, this.getY() + py, 3, 3, null, 0, dy);
-//					Game.bulletShootes.add(bulletShoot);
-//				}
-//			}
-//		}
-		
-//		Atirar com o mouse e rotacionar sprite com teclado
-		if(mouseShoot) {
-			
-			mouseShoot = false;
-			
-			if(hasGun && ammo > 0) {
-				Sound.Clips.shoot.play();
-				ammo--;
-				int dx = 0;
-				int dy = 0;
-				int px = 0;
-				int py = 0;
-				
-				if(dir == rightDir) {
-					dx = 1;
-					px = 12;
-					py = 7;
-				}else if (dir == leftDir){
-					dx = -1;
-					px = 0;
-					py = 7;
-				}
-				
-				if (dir == downDir) {
-					dy = 1;
-					px = 6;
-					py = 6;
-				}else if (dir == upDir){
-					dy = -1;
-					px = 5;
-					py = 0;
-				}
-				
-				if(dir == rightDir || dir == leftDir) {
-					BulletShoot bulletShoot = new BulletShoot(this.getX() + px, this.getY() + py, 3, 3, null, dx, 0);
-					Game.bulletShootes.add(bulletShoot);
-				}
-				
-				if(dir == downDir || dir == upDir) {
-					BulletShoot bulletShoot = new BulletShoot(this.getX() + px, this.getY() + py, 3, 3, null, 0, dy);
-					Game.bulletShootes.add(bulletShoot);
-				}
-			}else if (hasGun && ammo <= 0) {
-				Sound.Clips.missAmo.play();
-			}
-		}
-		
-		//Rotacionar sprite
-//		double angle = Math.atan2(moveMy - (this.getY()+8 - Camera.y), moveMx - (this.getX()+8 - Camera.x));
-//		double direction = Math.toDegrees(angle);
-//		System.out.println(direction);
-//		
-//		if(direction <= 35 && direction > -35)  //direita
-//			dir = rightDir;
-//		else if(direction <= -35 && direction > -145) //cima
-//			dir = upDir;
-//		else if (direction <= -145 || direction > 145)  //esquerda
-//			dir = leftDir;
-//		else if (direction <= 145 && direction > 50)  //baixo
-//			dir = downDir;
-//		
-////Atirar e rotacionar sprite com o mouse
-//		if(mouseShoot) {
-//			
-//			mouseShoot = false;
-//			//Sound.missAmo.play();
-//			
-//			if(hasGun && ammo > 0) {
-//				//Sound.missAmo.stop();
-//				//Sound.shootRifle.play();
-//				ammo--;
-//				
-//				double dx = Math.cos(angle);
-//				double dy = Math.sin(angle);
-//				int px = 0;
-//				int py = 0;
-//				
-//				if(dir == rightDir) {
-//					px = 12;
-//					py = 7;
-//				}else if (dir == leftDir){
-//					px = 0;
-//					py = 7;
-//				}
-//				
-//				if (dir == downDir) {
-//					px = 6;
-//					py = 6;
-//				}else if (dir == upDir){
-//					px = 5;
-//					py = 0;
-//				}
-//		
-//				BulletShoot bulletShoot = new BulletShoot(this.getX() + px, this.getY() + py, 3, 3, null, dx, dy);
-//				Game.bulletShootes.add(bulletShoot);
-//			}
-//		}
+		sysShootWithMouse();
+//		sysShootWithKeyBord();
 		
 	updateCamera();
 		
@@ -806,11 +843,71 @@ public class Player extends Entity{
 		Camera.y =  Camera.clamp(this.getY() - (Game.HEIGHT/2), 0, Game.world.HEIGHT*16 - Game.HEIGHT);
 	}
 	
+	public void sysShootWithMouse() {
+		//Rotacionar sprite
+		if(!moved) {
+			double angle = (Math.atan2(moveMy - (this.getY()+8 - Camera.y), moveMx - (this.getX()+8 - Camera.x)));
+			double direction = Math.toDegrees(angle);
+			
+			if((direction >= -50 && direction < 50)) {  //direita
+				dir = rightDir;
+			}else if (direction >= 50 && direction < 150) {  //baixo
+				dir = downDir;
+			}else if ((direction >= 150 && direction < 180) || (direction <= -150 && direction > -180)) {  //esquerda
+				dir = leftDir;
+			}else if (direction > -150 && direction < -50){ //cima
+				dir = upDir;
+			}
+		}
+		
+		//Atirar e rotacionar sprite com o mouse
+		if(mouseShoot) {
+			
+			mouseShoot = false;
+			
+			if(hasGun && ammo > 0) {
+				ammo--;
+				Sound.Clips.shoot.play();
+				
+				double angleShoot = 0;
+				int px = 0;
+				int py = 0;
+				
+				if(dir == rightDir) {
+					px = 12;
+					py = 8;
+					angleShoot = (Math.atan2(myShoot - (this.getY()+py - Camera.y), mxShoot - (this.getX()+px - Camera.x)));
+				}else if (dir == leftDir){
+					px = 0;
+					py = 7;
+					angleShoot = (Math.atan2(myShoot - (this.getY()+py - Camera.y), mxShoot - (this.getX()+px - Camera.x)));
+				}
+				if (dir == downDir) {
+					px = 6;
+					py = 6;
+					angleShoot = (Math.atan2(myShoot - (this.getY()+py - Camera.y), mxShoot - (this.getX()+px - Camera.x)));
+				}else if (dir == upDir){
+					px = 5;
+					py = 0;
+					angleShoot = (Math.atan2(myShoot - (this.getY()+py - Camera.y), mxShoot - (this.getX()+px - Camera.x)));
+				}
+				
+				double dx = Math.cos(angleShoot);
+				double dy = Math.sin(angleShoot);
+		
+				BulletShoot bulletShoot = new BulletShoot(this.getX() + px, this.getY() + py, 3, 3, null, dx, dy);
+				Game.bulletShootes.add(bulletShoot);
+			}else if (hasGun && ammo <= 0) {
+				Sound.Clips.missAmo.play();
+			}
+		}
+	}
+	
 	@Override
 	public void render(Graphics g) {
 		
 //		g.setColor(Color.black);
-//		g.fillRect(this.getX() - Camera.x + maskx, this.getY() - Camera.y + masky, mwidth, mheigth);
+//		g.fillRect(this.getX() - Camera.x + maskx, this.getY() + masky - Camera.y, mwidth, mheigth);
 	
 		if(!isJumping) {
 			
@@ -826,6 +923,8 @@ public class Player extends Entity{
 						g.drawImage(rightPlayerWithFishingRod[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
 					}else if (hasHoe){
 						g.drawImage(rightPlayerWithHoe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+					}else if (hasPickaxe){
+						g.drawImage(rightPlayerWithPickaxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
 					}else {
 						g.drawImage(rightPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
 					}
@@ -840,6 +939,8 @@ public class Player extends Entity{
 						g.drawImage(leftPlayerWithFishingRod[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
 					}else if (hasHoe){
 						g.drawImage(leftPlayerWithHoe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+					}else if (hasPickaxe){
+						g.drawImage(leftPlayerWithPickaxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
 					}else {
 						g.drawImage(leftPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
 					}
@@ -854,6 +955,8 @@ public class Player extends Entity{
 						g.drawImage(upPlayerWithFishingRod[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
 					}else if (hasHoe){
 						g.drawImage(upPlayerWithHoe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+					}else if (hasPickaxe){
+						g.drawImage(upPlayerWithPickaxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
 					}else {
 						g.drawImage(upPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
 					}
@@ -868,6 +971,8 @@ public class Player extends Entity{
 						g.drawImage(downPlayerWithFishingRod[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
 					}else if (hasHoe){
 						g.drawImage(downPlayerWithHoe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+					}else if (hasPickaxe){
+						g.drawImage(downPlayerWithPickaxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
 					}else {
 						g.drawImage(downPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
 					}

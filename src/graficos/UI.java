@@ -18,15 +18,15 @@ public class UI {
 	
 	private BufferedImage [] button;
 	private BufferedImage [] UI;
-	public InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("pixelfont.ttf");
-	public InputStream stream02 = ClassLoader.getSystemClassLoader().getResourceAsStream("pixelfont.ttf");
+	public InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("fonts/pixelfont.ttf");
+	public InputStream stream02 = ClassLoader.getSystemClassLoader().getResourceAsStream("fonts/pixelfont.ttf");
 	public Font newfont;
 	public Font fontSystemCreat;
 	static public Spritsheet spriteUI;
 	
 	public UI(Spritsheet spritButton) {
 		
-		spriteUI =  new Spritsheet("/spriteUI.png");
+		spriteUI =  new Spritsheet("/spritesSheet/spriteUI.png");
 		UI = new BufferedImage[10];
 		
 		UI[0] = spriteUI.getSprite(0, 0, 128, 48); //Inventario
@@ -78,18 +78,11 @@ public class UI {
 		if(Game.sysInv.handItem != null) {
 			g.setFont(newfont);
 			g.setColor(Color.white);
+			
 			//Ajudar a centralizar o texto
-			if(Game.sysInv.handItem.tipo.length() < 5)
-				g.drawString(Game.sysInv.handItem.tipo, 115, 135);
-			else if (Game.sysInv.handItem.tipo.length() >= 5 &&
-			Game.sysInv.handItem.tipo.length() < 10) {
-				g.drawString(Game.sysInv.handItem.tipo, 105, 135);
-			}else if (Game.sysInv.handItem.tipo.length() >= 10 &&
-					Game.sysInv.handItem.tipo.length() < 15) {	
-				g.drawString(Game.sysInv.handItem.tipo, 95, 135);
-			}else if(Game.sysInv.handItem.tipo.length() >= 15) {
-				g.drawString(Game.sysInv.handItem.tipo, 85, 135);
-			}
+		
+			g.drawString(Game.sysInv.handItem.tipo, 121 - Game.sysInv.handItem.tipo.length()*2, 135);
+			
 		}
 				
 		//Apenas renderizando oque foi colocado no buffer do inventario
