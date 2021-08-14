@@ -1,7 +1,9 @@
-package entities;
+package entities.spots;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import entities.Entity;
+import entities.Stump;
 import main.Game;
 import main.Sound;
 import util.Mapa;
@@ -9,7 +11,7 @@ import util.Regiao;
 
 public class Tree extends Entity{
 	
-	public static int cuttingTime, maxCuttingTime = Game.rand.nextInt(600) + 400;
+	public static int cuttingTime, maxCuttingTime = Game.rand.nextInt(500) + 500;
 	
 	public int life;
 	
@@ -31,14 +33,12 @@ public class Tree extends Entity{
 	}
 	
 	public void destroySelf() {
-		
-		//Renderizar cepo
+		//Cria cepo
 		Stump sp = new Stump(this.getX(), this.getY(), 16, 16, Entity.STUMP_EN);
 		sp.tipo = "cepo";
 		sp.psTiles = this.psTiles;
 		Game.entities.add(sp);
-				
-		Game.world.tiles[psTiles].en = null;
+		Game.world.tiles[psTiles].en = sp;
 		Game.entities.remove(this);
 		Sound.Clips.cuttingTree.stop();
 		Sound.Clips.fallingTree.play();

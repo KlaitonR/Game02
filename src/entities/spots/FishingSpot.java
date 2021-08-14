@@ -3,7 +3,6 @@ package entities.spots;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-
 import entities.Entity;
 import main.Game;
 import util.Mapa;
@@ -12,7 +11,7 @@ import world.Camera;
 
 public class FishingSpot extends Entity{
 	
-	public static int fishingTime, maxFishingfTime = Game.rand.nextInt(600) + 400;
+	public static int fishingTime, maxFishingfTime = Game.rand.nextInt(500) + 500; //600 - 400
 	private int frames, maxFrames = 20, index, maxIndex = 4;
 	private BufferedImage [] moveFishing;
 	private BufferedImage [] moveFishingSwamp;
@@ -91,6 +90,14 @@ public class FishingSpot extends Entity{
 	
 	public void render(Graphics g) {
 		super.render(g);
+		
+		maskx = 0;
+		masky = -1;
+		mwidth = 16;
+		mheigth = 13;
+		
+//		g.setColor(Color.black);
+//		g.fillRect(this.getX() - Camera.x + maskx, this.getY() - Camera.y + masky, mwidth, mheigth);
 		
 //		g.setColor(Color.black);
 //		g.fillRect(this.getX() - Camera.x + maskx2, this.getY() - Camera.y + masky2, mwidth2, mheigth2);

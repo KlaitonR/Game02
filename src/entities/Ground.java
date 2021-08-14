@@ -2,6 +2,10 @@ package entities;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+
+import entities.spots.Tree;
+import entities.spots.TreeOak;
+import entities.spots.TreePine;
 import main.Game;
 import util.Mapa;
 import util.Regiao;

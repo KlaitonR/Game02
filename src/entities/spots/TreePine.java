@@ -1,4 +1,4 @@
-package entities;
+package entities.spots;
 
 import java.awt.image.BufferedImage;
 

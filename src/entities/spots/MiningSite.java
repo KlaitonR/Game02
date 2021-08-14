@@ -9,7 +9,7 @@ import util.Regiao;
 
 public class MiningSite extends Entity{
 
-	public static int miningTime, maxMiningTime = Game.rand.nextInt(600) + 400;
+	public static int miningTime, maxMiningTime = Game.rand.nextInt(500) + 500;
 	
 	static public BufferedImage MINING_SITE_SILVER_EN = Game.spritesheet.getSprite(48, 48, 16, 16);
 	static public BufferedImage MINING_SITE_GOLD_EN = Game.spritesheet.getSprite(64, 48, 16, 16);

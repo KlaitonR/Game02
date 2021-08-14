@@ -3,10 +3,6 @@ package util;
 import java.util.ArrayList;
 
 import entities.Entity;
-import entities.Tree;
-import entities.TreeOak;
-import entities.TreePine;
-import entities.TreeWillow;
 import entities.itens.Diamond;
 import entities.itens.Emerald;
 import entities.itens.Firewood;
@@ -31,6 +27,10 @@ import entities.spots.MiningSiteDiamond;
 import entities.spots.MiningSiteEmerald;
 import entities.spots.MiningSiteGold;
 import entities.spots.MiningSiteSilver;
+import entities.spots.Tree;
+import entities.spots.TreeOak;
+import entities.spots.TreePine;
+import entities.spots.TreeWillow;
 import main.Game;
 
 public class GetResource {
@@ -151,8 +151,6 @@ public void getFirewood(Tree tr) {
 			}
 		}
 		
-		System.out.println(tr.life);
-		
 		if(tr.life == 0) {
 			tr.destroySelf();
 			Game.player.cuttingTree = false;
@@ -216,7 +214,7 @@ public void getFirewood(Tree tr) {
 			
 		}
 		
-		if(Game.rand.nextInt(100) < 5) {
+		if(Game.rand.nextInt(100) < 100) {
 			stone = new Stone(0, 0, 16, 15, Ore.STONE_EN);
 			stone.tipo = "pedra";
 		}

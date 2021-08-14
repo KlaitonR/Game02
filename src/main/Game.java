@@ -67,6 +67,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	static public ArrayList <Particle> particles;
 	static public Spritsheet spritesheet;
 	static public Spritsheet spritePlayer;
+	static public Spritsheet spritePlayerAnimation;
 	static public Spritsheet spriteMobs;
 	static public Spritsheet spriteContruction;
 	static public Spritsheet spriteButton;
@@ -145,7 +146,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 
 		setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
 		
-//		setPreferredSize(new Dimension(WIDTH*SCALE, HEIGHT*SCALE));
+//		setPreferredSize(new Dimension(WIDTH*SCALE, HEIGHT*SCALE)); modo Janela
 		initFrame();
 		spriteButton =  new Spritsheet("/button.png");
 		ui = new UI(spriteButton);
@@ -185,6 +186,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		particles =  new ArrayList<Particle>();
 		spritesheet =  new Spritsheet("/spritesSheet/spritesheet.png");
 		spritePlayer =  new Spritsheet("/spritesSheet/spritePlayer.png");
+		spritePlayerAnimation =  new Spritsheet("/spritesSheet/spritePlayerAnimation.png");
 		spriteMobs =  new Spritsheet("/spritesSheet/spriteMobs.png");
 		spriteContruction = new Spritsheet("/spritesSheet/spriteConstruction.png");
 		player  = new Player(0, 0, 16, 16, spritePlayer.getSprite(0, 0, 16, 16));
@@ -799,7 +801,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			if(e.getKeyCode() == KeyEvent.VK_B) {
 				
 				if(gameState.equals("NORMAL")) {
-					if(!player.creation) {
+					if(!player.creation && !player.openLvls) {
 						if(!player.useBag)
 							player.useBag = true;
 						else
@@ -812,7 +814,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			
 			if(e.getKeyCode() == KeyEvent.VK_K) {
 				if(gameState.equals("NORMAL")) {
-					if(!player.useBag) {
+					if(!player.useBag && !player.openLvls) {
 						if(!player.creation)
 							player.creation = true;
 						else
@@ -926,7 +928,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 //		System.out.println("x: " + player.mx + "    y:" + player.my);
 		
 		if(gameState.equals("NORMAL")) {
-			if(!player.openLvls && player.mx >= 10 && player.my >= 43 && player.mx <= 37 && player.my <= 63) {
+			if(!player.useBag && !player.openLvls && player.mx >= 10 && player.my >= 43 && player.mx <= 37 && player.my <= 63) {
 				player.openLvls = true;
 				player.offLvls = false;
 				player.mouseShoot =  false;

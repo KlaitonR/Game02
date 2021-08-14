@@ -1,4 +1,5 @@
 package entities;
+
 //import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -69,6 +70,7 @@ public class Entity {
 	static public BufferedImage POTION_EN = Game.spritesheet.getSprite(0, 272, 16, 16);
 	static public BufferedImage ESCADA_EN = Game.spritesheet.getSprite(0, 240, 16, 16);
 	static public BufferedImage PICARETA_EN = Game.spritesheet.getSprite(0, 80, 16, 16);
+	static public BufferedImage FORNO_EN = Game.spritesheet.getSprite(16, 288, 16, 16);
 	
 	public BufferedImage getSprite() {
 		return sprite;

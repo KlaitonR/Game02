@@ -25,6 +25,7 @@ public enum Id {
 	ID_ORE_COPPER,
 	ID_ORE_COAL,
 	ID_EMERALD,
-	ID_STONE
+	ID_STONE,
+	ID_OVEN
 
 }

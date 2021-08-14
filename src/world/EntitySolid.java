@@ -1,13 +1,13 @@
 package world;
 
 import entities.Staircase;
-import entities.Tree;
 import entities.NPC.Npc;
 import entities.construction.House;
 import entities.construction.Mine;
 import entities.construction.Statue;
 import entities.spots.FishingSpot;
 import entities.spots.MiningSite;
+import entities.spots.Tree;
 import main.Game;
 
 public class EntitySolid {

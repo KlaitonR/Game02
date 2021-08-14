@@ -7,6 +7,7 @@ import entities.itens.LifePack;
 import entities.itens.Lighter;
 import entities.spots.FishingSpot;
 import entities.spots.MiningSite;
+import entities.spots.Tree;
 import main.Game;
 import main.Sound;
 import util.Mapa;
@@ -26,7 +27,9 @@ public class Player extends Entity{
 	public int jumpFrames = 25, jumpCur, jumpSp = 1, z;
 	
 	public int frames, maxFrames = 5, index, maxIndex = 3;
-	public boolean moved, movedMouse;
+	public int framesAnimatio, maxFramesAnimatio = 30, indexAnimatio, maxIndexAnimatio = 3;
+	public int framesAnimatioFishing, maxFramesAnimatioFishing = 100, indexAnimatioFishing, maxIndexAnimatioFishing = 1;
+	public boolean moved, movedMouse, animation;
 	public boolean isDamage;
 	private int damageFrames;
 	
@@ -99,6 +102,28 @@ public class Player extends Entity{
 	private BufferedImage [] leftPlayerDamageWithHoe;
 	private BufferedImage [] upPlayerDamageWithHoe;
 	private BufferedImage [] downPlayerDamageWithHoe;
+	
+	//Animações
+	
+	private BufferedImage [] rightPlayerAnimationWithAxe;
+	private BufferedImage [] leftPlayerAnimationWithAxe;
+	private BufferedImage [] upPlayerAnimationWithAxe;
+	private BufferedImage [] downPlayerAnimationWithAxe;
+	
+	private BufferedImage [] rightPlayerAnimationWithFishingRod;
+	private BufferedImage [] leftPlayerAnimationWithFishingRod;
+	private BufferedImage [] upPlayerAnimationWithFishingRod;
+	private BufferedImage [] downPlayerAnimationWithFishingRod;
+	
+	private BufferedImage [] rightPlayerAnimationWithHoe;
+	private BufferedImage [] leftPlayerAnimationWithHoe;
+	private BufferedImage [] upPlayerAnimationWithHoe;
+	private BufferedImage [] downPlayerAnimationWithHoe;
+	
+	private BufferedImage [] rightPlayerAnimationWithPickaxe;
+	private BufferedImage [] leftPlayerAnimationWithPickaxe;
+	private BufferedImage [] upPlayerAnimationWithPickaxe;
+	private BufferedImage [] downPlayerAnimationWithPickaxe;
 	
 	private BufferedImage rightPlayerJumping;
 	private BufferedImage leftPlayerJumping;
@@ -180,6 +205,27 @@ public class Player extends Entity{
 		upPlayerWithPickaxe = new BufferedImage[4];
 		downPlayerWithPickaxe = new BufferedImage[4];
 		
+		rightPlayerAnimationWithAxe = new BufferedImage[4];
+		leftPlayerAnimationWithAxe = new BufferedImage[4];
+		upPlayerAnimationWithAxe = new BufferedImage[4];
+		downPlayerAnimationWithAxe = new BufferedImage[4];
+		
+		rightPlayerAnimationWithFishingRod = new BufferedImage[2];
+		leftPlayerAnimationWithFishingRod = new BufferedImage[2];
+		upPlayerAnimationWithFishingRod = new BufferedImage[2];
+		downPlayerAnimationWithFishingRod = new BufferedImage[2];
+		
+		rightPlayerAnimationWithHoe = new BufferedImage[2];
+		leftPlayerAnimationWithHoe = new BufferedImage[2];
+		upPlayerAnimationWithHoe = new BufferedImage[2];
+		downPlayerAnimationWithHoe = new BufferedImage[2];
+		
+		rightPlayerAnimationWithPickaxe = new BufferedImage[4];
+		leftPlayerAnimationWithPickaxe = new BufferedImage[4];
+		upPlayerAnimationWithPickaxe = new BufferedImage[4];
+		downPlayerAnimationWithPickaxe = new BufferedImage[4];
+		
+		
 		for(int i = 0; i<4; i++) {
 			rightPlayer[i] = Game.spritePlayer.getSprite(0 + (i*16), 0, 16, 16);
 			leftPlayer[i] = Game.spritePlayer.getSprite(0 + (i*16), 16, 16, 16);
@@ -235,6 +281,31 @@ public class Player extends Entity{
 			leftPlayerWithPickaxe[i] = Game.spritePlayer.getSprite(192 + (i*16), 16, 16, 16);
 			upPlayerWithPickaxe[i] = Game.spritePlayer.getSprite(192 + (i*16), 32, 16, 16);
 			downPlayerWithPickaxe[i] = Game.spritePlayer.getSprite(192 + (i*16), 48, 16, 16);
+			
+			rightPlayerAnimationWithAxe[i] = Game.spritePlayerAnimation.getSprite(0 + (i*16), 0, 16, 16);
+			leftPlayerAnimationWithAxe[i] = Game.spritePlayerAnimation.getSprite(0 + (i*16), 16, 16, 16);
+			upPlayerAnimationWithAxe[i] = Game.spritePlayerAnimation.getSprite(0 + (i*16), 32, 16, 16);
+			downPlayerAnimationWithAxe[i] = Game.spritePlayerAnimation.getSprite(0 + (i*16), 48, 16, 16);
+			
+			rightPlayerAnimationWithPickaxe[i] = Game.spritePlayerAnimation.getSprite(160 + (i*16), 0, 16, 16);
+			leftPlayerAnimationWithPickaxe[i] = Game.spritePlayerAnimation.getSprite(160 + (i*16), 16, 16, 16);
+			upPlayerAnimationWithPickaxe[i] = Game.spritePlayerAnimation.getSprite(160 + (i*16), 32, 16, 16);
+			downPlayerAnimationWithPickaxe[i] = Game.spritePlayerAnimation.getSprite(160 + (i*16), 48, 16, 16);
+			
+		}
+		
+		for(int i = 0; i<2; i++) {
+			
+			rightPlayerAnimationWithFishingRod[i] = Game.spritePlayerAnimation.getSprite(64 + (i*32), 0, 32, 16);
+			leftPlayerAnimationWithFishingRod[i] = Game.spritePlayerAnimation.getSprite(64 + (i*32), 16, 32, 16);
+			upPlayerAnimationWithFishingRod[i] = Game.spritePlayerAnimation.getSprite(64 + (i*32), 32, 32, 16);
+			downPlayerAnimationWithFishingRod[i] = Game.spritePlayerAnimation.getSprite(64 + (i*32), 48, 32, 32);
+			
+			rightPlayerAnimationWithHoe[i] = Game.spritePlayerAnimation.getSprite(128 + (i*16), 0, 32, 16);
+			leftPlayerAnimationWithHoe[i] = Game.spritePlayerAnimation.getSprite(128 + (i*16), 16, 32, 16);
+			upPlayerAnimationWithHoe[i] = Game.spritePlayerAnimation.getSprite(128 + (i*16), 32, 32, 16);
+			downPlayerAnimationWithHoe[i] = Game.spritePlayerAnimation.getSprite(128 + (i*16), 48, 32, 32);
+			
 		}
 		
 		rightPlayerJumping = Game.spritePlayer.getSprite(0, 256, 16, 16);
@@ -604,6 +675,7 @@ public class Player extends Entity{
 				Game.getResource.getFirewood(tr);
 	
 		}else {
+			Tree.cuttingTime = 0;
 			Sound.Clips.cuttingTree.stop();
 		}
 		
@@ -633,6 +705,7 @@ public class Player extends Entity{
 				Game.getResource.getFish();
 			
 		}else {
+			FishingSpot.fishingTime = 0;
 			Sound.Clips.fishing.stop();
 		}
 		
@@ -664,7 +737,42 @@ public class Player extends Entity{
 				Game.getResource.getOre(ms);
 	
 		}else {
+			MiningSite.miningTime = 0;
 			Sound.Clips.pickaxe.stop();
+		}
+		
+	}
+	
+	private void framesAnimation() {
+		if(cuttingTree || mining || fishing)
+			animation = true;
+		else
+			animation = false;
+		
+		if(animation) {
+			//Animação padrão
+			framesAnimatio++;
+			if(framesAnimatio == maxFramesAnimatio) {
+				framesAnimatio = 0;
+				indexAnimatio++;
+				if(indexAnimatio > maxIndexAnimatio)
+					indexAnimatio = 0;
+			}
+			
+			//Animação de pesca
+			framesAnimatioFishing++;
+			if(framesAnimatioFishing == maxFramesAnimatioFishing) {
+				framesAnimatioFishing = 0;
+				indexAnimatioFishing++;
+				if(indexAnimatioFishing > maxIndexAnimatioFishing)
+					indexAnimatioFishing = 0;
+			}
+			
+		}else{
+			indexAnimatio = 0;
+			framesAnimatio = 0;
+			indexAnimatioFishing = 0;
+			framesAnimatioFishing = 0;
 		}
 		
 	}
@@ -774,16 +882,18 @@ public class Player extends Entity{
 		if(!creation && !useBag) {
 		
 			if(rigth && Game.world.isFree((int)(x+speed), this.getY(), this.z)
-					&& EntitySolid.solidCollision((int)(x+speed), this.getY())) {
+					&& EntitySolid.solidCollision((int)(x+speed), this.getY()) ) {
 				moved =  true;
-				dir = rightDir; //Rotação de sprites com teclado
+				if(!animation)
+					dir = rightDir; //Rotação de sprites com teclado
 				x+=speed;
 				
 				
 			}else if (left && Game.world.isFree((int)(x-speed), this.getY(), this.z) 
 					&& EntitySolid.solidCollision((int)(x-speed), this.getY())) {
 				moved =  true;
-				dir = leftDir; //Rotação de sprites com teclado
+				if(!animation)
+					dir = leftDir; //Rotação de sprites com teclado
 				x-=speed;
 			
 			}
@@ -791,16 +901,20 @@ public class Player extends Entity{
 			if(up && Game.world.isFree(this.getX(),(int)(y-speed), this.z) 
 					&& EntitySolid.solidCollision(this.getX(),(int)(y-speed))) {
 				moved =  true;
-				dir = upDir; //Rotação de sprites com teclado 
+				if(!animation)
+					dir = upDir; //Rotação de sprites com teclado 
 				y-=speed;
 	
 			}else if (down && Game.world.isFree(this.getX(), (int)(y+speed), this.z) 
 					&& EntitySolid.solidCollision(this.getX(), (int)(y+speed))) {
 				moved =  true;
-				dir = downDir; //Rotação de sprites com teclado
+				if(!animation)
+					dir = downDir; //Rotação de sprites com teclado
 				y+=speed;
 			}
 		}
+		
+		framesAnimation();
 		
 		if(moved) {
 			
@@ -837,15 +951,15 @@ public class Player extends Entity{
 	updateCamera();
 		
 	}
-	
+
 	public void updateCamera() {
 		Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/2), 0, Game.world.WIDTH*16 - Game.WIDTH);
 		Camera.y =  Camera.clamp(this.getY() - (Game.HEIGHT/2), 0, Game.world.HEIGHT*16 - Game.HEIGHT);
 	}
 	
 	public void sysShootWithMouse() {
-		//Rotacionar sprite
-		if(!moved) {
+		//Rotacionar sprite (com a arma)
+		if(hasGun) {
 			double angle = (Math.atan2(moveMy - (this.getY()+8 - Camera.y), moveMx - (this.getX()+8 - Camera.x)));
 			double direction = Math.toDegrees(angle);
 			
@@ -909,203 +1023,243 @@ public class Player extends Entity{
 //		g.setColor(Color.black);
 //		g.fillRect(this.getX() - Camera.x + maskx, this.getY() + masky - Camera.y, mwidth, mheigth);
 	
-		if(!isJumping) {
+		if(!animation) {
 			
-			if(!isDamage) {
-					
-				if(dir == rightDir) {
-					
-					if(hasGun) {
-						g.drawImage(rightPlayerWithGun[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if(hasAxe){
-						g.drawImage(rightPlayerWithAxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if (hasFishingRod){
-						g.drawImage(rightPlayerWithFishingRod[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if (hasHoe){
-						g.drawImage(rightPlayerWithHoe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if (hasPickaxe){
-						g.drawImage(rightPlayerWithPickaxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else {
-						g.drawImage(rightPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+			if(!isJumping) {
+				
+				if(!isDamage) {
+						
+					if(dir == rightDir) {
+						
+						if(hasGun) {
+							g.drawImage(rightPlayerWithGun[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if(hasAxe){
+							g.drawImage(rightPlayerWithAxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if (hasFishingRod){
+							g.drawImage(rightPlayerWithFishingRod[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if (hasHoe){
+							g.drawImage(rightPlayerWithHoe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if (hasPickaxe){
+							g.drawImage(rightPlayerWithPickaxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else {
+							g.drawImage(rightPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}
+							
+					}else if (dir == leftDir) {
+							
+						if(hasGun) {
+							g.drawImage(leftPlayerWithGun[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if(hasAxe){
+							g.drawImage(leftPlayerWithAxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if (hasFishingRod){
+							g.drawImage(leftPlayerWithFishingRod[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if (hasHoe){
+							g.drawImage(leftPlayerWithHoe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if (hasPickaxe){
+							g.drawImage(leftPlayerWithPickaxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else {
+							g.drawImage(leftPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}
+							
+					}else if(dir == upDir) {
+							
+						if(hasGun) {
+							g.drawImage(upPlayerWithGun[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if(hasAxe){
+							g.drawImage(upPlayerWithAxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if (hasFishingRod){
+							g.drawImage(upPlayerWithFishingRod[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if (hasHoe){
+							g.drawImage(upPlayerWithHoe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if (hasPickaxe){
+							g.drawImage(upPlayerWithPickaxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else {
+							g.drawImage(upPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}
+						
+					}else if(dir == downDir) {
+							
+						if(hasGun) {
+							g.drawImage(downPlayerWithGun[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if(hasAxe){
+							g.drawImage(downPlayerWithAxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if (hasFishingRod){
+							g.drawImage(downPlayerWithFishingRod[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if (hasHoe){
+							g.drawImage(downPlayerWithHoe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if (hasPickaxe){
+							g.drawImage(downPlayerWithPickaxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else {
+							g.drawImage(downPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}
 					}
 						
-				}else if (dir == leftDir) {
+				}else {
 						
-					if(hasGun) {
-						g.drawImage(leftPlayerWithGun[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if(hasAxe){
-						g.drawImage(leftPlayerWithAxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if (hasFishingRod){
-						g.drawImage(leftPlayerWithFishingRod[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if (hasHoe){
-						g.drawImage(leftPlayerWithHoe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if (hasPickaxe){
-						g.drawImage(leftPlayerWithPickaxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else {
-						g.drawImage(leftPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}
-						
-				}else if(dir == upDir) {
-						
-					if(hasGun) {
-						g.drawImage(upPlayerWithGun[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if(hasAxe){
-						g.drawImage(upPlayerWithAxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if (hasFishingRod){
-						g.drawImage(upPlayerWithFishingRod[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if (hasHoe){
-						g.drawImage(upPlayerWithHoe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if (hasPickaxe){
-						g.drawImage(upPlayerWithPickaxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else {
-						g.drawImage(upPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}
+					if(dir == rightDir) {
+							
+						if(hasGun) {
+							g.drawImage(rightPlayerDamageWithGun[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if(hasAxe){
+							g.drawImage(rightPlayerDamageWithAxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if (hasFishingRod){
+							g.drawImage(rightPlayerDamageWithFishingRod[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if (hasHoe){
+							g.drawImage(rightPlayerDamageWithHoe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else {
+							g.drawImage(rightPlayerDamage[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}
+							
+					}else if (dir == leftDir) { 
+							
+						if(hasGun) {
+							g.drawImage(leftPlayerDamageWithGun[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if(hasAxe){
+							g.drawImage(rightPlayerDamageWithAxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if (hasFishingRod){
+							g.drawImage(leftPlayerDamageWithFishingRod[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if (hasHoe){
+							g.drawImage(leftPlayerDamageWithHoe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else {
+							g.drawImage(leftPlayerDamage[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}
+							
+					}else if(dir == upDir) {
 					
-				}else if(dir == downDir) {
+						if(hasGun) {
+							g.drawImage(upPlayerDamageWithGun[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if(hasAxe){
+							g.drawImage(upPlayerDamageWithAxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if (hasFishingRod){
+							g.drawImage(upPlayerDamageWithFishingRod[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if (hasHoe){
+							g.drawImage(upPlayerDamageWithHoe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else {
+							g.drawImage(upPlayerDamage[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}
 						
-					if(hasGun) {
-						g.drawImage(downPlayerWithGun[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if(hasAxe){
-						g.drawImage(downPlayerWithAxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if (hasFishingRod){
-						g.drawImage(downPlayerWithFishingRod[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if (hasHoe){
-						g.drawImage(downPlayerWithHoe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if (hasPickaxe){
-						g.drawImage(downPlayerWithPickaxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else {
-						g.drawImage(downPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+					}else if(dir == downDir) {
+							
+						if(hasGun) {
+							g.drawImage(downPlayerDamageWithGun[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if(hasAxe){
+							g.drawImage(downPlayerDamageWithAxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if (hasFishingRod){
+							g.drawImage(downPlayerDamageWithFishingRod[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else if (hasHoe){
+							g.drawImage(downPlayerDamageWithHoe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else {
+							g.drawImage(downPlayerDamage[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}
 					}
 				}
-					
-			}else {
-					
-				if(dir == rightDir) {
-						
-					if(hasGun) {
-						g.drawImage(rightPlayerDamageWithGun[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if(hasAxe){
-						g.drawImage(rightPlayerDamageWithAxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if (hasFishingRod){
-						g.drawImage(rightPlayerDamageWithFishingRod[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if (hasHoe){
-						g.drawImage(rightPlayerDamageWithHoe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else {
-						g.drawImage(rightPlayerDamage[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}
-						
-				}else if (dir == leftDir) { 
-						
-					if(hasGun) {
-						g.drawImage(leftPlayerDamageWithGun[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if(hasAxe){
-						g.drawImage(rightPlayerDamageWithAxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if (hasFishingRod){
-						g.drawImage(leftPlayerDamageWithFishingRod[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if (hasHoe){
-						g.drawImage(leftPlayerDamageWithHoe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else {
-						g.drawImage(leftPlayerDamage[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}
-						
-				}else if(dir == upDir) {
 				
-					if(hasGun) {
-						g.drawImage(upPlayerDamageWithGun[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if(hasAxe){
-						g.drawImage(upPlayerDamageWithAxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if (hasFishingRod){
-						g.drawImage(upPlayerDamageWithFishingRod[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if (hasHoe){
-						g.drawImage(upPlayerDamageWithHoe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else {
-						g.drawImage(upPlayerDamage[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}
+			}else { // Se estiver pulando
+				
+				if(!isDamage) {
 					
-				}else if(dir == downDir) {
+					if(dir == rightDir) {
 						
-					if(hasGun) {
-						g.drawImage(downPlayerDamageWithGun[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if(hasAxe){
-						g.drawImage(downPlayerDamageWithAxe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if (hasFishingRod){
-						g.drawImage(downPlayerDamageWithFishingRod[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else if (hasHoe){
-						g.drawImage(downPlayerDamageWithHoe[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else {
-						g.drawImage(downPlayerDamage[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						if(hasGun) {
+							g.drawImage(rightPlayerGunJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else {
+							g.drawImage(rightPlayerJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}
+							
+					}else if (dir == leftDir) {
+							
+						if(hasGun) {
+							g.drawImage(leftPlayerGunJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else {
+							g.drawImage(leftPlayerJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}
+							
+					}else if(dir == upDir) {
+							
+						if(hasGun) {
+							g.drawImage(upPlayerGunJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else {
+							g.drawImage(upPlayerJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}
+						
+					}else if(dir == downDir) {
+							
+						if(hasGun) {
+							g.drawImage(downPlayerGunJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else {
+							g.drawImage(downPlayerJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}
+					}
+						
+				}else {
+						
+					if(dir == rightDir) {
+							
+						if(hasGun) {
+							g.drawImage(rightPlayerGunDamageJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else {
+							g.drawImage(rightPlayerDamageJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}
+							
+					}else if (dir == leftDir) { 
+							
+						if(hasGun) {
+							g.drawImage(leftPlayerGunDamageJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else {
+							g.drawImage(leftPlayerDamageJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}
+							
+					}else if(dir == upDir) {
+						g.drawImage(upPlayerGunDamageJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						if(hasGun) {
+							g.drawImage(upPlayerDamageJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}
+					}else if(dir == downDir) {
+						
+						if(hasGun) {
+							g.drawImage(downPlayerGunDamageJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}else {
+							g.drawImage(downPlayerDamageJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+						}
 					}
 				}
 			}
 			
-		}else { // Se estiver pulando
-			
-			if(!isDamage) {
+		}else {
+			//animações
+			if(dir == rightDir) {
+				if(cuttingTree) 
+					g.drawImage(rightPlayerAnimationWithAxe[indexAnimatio], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+				else if(fishing)
+					g.drawImage(rightPlayerAnimationWithFishingRod[indexAnimatioFishing], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+				else if(mining)
+					g.drawImage(rightPlayerAnimationWithPickaxe[indexAnimatio], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
 				
-				if(dir == rightDir) {
-					
-					if(hasGun) {
-						g.drawImage(rightPlayerGunJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else {
-						g.drawImage(rightPlayerJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}
-						
-				}else if (dir == leftDir) {
-						
-					if(hasGun) {
-						g.drawImage(leftPlayerGunJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else {
-						g.drawImage(leftPlayerJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}
-						
-				}else if(dir == upDir) {
-						
-					if(hasGun) {
-						g.drawImage(upPlayerGunJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else {
-						g.drawImage(upPlayerJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}
-					
-				}else if(dir == downDir) {
-						
-					if(hasGun) {
-						g.drawImage(downPlayerGunJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else {
-						g.drawImage(downPlayerJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}
+			}else if (dir == leftDir) {
+				if(cuttingTree) 
+					g.drawImage(leftPlayerAnimationWithAxe[indexAnimatio], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+				else if(fishing)
+					g.drawImage(leftPlayerAnimationWithFishingRod[indexAnimatioFishing], this.getX() - Camera.x - 16, this.getY() - Camera.y - z, null);
+				else if(mining)
+					g.drawImage(leftPlayerAnimationWithPickaxe[indexAnimatio], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+				
+			}else if (dir == downDir) {
+				if(cuttingTree) 
+					g.drawImage(downPlayerAnimationWithAxe[indexAnimatio], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+				else if(fishing)
+					g.drawImage(downPlayerAnimationWithFishingRod[indexAnimatioFishing], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+				else if(mining)
+					g.drawImage(downPlayerAnimationWithPickaxe[indexAnimatio], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+				
+			}else if (dir == upDir) {
+				if(cuttingTree) 
+					g.drawImage(upPlayerAnimationWithAxe[indexAnimatio], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+				else if(fishing)
+					g.drawImage(upPlayerAnimationWithFishingRod[indexAnimatioFishing], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
+				else if(mining) {
+					g.drawImage(upPlayerAnimationWithPickaxe[indexAnimatio], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
 				}
-					
-			}else {
-					
-				if(dir == rightDir) {
-						
-					if(hasGun) {
-						g.drawImage(rightPlayerGunDamageJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else {
-						g.drawImage(rightPlayerDamageJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}
-						
-				}else if (dir == leftDir) { 
-						
-					if(hasGun) {
-						g.drawImage(leftPlayerGunDamageJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else {
-						g.drawImage(leftPlayerDamageJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}
-						
-				}else if(dir == upDir) {
-					g.drawImage(upPlayerGunDamageJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					if(hasGun) {
-						g.drawImage(upPlayerDamageJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}
-				}else if(dir == downDir) {
-					
-					if(hasGun) {
-						g.drawImage(downPlayerGunDamageJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}else {
-						g.drawImage(downPlayerDamageJumping, this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-					}
-				}
+				
 			}
 		}
 		

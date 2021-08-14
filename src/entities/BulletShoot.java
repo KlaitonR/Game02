@@ -3,6 +3,8 @@ package entities;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+
+import entities.spots.Tree;
 import main.Game;
 import util.Mapa;
 import util.Regiao;

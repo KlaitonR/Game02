@@ -2,6 +2,8 @@ package util;
 
 import java.awt.image.BufferedImage;
 import entities.Entity;
+import entities.Oven;
+import entities.itens.Axe;
 import entities.itens.Potion;
 import main.Game;
 import main.Sound;
@@ -156,7 +158,6 @@ public class SystemCreation {
 				slot[i].setY(y);
 				slot[i].show = true;
 				Game.entities.add(slot[i]);
-				Game.world.tiles[slot[i].xTile + (slot[i].yTile*Game.world.WIDTH)].en = slot[i];
 				slot[i] = null;
 				itens[i] = null;
 				Sound.Clips.dropAndGetItem.play();
@@ -170,9 +171,7 @@ public class SystemCreation {
 			if(slot[index] != null) {
 				slot[index].setX(x);
 				slot[index].setY(y);
-				slot[index].show = true;
 				Game.entities.add(slot[index]);
-				Game.world.tiles[slot[index].xTile + (slot[index].yTile*Game.world.WIDTH)].en = slot[index];
 				slot[index] = null;
 				itens[index] = null;
 				Sound.Clips.dropAndGetItem.play();
@@ -237,69 +236,62 @@ public class SystemCreation {
 		}
 	}
 	
-	public boolean checkCraft(int index1, int index2) {
-		
+	//Verifica se tem outro item alem os dos necessarios para fazer o craft nos slots
+	//Se algum slot tiver um id diferente de algum dos index passados, retorna false
+	public boolean checkCraft(int index1, int index2, int index3, int index4, int numSlot) {
 		for(int i=0; i<slot.length-1;i++) {
-			if(index1 != i && index2 != i) {
-				if(slot[i] != null && slot[i].id != slot[index1].id && slot[i].id != slot[index2].id)
-					return false;
+			
+			if(numSlot == 1) {
+				if(index1 != i) {
+					if(slot[i] != null && slot[i].id != slot[index1].id)
+						return false;
+				}
+				
+			}else if (numSlot == 2) {
+				if(index1 != i && index2 != i) {
+					if(slot[i] != null && slot[i].id != slot[index1].id && slot[i].id != slot[index2].id)
+						return false;
+				}
+				
+			}else if (numSlot == 3) {
+				if(index1 != i && index2 != i && index3 != i) {
+					if(slot[i] != null && slot[i].id != slot[index1].id && slot[i].id != slot[index2].id && slot[i].id != slot[index3].id)
+						return false;
+				}
+				
+			}else if (numSlot == 4) {
+				if(index1 != i && index2 != i && index3 != i && index4 != i) {
+					if(slot[i] != null && slot[i].id != slot[index1].id && slot[i].id != slot[index2].id && slot[i].id != slot[index3].id && slot[i].id != slot[index4].id)
+						return false;
+				}
 			}
+			
 		}
 		
 		return true;
 	}
 	
-	public void craftItem(Id id1, Id id2, int required1, int required2) {
+	public void craftItem(Id id1, Id id2, Id id3, Id id4,
+							int index1, int index2, int index3, int index4,
+							int required1, int required2, int required3, int required4,
+							BufferedImage img, int numSlot) {
 		
-		int index1 = checkStuff(id1);
-		int index2 = checkStuff(id2);
+		Entity item = null;
 		
-		if(index1 >= 0 && index2 >= 0) {
-			if(checkCraft(index1, index2)) {
-				if(checkQtStuff(index1, required1) && checkQtStuff(index2, required2)) {
-					
-					Entity item = null;
-					
-					if((id1==Id.ID_SEED_OAK && id2==Id.ID_ROOT) || (id1==Id.ID_ROOT && id2==Id.ID_SEED_OAK)) {
-						item = new Potion(0, 0, 16, 16, Entity.POTION_EN);
-						item.tipo = "Poção de regeneração";
-					}
-					
+		if(checkCraft(index1, index2, index3, index4, numSlot)) {
+			if(checkQtStuff(index1, index2, index3, index4, required1, required2, required3, required4, numSlot)) {
+			
+				itens[indexCraft] = img;
+				
+				if(Game.player.clickCraft) {
+					Game.player.clickCraft = false;
+					Sound.Clips.creation.play();
+					item = createItem(item, id1, id2, id3, id4, numSlot);
 					slot[indexCraft] = item;
-					itens[indexCraft] = item.getSprite();
-					
-					if(Game.player.clickCraft) {
-						
-						Game.player.clickCraft = false;
-						Sound.Clips.creation.play();
-						
-						if(slot[index1].itensPack.size()>=required1) {
-							int i=0;
-							while(i<required1) {
-								slot[index1].itensPack.remove(0);
-								i++;
-							}
-						}else {
-							slot[index1] = null;
-							itens[index1] = null;
-						}
-						
-						if(slot[index2].itensPack.size()>=required2) {
-							int i=0;
-							while(i<required2) {
-								slot[index2].itensPack.remove(0);
-								i++;
-							}
-						}else {
-							slot[index2] = null;
-							itens[index2] = null;
-						}
-						
-						checkGetCraft(Game.player.getX(), Game.player.getY());
-					}
-				}else {
-					indexCraftNull();
-				}
+					useResourseTocraft(index1, index2, index3, index4, required1, required2, required3, required4, numSlot);
+					checkGetCraft(Game.player.getX(), Game.player.getY());
+					slot[indexCraft] = null;
+				}				
 			}else {
 				indexCraftNull();
 			}
@@ -308,9 +300,52 @@ public class SystemCreation {
 		}
 	}
 	
-	private void indexCraftNull() {
+	public void indexCraftNull() {
 		slot[indexCraft] = null;
 		itens[indexCraft] = null;
+	}
+	
+	public void useResourseTocraft(int index1, int index2, int index3, int index4,
+									int required1, int required2, int required3, int required4,
+									int numSlot) {
+		
+		if(numSlot == 1) {
+			removeResource(index1, required1);
+	
+		}else if(numSlot == 2) {
+			removeResource(index1, required1);
+			removeResource(index2, required2);
+			
+		}else if(numSlot == 3) {
+			removeResource(index1, required1);
+			removeResource(index2, required2);
+			removeResource(index3, required3);
+			
+		}else if(numSlot == 4) {	
+			removeResource(index1, required1);
+			removeResource(index2, required2);
+			removeResource(index3, required3);
+			removeResource(index4, required4);
+		}
+		
+	}
+	
+	public void removeResource(int index, int required) {
+		
+		if(slot[index].itensPack.size() >= required) { //Verifica se irá usar todo o recurso ou sobrará itens na lista
+			int i=0;
+			while(i<required) {
+				slot[index].itensPack.remove(0);
+				i++;
+			}
+		}else { //Se a quantidade de recurso requerida for igual ao item mais os itens da lista, apenas remove tudo
+			removeSlotAndItens(index);
+		}
+	}
+	
+	public void removeSlotAndItens(int index) {
+		slot[index] = null;
+		itens[index] = null;
 	}
 	
 	//Retorna se o indice do objeto necessário se estiver na aba de craft
@@ -328,11 +363,44 @@ public class SystemCreation {
 	}
 	
 	//retorna se a quantidade de iten é suficiente pra fazer o craft
-	public boolean checkQtStuff(int index, int required ) {
+	public boolean checkQtStuff(int index1, int index2, int index3, int index4,
+								int required1, int required2, int required3, int required4,
+								int numSlot) {
 
-		if(index >= 0) {
-			if((slot[index].itensPack.size()+1) >= required)
-				return true;
+		if(numSlot == 1) {
+			if(index1 >= 0) {
+				if((slot[index1].itensPack.size()+1) >= required1) {
+					return true;
+				}
+			}
+			
+		}else if(numSlot == 2) {
+			if(index1 >= 0 && index2 >= 0) {
+				if((slot[index1].itensPack.size()+1) >= required1 &&
+						(slot[index2].itensPack.size()+1) >= required2) {
+					return true;
+				}
+			}
+			
+		}else if(numSlot == 3) {
+			if(index1 >= 0 && index2 >= 0 && index3 >= 0) {
+				if((slot[index1].itensPack.size()+1) >= required1 &&
+						(slot[index2].itensPack.size()+1) >= required2 &&
+						(slot[index3].itensPack.size()+1) >= required3) {
+					return true;
+				}
+			}
+			
+		}else if(numSlot == 4) {
+			if(index1 >= 0 && index2 >= 0 && index3 >= 0 && index4 >= 0) {
+				if((slot[index1].itensPack.size()+1) >= required1 &&
+						(slot[index2].itensPack.size()+1) >= required2 &&
+						(slot[index3].itensPack.size()+1) >= required3 &&
+						(slot[index4].itensPack.size()+1) >= required4) {
+					return true;
+				}
+			}
+			
 		}
 		
 		return false;
@@ -410,6 +478,36 @@ public class SystemCreation {
 		}
 		
 		return false;
+	}
+	
+	public Entity createItem(Entity item, Id id1, Id id2, Id id3, Id id4, int numSlot) {
+		
+		if(numSlot == 1) {
+			
+			if (id1==Id.ID_STONE) {
+				item = new Oven(0, 0, 16, 16, Entity.FORNO_EN);
+				item.tipo = "forno";
+			}
+			
+		}else if (numSlot == 2) {
+			
+			if((id1==Id.ID_SEED_OAK && id2==Id.ID_ROOT) || (id1==Id.ID_ROOT && id2==Id.ID_SEED_OAK)) {
+				item = new Potion(0, 0, 16, 16, Entity.POTION_EN);
+				item.tipo = "poção de regeneração";
+				
+			}else if ((id1==Id.ID_OVEN && id2==Id.ID_ORE_GOLD) || (id1==Id.ID_ORE_GOLD && id2==Id.ID_OVEN)) {
+				item = new Axe(0, 0, 16, 16, Entity.AXE_EN);
+				item.tipo = "machado";
+			}
+			
+		}else if(numSlot == 3) {
+			
+		}else if(numSlot == 4) {
+			
+		}
+		
+		return item;
+		
 	}
 
 }
