@@ -10,16 +10,26 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import entities.BulletShoot;
 import entities.Door;
+import entities.DoorHouse;
 import entities.Enemy;
 import entities.Entity;
 import entities.Staircase;
 import entities.Particle;
 import entities.Player;
 import entities.NPC.Npc;
+import entities.construction.Bed;
+import entities.construction.BedsideLamp;
+import entities.construction.Cabinet;
+import entities.construction.Chair;
 import entities.construction.Construction;
+import entities.construction.Drawer;
+import entities.construction.FlowerVase;
 import entities.construction.House;
+import entities.construction.Mat;
 import entities.construction.Mine;
 import entities.construction.Statue;
+import entities.construction.Table;
+import entities.construction.Watch;
 import entities.itens.Axe;
 import entities.itens.Bullet;
 import entities.itens.FishingRod;
@@ -46,6 +56,8 @@ import entities.spots.TreeWillow;
 import entities.spots.MiningSiteCopper;
 import graficos.Spritsheet;
 import main.Game;
+import tiles.FloorRoomHouse;
+import tiles.WallRoomHouse;
 import util.Mapa;
 import util.Regiao;
 
@@ -54,7 +66,6 @@ public class World {
 	public Tile[] tiles;
 	public int WIDTH, HEIGHT;
 	public int TILE_SIZE = 16;
-	public Npc npc;
 	public Mapa mapa;
 	public Regiao regiao;
 	public String path;
@@ -94,13 +105,20 @@ public class World {
 			
 					int pixelAtual = pixels[xx + (yy*map.getWidth())];
 					
-					tiles[xx + (yy*WIDTH)] = new FloorTile(xx*16, yy*16, Tile.TILE_FLOOR);
-					tiles[xx + (yy*WIDTH)].psTiles = xx + (yy*WIDTH);
-					tiles[xx + (yy*WIDTH)].en = null;
+					if(Game.mapaGame.equals(Mapa.MAPA_FLORESTA)) {
+						tiles[xx + (yy*WIDTH)] = new FloorTile(xx*16, yy*16, Tile.TILE_FLOOR);
+						tiles[xx + (yy*WIDTH)].psTiles = xx + (yy*WIDTH);
+						tiles[xx + (yy*WIDTH)].en = null;
 					
-					if(Game.mapaGame.equals(Mapa.MAPA_CALABOUÇO)) {
+					}else if(Game.mapaGame.equals(Mapa.MAPA_CALABOUÇO)) {
 						tiles[xx + (yy*WIDTH)] = new EarthTile(xx*16, yy*16, Tile.TILE_EARTH);
 						tiles[xx + (yy*WIDTH)].psTiles = xx + (yy*WIDTH);
+						tiles[xx + (yy*WIDTH)].en = null;
+						
+					}else if (Game.mapaGame.equals(Mapa.MAPA_ROOM_HOUSE_01)) {
+						tiles[xx + (yy*WIDTH)] = new WallRoomHouse(xx*16, yy*16, Tile.TILE_FLOOR_ROOM_HOUSE_01);
+						tiles[xx + (yy*WIDTH)].psTiles = xx + (yy*WIDTH);
+						tiles[xx + (yy*WIDTH)].en = null;
 					}
 					
 					if(pixelAtual == 0xFF000000) { //chão
@@ -391,12 +409,51 @@ public class World {
 						mse.psTiles = xx + (yy*WIDTH);
 						tiles[xx + (yy*WIDTH)].en = mse;
 						
+					}else if (pixelAtual == 0xFFB54500){ //WALL HOUSE ROOM 01
+						
+						if(xx == 0 && yy == 0) {
+							tiles[xx + (yy*WIDTH)] = new WallRoomHouse(xx*16, yy*16, Tile.TILE_WALL_ROOM_HOUSE_01_06);
+						}else if (xx == 0 && yy == WIDTH-1) {
+							tiles[xx + (yy*WIDTH)] = new WallRoomHouse(xx*16, yy*16, Tile.TILE_WALL_ROOM_HOUSE_01_08);
+						}else if (xx == HEIGHT-1 && yy == 0) {
+							tiles[xx + (yy*WIDTH)] = new WallRoomHouse(xx*16, yy*16, Tile.TILE_WALL_ROOM_HOUSE_01_05);		
+						}else if (xx == HEIGHT-1 && yy == WIDTH-1) {
+							tiles[xx + (yy*WIDTH)] = new WallRoomHouse(xx*16, yy*16, Tile.TILE_WALL_ROOM_HOUSE_01_07);
+						}else if (xx == 0) {
+							tiles[xx + (yy*WIDTH)] = new WallRoomHouse(xx*16, yy*16, Tile.TILE_WALL_ROOM_HOUSE_01_04);
+						}else if (yy == WIDTH-1) {
+							tiles[xx + (yy*WIDTH)] = new WallRoomHouse(xx*16, yy*16, Tile.TILE_WALL_ROOM_HOUSE_01_03 );
+						}else if (xx == HEIGHT-1) {
+							tiles[xx + (yy*WIDTH)] = new WallRoomHouse(xx*16, yy*16, Tile.TILE_WALL_ROOM_HOUSE_01_02);
+						}else if (yy == 0) {
+							tiles[xx + (yy*WIDTH)] = new WallRoomHouse(xx*16, yy*16, Tile.TILE_WALL_ROOM_HOUSE_01_01);
+						}
+						
+						tiles[xx + (yy*WIDTH)].psTiles = xx + (yy*WIDTH);
+						tiles[xx + (yy*WIDTH)].en = null;
+						
+					}else if (pixelAtual == 0xFFB58C73){
+						tiles[xx + (yy*WIDTH)] = new FloorRoomHouse(xx*16, yy*16, Tile.TILE_FLOOR_ROOM_HOUSE_01);
+						
+					}else if (pixelAtual == 0xFF876856){
+						
+						DoorHouse dh = null;
+						
+						if(xx == 0)
+							dh = new DoorHouse(xx*16, yy*16, 16, 16, Entity.DOOR_LEFT_HOUSE_EN);
+						
+						Game.entities.add(dh);
+						dh.tipo = "PortaDaCasa";
+						dh.psTiles = xx + (yy*WIDTH);
+						tiles[xx + (yy*WIDTH)].en = dh;
+						
 					}
 					
 				}
 			}
 			
-				npc = new Npc(144, 80, 16, 16, Game.spritesheet.getSprite(224, 0, 16, 16));
+			if(Game.mapaGame.equals(Mapa.MAPA_FLORESTA)) {
+				Npc npc = new Npc(144, 80, 16, 16, Game.spritesheet.getSprite(224, 0, 16, 16));
 				Game.entities.add(npc);
 //				xx + (yy*WIDTH)
 //				9 + (5*100) = 509
@@ -406,10 +463,11 @@ public class World {
 				confirmTilesConstruction32x32(house);
 				confirmTilesConstruction32x32(mine);
 				
-				if(!Game.mapaGame.equals(Mapa.MAPA_CALABOUÇO)) {
-					createMobs();
-				}
-				
+				createMobs();
+			}else if(Game.mapaGame.equals(Mapa.MAPA_ROOM_HOUSE_01)) {
+				createMobilia();
+			}
+			
 				createBorder();
 			
 		} catch (IOException e) {
@@ -467,6 +525,82 @@ public class World {
 		
 	}
 	
+	private void createMobilia() {
+		
+		BedsideLamp bl = new BedsideLamp(12, 36, 16, 16, Construction.BEDSIDE_LAMP_EN);
+		Game.entities.add(bl);
+		bl.xTile = (int)(bl.getX()/16);
+		bl.yTile = (int)(bl.getY()/16);
+		bl.psTiles = bl.xTile + (bl.yTile*WIDTH);
+		
+		Bed bed = new Bed(11, 96, 32, 16, Construction.BED_EN);
+		Game.entities.add(bed);
+		bed.xTile = (int)(bed.getX()/16);
+		bed.yTile = (int)(bed.getY()/16);
+		bed.psTiles = bed.xTile + (bed.yTile*WIDTH);
+		
+		Drawer dw = new Drawer(32, 14, 16, 16, Construction.DRAWER_EN);
+		Game.entities.add(dw);
+		dw.xTile = (int)(dw.getX()/16);
+		dw.yTile = (int)(dw.getY()/16);
+		dw.psTiles = dw.xTile + (dw.yTile*WIDTH);
+		
+		Cabinet cb = new Cabinet(16, 0, 16, 32, Construction.CABINET_EN);
+		Game.entities.add(cb);
+		cb.xTile = (int)(cb.getX()/16);
+		cb.yTile = (int)(cb.getY()/16);
+		cb.psTiles = cb.xTile + (cb.yTile*WIDTH);
+		
+		Cabinet cb02 = new Cabinet(98, 48, 16, 32, Construction.CABINET_02_EN);
+		Game.entities.add(cb02);
+		cb02.xTile = (int)(cb02.getX()/16);
+		cb02.yTile = (int)(cb02.getY()/16);
+		cb02.psTiles = cb02.xTile + (cb02.yTile*WIDTH);
+		
+		Watch wt = new Watch(80, 5, 16, 16, Construction.WATCH_EN);
+		Game.entities.add(wt);
+		wt.xTile = (int)(wt.getX()/16);
+		wt.yTile = (int)(wt.getY()/16);
+		wt.psTiles = wt.xTile + (wt.yTile*WIDTH);
+		
+		Chair ch = new Chair(58, 96, 16, 16, Construction.CHAIR_EN);
+		Game.entities.add(ch);
+		ch.xTile = (int)(ch.getX()/16);
+		ch.yTile = (int)(ch.getY()/16);
+		ch.psTiles = ch.xTile + (ch.yTile*WIDTH);
+		
+		Chair ch02 = new Chair(75, 93, 16, 16, Construction.CHAIR_EN);
+		Game.entities.add(ch02);
+		ch02.xTile = (int)(ch02.getX()/16);
+		ch02.yTile = (int)(ch02.getY()/16);
+		ch02.psTiles = ch02.xTile + (ch02.yTile*WIDTH);
+		
+		Table tb = new Table(64, 96, 16, 32, Construction.TABLE_EN);
+		Game.entities.add(tb);
+		tb.xTile = (int)(tb.getX()/16);
+		tb.yTile = (int)(tb.getY()/16);
+		tb.psTiles = tb.xTile + (tb.yTile*WIDTH);
+		
+		Mat mt = new Mat(55, 55, 16, 16, Construction.MAT_EN);
+		Game.entities.add(mt);
+		mt.xTile = (int)(mt.getX()/16);
+		mt.yTile = (int)(mt.getY()/16);
+		mt.psTiles = mt.xTile + (mt.yTile*WIDTH);
+		
+		FlowerVase fv = new FlowerVase(12, 64, 16, 16, Construction.FLOWER_VASE_EN);
+		Game.entities.add(fv);
+		fv.xTile = (int)(fv.getX()/16);
+		fv.yTile = (int)(fv.getY()/16);
+		fv.psTiles = fv.xTile + (fv.yTile*WIDTH);
+		tiles[fv.psTiles].en = fv;
+		
+		confirmTilesConstruction32x16(bed);
+		confirmTilesConstruction32x16(tb);
+		confirmTilesConstruction32x16(cb);
+		confirmTilesConstruction32x16(cb02);
+		
+	}
+
 	public void confirmTilesConstruction32x32(Entity entity) {
 //		xx + (yy*WIDTH)
 //		13 + (3*100) = posisão da casa, posição do pixel no mapa desenhado
@@ -478,16 +612,27 @@ public class World {
 		}
 	}
 	
+	public void confirmTilesConstruction16x32(Entity entity) {
+		if(entity != null) {
+			tiles[entity.psTiles].en = entity;
+			tiles[entity.xTile + ((entity.yTile+1)*WIDTH)].en = entity;
+		}
+	}
+	
+	public void confirmTilesConstruction32x16(Entity entity) {
+		if(entity != null) {
+			tiles[entity.psTiles].en = entity;
+			tiles[(entity.xTile+1) + (entity.yTile*WIDTH)].en = entity;
+		}
+	}
+	
 	public void createBorder() {
 		
-		if(!Game.mapaGame.equals(Mapa.MAPA_CALABOUÇO)) {
+		if(Game.mapaGame.equals(Mapa.MAPA_FLORESTA)) {
 			
 			WaterTile water = null;
 			FishingSpot fs = null;
 			EarthTile et = null;
-			
-//			System.out.println(Game.WIDTH + "      " + Game.HEIGHT);
-//			System.out.println(WIDTH + "      " + HEIGHT);
 		
 			for(int i=0; i<waterList.size();i++) {
 				water = waterList.get(i);
@@ -717,14 +862,14 @@ public class World {
 	
 	public boolean isFree(int xNext, int yNext, int zPlayer) {
 		
-		if(collisionFloorTile(xNext, yNext, zPlayer) &&
+		if(collisionWallTile(xNext, yNext, zPlayer) &&
 				collisionWaterTile(xNext, yNext, zPlayer)) {
 			return true;
 		}
 		return false;
 	}
 	
-	public boolean collisionFloorTile(int xNext, int yNext, int zPlayer) {
+	public boolean collisionWallTile(int xNext, int yNext, int zPlayer) {
 		
 		int x1 = (xNext + 5) / TILE_SIZE;
 		int y1 = (yNext + 2) / TILE_SIZE;
@@ -741,7 +886,7 @@ public class World {
 		if (!((tiles[x1 + (y1*WIDTH)] instanceof WallTile) ||
 				(tiles[x2 + (y2*WIDTH)] instanceof WallTile) ||
 				(tiles[x3 + (y3*WIDTH)] instanceof WallTile) ||
-				(tiles[x4 + (y4*WIDTH)] instanceof WallTile))){
+				(tiles[x4 + (y4*WIDTH)] instanceof WallTile))){		
 			return true;
 		}
 		

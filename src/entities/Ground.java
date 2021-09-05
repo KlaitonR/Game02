@@ -33,7 +33,6 @@ public class Ground extends Entity{
 		
 		if(plant && time < f3) {
 			Tree tr = null;
-			Game.world.tiles[this.psTiles].en = tr;
 			time++;
 			depth = 1;
 			if(time < f1 && time > 0) {
@@ -56,6 +55,7 @@ public class Ground extends Entity{
 				}
 				
 				Game.entities.add(tr);
+				Game.world.tiles[this.psTiles].en = tr;
 				tr.show = true;
 				tr.psTiles = this.psTiles;
 				plant = false;

@@ -7,11 +7,9 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-
 import entities.NPC.Npc;
 import main.Game;
 import main.Menu;
-import util.Mapa;
 import world.Camera;
 
 public class UI {
@@ -23,11 +21,14 @@ public class UI {
 	public Font newfont;
 	public Font fontSystemCreat;
 	static public Spritsheet spriteUI;
+	public boolean buttonColletct;
+	public boolean buttonEnterRoom;
+	public boolean buttonUseItem;
 	
 	public UI(Spritsheet spritButton) {
 		
 		spriteUI =  new Spritsheet("/spritesSheet/spriteUI.png");
-		UI = new BufferedImage[10];
+		UI = new BufferedImage[14];
 		
 		UI[0] = spriteUI.getSprite(0, 0, 128, 48); //Inventario
 		UI[1] = spriteUI.getSprite(0, 48, 32, 32); //Seleção do inventário
@@ -39,6 +40,10 @@ public class UI {
 		UI[7] = spriteUI.getSprite(0, 304, 96, 64); //Craft
 		UI[8] = spriteUI.getSprite(64, 64, 16, 16); //Icone Munição
 		UI[9] = spriteUI.getSprite(0, 368, 80, 16); //Life Player
+		UI[10] = spriteUI.getSprite(80, 64, 16, 16); //Button R
+		UI[11] = spriteUI.getSprite(96, 64, 16, 16); //Button G
+		UI[12] = spriteUI.getSprite(112, 64, 16, 16); //Button Z
+		UI[13] = spriteUI.getSprite(80, 80, 16, 16); //Dinheiro $
 		
 		button = new BufferedImage[2];
 		button[0] = Game.spriteButton.getSprite(0, 0, 5, 5);
@@ -60,14 +65,14 @@ public class UI {
 			g.setFont(new Font("arial", Font.BOLD, 9));
 			g.setColor(Color.white);
 			
-			if(Game.hour < 10 && Game.minute < 10) 
-				g.drawString("0" + Game.hour + ":0" + Game.minute,  7,  25 );
-			if(Game.hour >= 10 && Game.minute < 10) 
-				g.drawString(Game.hour + ":0" + Game.minute,  7,  25 );
-			if(Game.hour < 10 && Game.minute >= 10) 
-				g.drawString("0" + Game.hour + ":" + Game.minute,  7,  25 );
-			if(Game.hour >= 10 && Game.minute >= 10) 
-				g.drawString(Game.hour + ":" + Game.minute,  7,  25 );
+			if(Game.sysTime.hour < 10 && Game.sysTime.minute < 10) 
+				g.drawString("0" + Game.sysTime.hour + ":0" + Game.sysTime.minute,  7,  25 );
+			if(Game.sysTime.hour >= 10 && Game.sysTime.minute < 10) 
+				g.drawString(Game.sysTime.hour + ":0" + Game.sysTime.minute,  7,  25 );
+			if(Game.sysTime.hour < 10 && Game.sysTime.minute >= 10) 
+				g.drawString("0" + Game.sysTime.hour + ":" + Game.sysTime.minute,  7,  25 );
+			if(Game.sysTime.hour >= 10 && Game.sysTime.minute >= 10) 
+				g.drawString(Game.sysTime.hour + ":" + Game.sysTime.minute,  7,  25 );
 		}
 	}
 	
@@ -124,8 +129,8 @@ public class UI {
 	
 	public void lifeMobs(Graphics g) {
 		
-		if(!Game.mapaGame.equals(Mapa.MAPA_CALABOUÇO)) {
-			for(int i=0; i<Game.mobs.size();i++) {
+		for(int i=0; i<Game.mobs.size();i++) {
+			if(Game.mobs.get(i).mapa.contains(Game.mapaGame)) {
 				g.setColor(Color.black); 
 				g.fillRect((int)Game.mobs.get(i).x + 2 - Camera.x, (int)Game.mobs.get(i).y - 5 - Camera.y, 12, 3);
 				g.setColor(Color.red);
@@ -349,15 +354,26 @@ public class UI {
 	
 	public void render(Graphics g) {
 		
-		g.drawImage(UI[8], 205, 1, null);
+		lifeMobs(g);
+		
+		g.drawImage(UI[8], 203, 1, null);
 		g.setFont(new Font("arial", Font.BOLD, 8));
+		g.setColor(Color.black);
+		g.drawString("" + Game.player.ammo, 221, 8);
 		g.setColor(Color.yellow);
-		g.drawString("" + Game.player.ammo, 220, 7);
+		g.drawString("" + Game.player.ammo, 220, 8);
+		
+		g.drawImage(UI[13], 207, 10, null); 
+		g.setFont(new Font("arial", Font.BOLD, 8));
+		g.setColor(Color.black);
+		g.drawString("" + 245, 222, 19);
+		g.setColor(new Color(0,210,25));
+		g.drawString("" + 245, 221, 19);
+		
 //		g.setColor(Color.darkGray); 
 //		g.drawString("Level " + Game.CUR_LEVEL, 10, 745);
 
 		lifePlayer(g);
-		lifeMobs(g);
 		timeSystem(g);
 		invSystem(g);
 		levelTab(g);
@@ -368,6 +384,18 @@ public class UI {
 		
 		if(Game.player.creation)
 			systemCreation(g);
+		
+		if(buttonColletct) {
+			g.drawImage(UI[11], 220, 140, null);
+		}
+		
+		if (buttonUseItem) {
+			g.drawImage(UI[10], 220, 140, null);
+		}
+		
+		if (buttonEnterRoom) {
+			g.drawImage(UI[12], 220, 140, null);
+		}
 	
 	}
 }

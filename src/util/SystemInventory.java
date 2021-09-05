@@ -163,34 +163,37 @@ public class SystemInventory {
 		
 		public void checkHasItem() {
 			
-			if(handItem instanceof Wapon && inventario[handIndexItem] instanceof Wapon) {
+			if(handItem instanceof Wapon && inventario[handIndexItem] instanceof Wapon) 
 				Game.player.hasGun = true;
-			}else {
+			else 
 				Game.player.hasGun = false;
-			}
+			
 			
 			if(handItem instanceof Axe && inventario[handIndexItem] instanceof Axe) {
 				Game.player.hasAxe = true;
 			}else {
 				Game.player.hasAxe = false;
+				Game.player.cuttingTree = false;
 			}
 			
 			if(handItem instanceof FishingRod && inventario[handIndexItem] instanceof FishingRod) {
 				Game.player.hasFishingRod = true;
 			}else {
 				Game.player.hasFishingRod = false;
+				Game.player.fishing = false;
 			}
 			
-			if(handItem instanceof Hoe && inventario[handIndexItem] instanceof Hoe) {
+			if(handItem instanceof Hoe && inventario[handIndexItem] instanceof Hoe) 
 				Game.player.hasHoe = true;
-			}else {
+			else 
 				Game.player.hasHoe = false;
-			}
+			
 			
 			if(handItem instanceof Pickaxe && inventario[handIndexItem] instanceof Pickaxe) {
 				Game.player.hasPickaxe = true;
 			}else {
 				Game.player.hasPickaxe = false;
+				Game.player.mining = false;
 			}
 			
 		}

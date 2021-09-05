@@ -48,8 +48,6 @@ public class WallCal extends WallTile{
 		else if(right && !left && !up && down)
 			g.drawImage(borderUpRight, x - Camera.x ,y - Camera.y ,null);
 	
-	
-	
 	}
 
 }

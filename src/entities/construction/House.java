@@ -10,11 +10,6 @@ public class House extends Construction{
 	public House(double x, double y, int width, int height, BufferedImage sprite) {
 		super(x, y, width, height, sprite);
 		
-//		maskx = 0; mascara para entrada
-//		masky = 12;
-//		mwidth = 10;
-//		mheigth = 16;
-		
 		maskx = 2;
 		masky = 5;
 		mwidth = 29;

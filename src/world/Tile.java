@@ -31,6 +31,17 @@ public class Tile {
 	static public BufferedImage TILE_EARTH = Game.spritesheet.getSprite(0, 16, 16, 16);
 	static public BufferedImage TILE_FLOOR_CAL_SOLID = Game.spritesheet.getSprite(16, 48, 16, 16);
 	static public BufferedImage TILE_WALL_CAL = Game.spritesheet.getSprite(0, 304, 16, 16);
+	static public BufferedImage TILE_FLOOR_ROOM_HOUSE_01 = Game.spritesheet.getSprite(80, 80, 16, 16);
+	//Floor room house 01
+	static public BufferedImage TILE_WALL_ROOM_HOUSE_01_01 = Game.spritesheet.getSprite(48, 80, 16, 16);
+	static public BufferedImage TILE_WALL_ROOM_HOUSE_01_02 = Game.spritesheet.getSprite(48, 96, 16, 16);
+	static public BufferedImage TILE_WALL_ROOM_HOUSE_01_03 = Game.spritesheet.getSprite(48, 112, 16, 16);
+	static public BufferedImage TILE_WALL_ROOM_HOUSE_01_04 = Game.spritesheet.getSprite(48, 128, 16, 16);
+	static public BufferedImage TILE_WALL_ROOM_HOUSE_01_05 = Game.spritesheet.getSprite(64, 80, 16, 16);
+	static public BufferedImage TILE_WALL_ROOM_HOUSE_01_06 = Game.spritesheet.getSprite(64, 96, 16, 16);
+	static public BufferedImage TILE_WALL_ROOM_HOUSE_01_07 = Game.spritesheet.getSprite(64, 112, 16, 16);
+	static public BufferedImage TILE_WALL_ROOM_HOUSE_01_08 = Game.spritesheet.getSprite(64, 128, 16, 16);
+	
 	
 	public boolean right, left, up, down;
 	public int xTile, yTile;

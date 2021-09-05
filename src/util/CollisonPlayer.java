@@ -1,15 +1,27 @@
 package util;
 
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import entities.Door;
+import entities.DoorHouse;
 import entities.Entity;
 import entities.Ground;
+import entities.Oven;
 import entities.Staircase;
 import entities.Stump;
 import entities.NPC.Npc;
+import entities.construction.Bed;
+import entities.construction.BedsideLamp;
+import entities.construction.Cabinet;
+import entities.construction.Chair;
+import entities.construction.Drawer;
+import entities.construction.FlowerVase;
 import entities.construction.House;
+import entities.construction.Mat;
 import entities.construction.Mine;
 import entities.construction.Statue;
+import entities.construction.Table;
+import entities.construction.Watch;
 import entities.itens.Axe;
 import entities.itens.Beef;
 import entities.itens.Bullet;
@@ -59,7 +71,8 @@ public class CollisonPlayer {
 					atual instanceof Seed ||
 					atual instanceof Wapon ||
 					atual instanceof Pickaxe ||
-					atual instanceof Ore) {
+					atual instanceof Ore ||
+					atual instanceof Oven) {
 					confirmCollision(atual, Game.sysInv.checkPositionGetInv());
 				}
 			}
@@ -67,24 +80,29 @@ public class CollisonPlayer {
 	}
 	
 	public void confirmCollision(Entity atual, int index) {
-		if(Entity.isColidding(Game.player, atual)) {
 		
+		if(Entity.isColidding(Game.player, atual)) {
+			
+			Game.ui.buttonColletct = true;
 			atual.depth = Game.player.depthPlayer(atual);
 				
 			if(Game.player.getItem) {
 				if(!Game.sysInv.checkPackInv(atual)) {
 					if (index >= 0 && index <= Game.sysInv.inventario.length) {
-						atual.clear = false;
-						atual.timeClear = 0;
+//						atual.clear = false;
+//						atual.timeClear = 0;
 						Game.sysInv.inventario[index] = atual;
 						Game.sysInv.inv[index] = atual.getSprite();
 						Game.sysInv.handItem = Game.sysInv.inventario[index];
 						Game.sysInv.handIndexItem = index;
 						Game.entities.remove(atual);
 						Sound.Clips.dropAndGetItem.play();
+						Game.ui.buttonColletct = false;
 					}
 				}
 			}
+		}else {
+			Game.ui.buttonColletct = false;
 		}
 	}
 	
@@ -112,14 +130,27 @@ public class CollisonPlayer {
 		}
 	}
 	
-	// //Colisões com objetos que não irão para o inventario (entidades não coletaveis)
-		public void checkCollisionNpc() {
+	//Colisões com objetos que não irão para o inventario (entidades não coletaveis)
+		public void checkCollisionNotInterator() {
 			for(int i = 0; i < Game.entities.size(); i++) {
 				Entity atual = Game.entities.get(i);
 				if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
-					if(atual instanceof Npc) {
+					if(atual instanceof Npc ||
+							atual instanceof Bed ||
+							atual instanceof Cabinet ||
+							atual instanceof FlowerVase ||
+							atual instanceof Watch ||
+							atual instanceof Table ||
+							atual instanceof Chair ||
+							atual instanceof Drawer ||
+							atual instanceof BedsideLamp) {
 						if(Entity.isColidding(Game.player, atual)) {
 							atual.depth = Game.player.depthPlayer(atual);
+						}
+						
+						if(atual instanceof Mat) {
+							Game.player.depth = atual.depth + 1;
+							atual.depth = 0;
 						}
 					}
 				}
@@ -147,6 +178,33 @@ public class CollisonPlayer {
 					if(Entity.isColidding(Game.player, atual)) {
 						atual.depth = Game.player.depthPlayer(atual);
 						Game.player.enterRoom = true;
+						Game.ui.buttonEnterRoom = true;
+						Game.player.nextRoom = Mapa.MAPA_CALABOUÇO;
+						Game.player.backRoom = Mapa.MAPA_FLORESTA;
+
+					}else {
+						Game.ui.buttonEnterRoom = false;
+					}
+				}
+			}
+		}
+	}
+	
+	public void checkCollisionStaircase() {
+		for(int i = 0; i < Game.entities.size(); i++) {
+			Entity atual = Game.entities.get(i);
+			if(atual instanceof Staircase) {
+				if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+					if(Entity.isColidding(Game.player, atual)) {
+						Game.player.depth = atual.depth + 1;
+						atual.depth = 0;
+						Game.player.enterRoom = true;
+						Game.ui.buttonEnterRoom = true;
+						Game.player.nextRoom = Mapa.MAPA_FLORESTA;
+						Game.player.backRoom = Mapa.MAPA_CALABOUÇO;
+						
+					}else {
+						Game.ui.buttonEnterRoom = false;
 					}
 				}
 			}
@@ -160,7 +218,31 @@ public class CollisonPlayer {
 				if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
 					if(Entity.isColidding(Game.player, atual)) {
 						atual.depth = Game.player.depthPlayer64x64(atual);
-//						Game.player.enterRoom = true;
+						Game.player.enterRoom = true;
+						Game.ui.buttonEnterRoom = true;
+						Game.player.nextRoom = Mapa.MAPA_ROOM_HOUSE_01;
+						Game.player.backRoom = Mapa.MAPA_FLORESTA;
+						
+					}
+				}
+			}
+		}
+	}
+	
+	public void checkCollisionDoorHouse() {
+		for(int i = 0; i < Game.entities.size(); i++) {
+			Entity atual = Game.entities.get(i);
+			if(atual instanceof DoorHouse) {
+				if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+					if(Entity.isColidding(Game.player, atual)) {
+						atual.depth = Game.player.depth - 1;
+						Game.player.enterRoom = true;
+						Game.ui.buttonEnterRoom = true;
+						Game.player.nextRoom = Mapa.MAPA_FLORESTA;
+						Game.player.backRoom = Mapa.MAPA_ROOM_HOUSE_01;
+						
+					}else {
+						Game.ui.buttonEnterRoom = false;
 					}
 				}
 			}
@@ -174,19 +256,6 @@ public class CollisonPlayer {
 				if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
 					if(Entity.isColidding(Game.player, atual)) {
 						atual.depth = Game.player.depthPlayer64x64(atual);
-					}
-				}
-			}
-		}
-	}
-	
-	public void checkCollisionStaircase() {
-		for(int i = 0; i < Game.entities.size(); i++) {
-			Entity atual = Game.entities.get(i);
-			if(atual instanceof Staircase) {
-				if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
-					if(Entity.isColidding(Game.player, atual)) {
-						Game.player.enterRoom = true;
 					}
 				}
 			}
@@ -220,13 +289,30 @@ public class CollisonPlayer {
 			Entity atual = Game.entities.get(i);
 			if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
 				if(atual instanceof FishingSpot) {
-					if(Entity.isColidding(Game.player, atual)) {
+					if(isColiddingFishingSpots(Game.player, atual)) {
 						return true;
 					}
 				}
 			}
 		}
 		return false;
+	}
+	
+	public static boolean isColiddingFishingSpots(Entity player, Entity spot) {
+		
+		Rectangle ePlayer = new Rectangle(player.getX() + player.maskx, player.getY() + player.masky, player.mwidth, player.mheigth);
+		Rectangle eSpot = new Rectangle(spot.getX() + spot.maskx, spot.getY() + spot.masky, spot.mwidth, spot.mheigth);
+		
+		if(ePlayer.intersects(eSpot)) {
+			if (player.getX() < spot.getX()) {
+				Game.player.dir = Game.player.rightDir;
+			}else if (player.getX() > spot.getX()) {
+				Game.player.dir = Game.player.leftDir;
+			}
+		}
+		
+		return ePlayer.intersects(eSpot);
+		
 	}
 	
 	public boolean checkCollisionFishingSpotMask() {

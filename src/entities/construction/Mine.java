@@ -17,7 +17,6 @@ public class Mine extends Construction{
 		
 		mapa.add(Mapa.MAPA_FLORESTA);
 		regiao.add(Regiao.REGIAO_FLORESTA);
-	
 	}
 	
 	public void render(Graphics g) {

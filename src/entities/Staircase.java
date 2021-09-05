@@ -8,12 +8,14 @@ public class Staircase extends Entity{
 
 	public Staircase(double x, double y, int width, int height, BufferedImage sprite) {
 		super(x, y, width, height, sprite);
-		mapa.add(Mapa.MAPA_CALABOUÇO);
-		regiao.add(Regiao.REGIAO_CALABOUÇO);
+
 		maskx = 0;
 		masky = 0;
-		mwidth = 14;
+		mwidth = 20;
 		mheigth = 16;
+		
+		mapa.add(Mapa.MAPA_CALABOUÇO);
+		regiao.add(Regiao.REGIAO_CALABOUÇO);
 	}
 	
 //	public void render(Graphics g) {

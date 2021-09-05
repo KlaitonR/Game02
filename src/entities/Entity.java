@@ -55,7 +55,8 @@ public class Entity {
 	public static BufferedImage RAIZ_EN = Game.spritesheet.getSprite(32, 16, 16, 16);
 	public static BufferedImage AXE_EN = Game.spritesheet.getSprite(0, 96, 16, 16);
 	public static BufferedImage LIGHTER_EN = Game.spritesheet.getSprite(0, 128, 16, 16);
-	static public BufferedImage DOOR_EN = Game.spritesheet.getSprite(16, 16, 16, 16); 
+	static public BufferedImage DOOR_EN = Game.spritesheet.getSprite(16, 16, 16, 16);
+	static public BufferedImage DOOR_LEFT_HOUSE_EN = Game.spritesheet.getSprite(16, 80, 16, 16); 
 	static public BufferedImage PLAT_EN = Game.spritesheet.getSprite(16, 176, 16, 16);
 	static public BufferedImage FISHING_ROD_EN = Game.spritesheet.getSprite(0, 208, 16, 16);
 	static public BufferedImage FISH_EN = Game.spritesheet.getSprite(16, 192, 16, 16);

@@ -3,6 +3,9 @@ package entities.mobs;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import entities.Entity;
+import entities.construction.House;
+import entities.construction.Mine;
+import main.Game;
 
 public class Mob extends Entity{
 
@@ -48,6 +51,40 @@ public class Mob extends Entity{
 		upDamage = new BufferedImage[4];
 		downDamage = new BufferedImage[4];
 		
+	}
+	
+	public void tick() {
+		
+		checkDepth();
+		
+	}
+	
+	public void checkDepth() {
+		for(int i = 0; i < Game.entities.size(); i++) {
+			Entity atual = Game.entities.get(i);
+			if(atual instanceof Mine || atual instanceof House) {
+				if(atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
+					if(Entity.isColidding(this, atual)) {
+						atual.depth = depthMob(atual);
+					}
+				}
+			}
+		}
+	}
+	
+	public int depthMob(Entity e) {
+		
+		int yMob = (int)this.y;
+		int yEntity = (int)e.getY();
+		
+		if(yMob > yEntity - 2) { // colocar o player atras dos objetos e dar noção de profundidade
+			depth = e.depth+1;
+			return  1;
+		
+		}else {
+			depth = 1;
+			return e.depth+1;
+		}
 	}
 	
 	public static boolean isColiddingTarget(Mob e1, Entity e2) {

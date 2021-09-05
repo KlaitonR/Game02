@@ -36,7 +36,7 @@ public class Player extends Entity{
 	public boolean hasGun, hasAxe, hasFishingRod, hasHoe, hasPickaxe;
 	public boolean shoot, mouseShoot, openLvls, offLvls = true, openMap, offMap = true;
 	public boolean useLighter, useBag, openDoor, enter, enterRoom, creation, getFish, fishing,
-	cuttingTree, getFirewood, getOre, mining;
+					cuttingTree, getFirewood, getOre, mining;
 	public boolean clickInv, clickBag, clickCreation, clickCraft;
 	public boolean dropItem, getItem, useItem;
 
@@ -45,6 +45,8 @@ public class Player extends Entity{
 	public int ammo = 1000, levelPlayer, maxLevel = 4;
 	
 	public String levelRoom;
+	public Mapa nextRoom;
+	public Mapa backRoom;
 	
 	public Door doorCollision;
 	
@@ -504,14 +506,17 @@ public class Player extends Entity{
 				}	
 			}
 			
-			if(Game.sysInv.inventario[hi] instanceof Lighter && h instanceof Lighter  && !Game.player.useLighter && (Game.hour >= 18 || (Game.hour <= 7 && Game.hour >=0))) {
+			if(Game.sysInv.inventario[hi] instanceof Lighter && h instanceof Lighter  && !Game.player.useLighter && !Game.sysTime.day) {
 				Game.player.useLighter = true;
 				Sound.Clips.lighter.play();
-			}else  if(Game.sysInv.inventario[hi] instanceof Lighter  && Game.player.useLighter){
+			}else  if(Game.sysInv.inventario[hi] instanceof Lighter && Game.player.useLighter){
 				Game.player.useLighter = false;
 				Sound.Clips.lighter.play();
 			}
 			
+			if(Game.sysTime.day) {
+				Game.player.useLighter = false;
+			}
 		}
 	}
 	
@@ -647,7 +652,7 @@ public class Player extends Entity{
 	}
 	
 	public void colectResource() {
-		
+			
 		//CORTANDO LENHA
 		Tree tr = Game.collision.checkCollisionTree();
 		
@@ -743,6 +748,16 @@ public class Player extends Entity{
 		
 	}
 	
+	public void checkDesableCollectResource() {
+		
+		if(useBag || getItem || creation) {
+			mining = false;
+			fishing = false;
+			cuttingTree = false;
+		}
+		
+	}
+	
 	private void framesAnimation() {
 		if(cuttingTree || mining || fishing)
 			animation = true;
@@ -750,7 +765,7 @@ public class Player extends Entity{
 			animation = false;
 		
 		if(animation) {
-			//Animação padrão
+			//Animação padrão (5 frames)
 			framesAnimatio++;
 			if(framesAnimatio == maxFramesAnimatio) {
 				framesAnimatio = 0;
@@ -759,7 +774,7 @@ public class Player extends Entity{
 					indexAnimatio = 0;
 			}
 			
-			//Animação de pesca
+			//Animação de pesca (Apenas 2 frames)
 			framesAnimatioFishing++;
 			if(framesAnimatioFishing == maxFramesAnimatioFishing) {
 				framesAnimatioFishing = 0;
@@ -779,8 +794,7 @@ public class Player extends Entity{
 	
 	public void tick() {
 		
-		depth = 5;
-		
+//		depth = 5;
 //		revealMap();
 		
 		if(creation) {
@@ -801,17 +815,20 @@ public class Player extends Entity{
 		collidingNoInteratorAndSound();
 	
 		Game.collision.checkCollision();
-		Game.collision.checkCollisionNpc();
+		Game.collision.checkCollisionNotInterator();
 		Game.collision.checkCollisionPig();
 		
 		Game.collision.checkCollisionAmmo();
 		Game.collision.checkCollisionDoor();
 		Game.collision.checkColisionGround();
 		Game.collision.checkCollisionStump();
+		
 		Game.collision.checkCollisionMine();
-		Game.collision.checkCollisionHouse();
-		Game.collision.checkCollisionStatue();
 		Game.collision.checkCollisionStaircase();
+		Game.collision.checkCollisionHouse();
+		Game.collision.checkCollisionDoorHouse();
+		
+		Game.collision.checkCollisionStatue();
 		Game.collision.checkCollisionMiningSite();
 		
 		if(Game.collision.createGround())
@@ -844,6 +861,7 @@ public class Player extends Entity{
 			Game.sysBag.getItemBag();
 		}
 		
+		checkDesableCollectResource();
 		colectResource();
 		
 		if(openDoor)
@@ -953,8 +971,14 @@ public class Player extends Entity{
 	}
 
 	public void updateCamera() {
-		Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/2), 0, Game.world.WIDTH*16 - Game.WIDTH);
-		Camera.y =  Camera.clamp(this.getY() - (Game.HEIGHT/2), 0, Game.world.HEIGHT*16 - Game.HEIGHT);
+		
+		if(Game.mapaGame.equals(Mapa.MAPA_ROOM_HOUSE_01)) {
+			Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/2), 0, Game.world.WIDTH*16 - Game.WIDTH + 51);
+			Camera.y =  Camera.clamp(this.getY() - (Game.HEIGHT/2), -25, Game.world.HEIGHT*16 - Game.HEIGHT + 25);
+		}else {
+			Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/2), 0, Game.world.WIDTH*16 - Game.WIDTH);
+			Camera.y =  Camera.clamp(this.getY() - (Game.HEIGHT/2), 0, Game.world.HEIGHT*16 - Game.HEIGHT);
+		}
 	}
 	
 	public void sysShootWithMouse() {
@@ -1250,15 +1274,14 @@ public class Player extends Entity{
 					g.drawImage(downPlayerAnimationWithFishingRod[indexAnimatioFishing], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
 				else if(mining)
 					g.drawImage(downPlayerAnimationWithPickaxe[indexAnimatio], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-				
+					
 			}else if (dir == upDir) {
 				if(cuttingTree) 
 					g.drawImage(upPlayerAnimationWithAxe[indexAnimatio], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
 				else if(fishing)
 					g.drawImage(upPlayerAnimationWithFishingRod[indexAnimatioFishing], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-				else if(mining) {
+				else if(mining) 
 					g.drawImage(upPlayerAnimationWithPickaxe[indexAnimatio], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
-				}
 				
 			}
 		}

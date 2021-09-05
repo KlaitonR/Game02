@@ -58,6 +58,8 @@ public class Pig extends Mob {
 	
 	public void tick() {
 		
+		super.tick();
+		
 		moved = false;
 		
 		if(speed<0.1) 
