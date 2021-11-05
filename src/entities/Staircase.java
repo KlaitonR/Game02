@@ -16,6 +16,8 @@ public class Staircase extends Entity{
 		
 		mapa.add(Mapa.MAPA_CALABOUÇO);
 		regiao.add(Regiao.REGIAO_CALABOUÇO);
+		
+		depth = 0;
 	}
 	
 //	public void render(Graphics g) {

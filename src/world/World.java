@@ -17,20 +17,21 @@ import entities.Staircase;
 import entities.Particle;
 import entities.Player;
 import entities.NPC.Npc;
-import entities.construction.Bed;
-import entities.construction.BedsideLamp;
-import entities.construction.Cabinet;
-import entities.construction.Chair;
 import entities.construction.Construction;
-import entities.construction.Drawer;
-import entities.construction.FlowerVase;
 import entities.construction.House;
-import entities.construction.Mat;
 import entities.construction.Mine;
 import entities.construction.Statue;
-import entities.construction.Table;
-import entities.construction.Watch;
+import entities.construction.mobilia.Bed;
+import entities.construction.mobilia.BedsideLamp;
+import entities.construction.mobilia.Cabinet;
+import entities.construction.mobilia.Chair;
+import entities.construction.mobilia.Drawer;
+import entities.construction.mobilia.FlowerVase;
+import entities.construction.mobilia.Mat;
+import entities.construction.mobilia.Table;
+import entities.construction.mobilia.Watch;
 import entities.itens.Axe;
+import entities.itens.Bomb;
 import entities.itens.Bullet;
 import entities.itens.FishingRod;
 import entities.itens.Hoe;
@@ -48,7 +49,10 @@ import entities.spots.MiningSiteCoal;
 import entities.spots.MiningSiteDiamond;
 import entities.spots.MiningSiteEmerald;
 import entities.spots.MiningSiteGold;
+import entities.spots.MiningSitePhosphor;
+import entities.spots.MiningSitePotassiumNitrate;
 import entities.spots.MiningSiteSilver;
+import entities.spots.MiningSiteSulfor;
 import entities.spots.Tree;
 import entities.spots.TreeOak;
 import entities.spots.TreePine;
@@ -172,6 +176,10 @@ public class World {
 						Game.player.setY(yy*16);
 						Game.player.psTiles = xx + (yy*WIDTH);
 						
+						Bomb b = new Bomb(xx*16, yy*16, 16, 16, Entity.BOMBA_EN);
+						b.tipo = "bomba";
+						Game.entities.add(b);
+						
 					}else if(pixelAtual == 0xFFFF0000) { //Inimigo
 						Enemy en = new Enemy(xx*16, yy*16, 16, 16, Entity.ENEMY_EN);
 						Game.entities.add(en);
@@ -185,6 +193,7 @@ public class World {
 						wapon.tipo = "gun";
 						Game.entities.add(wapon);
 						wapon.psTiles = xx + (yy*WIDTH);
+						tiles[wapon.psTiles].en = wapon;
 						
 					}else if(pixelAtual == 0xFF00FF00) { //Cura
 						LifePack lifePack = new LifePack(xx*16, yy*16, 16, 16, Entity.LIFE_PACK_EN);
@@ -197,6 +206,7 @@ public class World {
 						bullet.tipo = "bullet";
 						Game.entities.add(bullet);
 						bullet.psTiles = xx + (yy*WIDTH);
+						tiles[bullet.psTiles].en = bullet;
 		
 					}else if (pixelAtual == 0xFFB200FF){ //Portas
 						Door door = new Door(xx*16, yy*16, 16, 16, Entity.DOOR_EN);
@@ -409,6 +419,27 @@ public class World {
 						mse.psTiles = xx + (yy*WIDTH);
 						tiles[xx + (yy*WIDTH)].en = mse;
 						
+					}else if (pixelAtual == 0xFFFFE500){ //LOCAL DE SULFATO
+						MiningSiteSulfor msd = new MiningSiteSulfor(xx*16, yy*16, 16, 16, MiningSite.MINING_SITE_SULFOR_EN);
+						Game.entities.add(msd);
+						msd.tipo = "localEnxofre";
+						msd.psTiles = xx + (yy*WIDTH);
+						tiles[xx + (yy*WIDTH)].en = msd;
+						
+					}else if (pixelAtual == 0xFF9E9E9E){ //LOCAL DE NITRATO DE POTASSIO
+						MiningSitePotassiumNitrate msd = new MiningSitePotassiumNitrate(xx*16, yy*16, 16, 16, MiningSite.MINING_SITE_POTASSIUM_NITARTE_EN);
+						Game.entities.add(msd);
+						msd.tipo = "localNitratoDePotasio";
+						msd.psTiles = xx + (yy*WIDTH);
+						tiles[xx + (yy*WIDTH)].en = msd;
+							
+					}else if (pixelAtual == 0xFF707063){ //LOCAL DE FOSFORO
+						MiningSitePhosphor msd = new MiningSitePhosphor(xx*16, yy*16, 16, 16, MiningSite.MINING_SITE_PHOSPHOR_EN);
+						Game.entities.add(msd);
+						msd.tipo = "localPotacio";
+						msd.psTiles = xx + (yy*WIDTH);
+						tiles[xx + (yy*WIDTH)].en = msd;
+							
 					}else if (pixelAtual == 0xFFB54500){ //WALL HOUSE ROOM 01
 						
 						if(xx == 0 && yy == 0) {

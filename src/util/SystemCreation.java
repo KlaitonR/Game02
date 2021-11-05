@@ -1,10 +1,20 @@
 package util;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+
+import entities.Bonfire;
 import entities.Entity;
 import entities.Oven;
 import entities.itens.Axe;
+import entities.itens.BlockWood;
+import entities.itens.Bomb;
+import entities.itens.Gunpowder;
+import entities.itens.Pickaxe;
 import entities.itens.Potion;
+import entities.itens.ProcessedPotassiumNitrate;
+import entities.itens.ProcessedSulfor;
+import entities.itens.ProcessedWood;
 import main.Game;
 import main.Sound;
 
@@ -271,26 +281,32 @@ public class SystemCreation {
 		return true;
 	}
 	
-	public void craftItem(Id id1, Id id2, Id id3, Id id4,
+	public void craftItem(ArrayList<Id> ids,
 							int index1, int index2, int index3, int index4,
 							int required1, int required2, int required3, int required4,
-							BufferedImage img, int numSlot) {
+							BufferedImage img, int numSlot, int qtItem) {
 		
 		Entity item = null;
 		
 		if(checkCraft(index1, index2, index3, index4, numSlot)) {
-			if(checkQtStuff(index1, index2, index3, index4, required1, required2, required3, required4, numSlot)) {
+			if(checkQtStuff(index1, index2, index3, index4, required1, required2, required3, required4, numSlot, qtItem)) {
 			
 				itens[indexCraft] = img;
 				
 				if(Game.player.clickCraft) {
 					Game.player.clickCraft = false;
 					Sound.Clips.creation.play();
-					item = createItem(item, id1, id2, id3, id4, numSlot);
-					slot[indexCraft] = item;
-					useResourseTocraft(index1, index2, index3, index4, required1, required2, required3, required4, numSlot);
-					checkGetCraft(Game.player.getX(), Game.player.getY());
+					item = createItem(item, ids, numSlot, qtItem);
+					if(item != null) {
+						item.mapa.add(Game.mapaGame);
+						item.regiao.add(Game.regiaoGame);
+						slot[indexCraft] = item;
+						useResourseToCraft(index1, index2, index3, index4, required1, required2, required3, required4, numSlot);
+						checkGetCraft(Game.player.getX(), Game.player.getY());
+					}
+					
 					slot[indexCraft] = null;
+					
 				}				
 			}else {
 				indexCraftNull();
@@ -305,7 +321,7 @@ public class SystemCreation {
 		itens[indexCraft] = null;
 	}
 	
-	public void useResourseTocraft(int index1, int index2, int index3, int index4,
+	public void useResourseToCraft(int index1, int index2, int index3, int index4,
 									int required1, int required2, int required3, int required4,
 									int numSlot) {
 		
@@ -349,11 +365,32 @@ public class SystemCreation {
 	}
 	
 	//Retorna se o indice do objeto necessário se estiver na aba de craft
-	public int checkStuff(Id id) {
+	public int checkStuff(Id id, ArrayList<Id> ids) {
 		
 		for(int i=0; i<slot.length-1; i++) {
 			if(slot[i] != null) {
 				if(slot[i].id == id) {
+					if(i != Game.createItem.index1 &&
+						i != Game.createItem.index2 &&
+						i != Game.createItem.index3 &&
+						i != Game.createItem.index4) {
+							ids.add(id);
+							return i;
+						}
+					}
+			}
+		}
+		
+		return -1;
+	}
+	
+	//Retorna o index do slot, caso algum dos ids da lista for igual ao do slot
+	public int checkStuffList(ArrayList<Id> idsOneIndex, ArrayList<Id> ids) {
+		
+		for(int i=0; i<slot.length-1; i++) {
+			if(slot[i] != null) {
+				if(idsOneIndex.contains(slot[i].id)) {
+					ids.add(slot[i].id);
 					return i;
 				}
 			}
@@ -365,7 +402,7 @@ public class SystemCreation {
 	//retorna se a quantidade de iten é suficiente pra fazer o craft
 	public boolean checkQtStuff(int index1, int index2, int index3, int index4,
 								int required1, int required2, int required3, int required4,
-								int numSlot) {
+								int numSlot, int qtItem) {
 
 		if(numSlot == 1) {
 			if(index1 >= 0) {
@@ -480,34 +517,140 @@ public class SystemCreation {
 		return false;
 	}
 	
-	public Entity createItem(Entity item, Id id1, Id id2, Id id3, Id id4, int numSlot) {
+	public Entity createItem(Entity item, ArrayList<Id> ids, int numSlot, int qtItem) {
 		
 		if(numSlot == 1) {
 			
-			if (id1==Id.ID_STONE) {
-				item = new Oven(0, 0, 16, 16, Entity.FORNO_EN);
+			if (ids.contains(Id.ID_STONE)) {
+				item = new Oven(0, 0, 16, 16, Entity.FORNO_DESLIGADO_EN);
 				item.tipo = "forno";
+				
+			}else if (ids.contains(Id.ID_BLOCK_WOOD)) {
+				item = new ProcessedWood(0, 0, 16, 16, Entity.MADEIRA_PROCESSADA_EN);
+				
+				for(int i=0; i< qtItem-1; i++) {
+					Entity e = new ProcessedWood(0, 0, 16, 16, Entity.MADEIRA_PROCESSADA_EN);
+					item.itensPack.add(e);
+				}
+				item.tipo = "madeira processada";
+				
+			}else if (ids.contains(Id.ID_SULFOR)) {
+				item = new ProcessedSulfor(0, 0, 16, 16, Entity.ENXOFRE_PROCESSADO_EN);
+				
+				for(int i=0; i< qtItem-1; i++) {
+					Entity e = new ProcessedSulfor(0, 0, 16, 16, Entity.ENXOFRE_PROCESSADO_EN);
+					item.itensPack.add(e);
+				}
+				item.tipo = "enxofre processado";
+				
+			}else if (ids.contains(Id.ID_POTASSIUM_NITRATE)) {
+				item = new ProcessedPotassiumNitrate(0, 0, 16, 16, Entity.NITRATO_DE_POTASIO_PROCESSADO_EN);
+				
+				for(int i=0; i< qtItem-1; i++) {
+					Entity e = new ProcessedPotassiumNitrate(0, 0, 16, 16, Entity.NITRATO_DE_POTASIO_PROCESSADO_EN);
+					item.itensPack.add(e);
+				}
+				item.tipo = "nitrato de potásio processado";
+				
+			}else if(ids.contains(Id.ID_FIREWOOD_OAK)||ids.contains(Id.ID_FIREWOOD_PINE) || ids.contains(Id.ID_FIREWOOD_WILLOW)) {
+				item = new BlockWood(0, 0, 16, 16, Entity.BLOCO_DE_MADEIRA_EN);
+				item.tipo = "bloco de madeira";
+				
 			}
 			
 		}else if (numSlot == 2) {
 			
-			if((id1==Id.ID_SEED_OAK && id2==Id.ID_ROOT) || (id1==Id.ID_ROOT && id2==Id.ID_SEED_OAK)) {
+			if((ids.contains(Id.ID_SEED_OAK) && ids.contains(Id.ID_ROOT))) {
 				item = new Potion(0, 0, 16, 16, Entity.POTION_EN);
 				item.tipo = "poção de regeneração";
 				
-			}else if ((id1==Id.ID_OVEN && id2==Id.ID_ORE_GOLD) || (id1==Id.ID_ORE_GOLD && id2==Id.ID_OVEN)) {
-				item = new Axe(0, 0, 16, 16, Entity.AXE_EN);
-				item.tipo = "machado";
+			}else if((ids.contains(Id.ID_GUNPOWDER) && ids.contains(Id.ID_BAR_SILVER))) {
+				item = new Bomb(0, 0, 16, 16, Entity.BOMBA_EN);
+				item.tipo = "bomba";
+				
+			}
+			
+			if((ids.contains(Id.ID_PROCESSED_WOOD) && ids.contains(Id.ID_BLOCK_WOOD)) && checkQtSlot() == 2) {
+				item = new Axe(0, 0, 16, 16, Entity.AXE_WOOD_EN);
+				item.tipo = "machado de madeira";
+				
+			}else if((ids.contains(Id.ID_PROCESSED_WOOD) && ids.contains(Id.ID_BAR_COOPER)) && checkQtSlot() == 2) {
+				item = new Axe(0, 0, 16, 16, Entity.AXE_COOPER_EN);
+				item.tipo = "machado de cobre";
+				
+			}else if((ids.contains(Id.ID_PROCESSED_WOOD) && ids.contains(Id.ID_BAR_SILVER)) && checkQtSlot() == 2) {
+				item = new Axe(0, 0, 16, 16, Entity.AXE_SILVER_EN);
+				item.tipo = "machado de prata";
+				
+			}else if((ids.contains(Id.ID_PROCESSED_WOOD) && ids.contains(Id.ID_BAR_GOLD)) && checkQtSlot() == 2) {
+					item = new Axe(0, 0, 16, 16, Entity.AXE_GOLD_EN);
+					item.tipo = "machado de ouro";
+					
+			}else if((ids.contains(Id.ID_PROCESSED_WOOD) && ids.contains(Id.ID_DIAMOND)) && checkQtSlot() == 2) {
+				item = new Axe(0, 0, 16, 16, Entity.AXE_DIAMOND_EN);
+				item.tipo = "machado de diamante";
+					
+			}else {
+				Game.player.clickCraft = true;
 			}
 			
 		}else if(numSlot == 3) {
 			
+			if(((ids.contains(Id.ID_FIREWOOD_OAK) || ids.contains(Id.ID_FIREWOOD_PINE) || ids.contains(Id.ID_FIREWOOD_WILLOW)) 
+					&& ids.contains(Id.ID_SULFOR) && ids.contains(Id.ID_PHOSPHOR))) {
+				item = new Bonfire(0, 0, 16, 16, Entity.FOGUEIRA_EN);
+				item.tipo = "fogueira";
+				
+			}else if(ids.contains(Id.ID_CHARCOAL) && ids.contains(Id.ID_PROCESSED_SULFOR) && ids.contains(Id.ID_PROCESSED_POTASSIUM_NITRATE)) {
+				item = new Gunpowder(0, 0, 16, 16, Entity.POLVORA_EN);
+				item.tipo = "pólvora";
+				
+			}
+			
+			if(ids.contains(Id.ID_PROCESSED_WOOD) && ids.contains(Id.ID_BLOCK_WOOD) && checkQtSlot() == 3) {
+				item = new Pickaxe(0, 0, 16, 16, Entity.PICARETA_MADEIRA_EN);
+				item.tipo = "picareta de madeira";
+				
+			}else if(ids.contains(Id.ID_PROCESSED_WOOD) && ids.contains(Id.ID_BAR_COOPER) && checkQtSlot() == 3) {
+				item = new Pickaxe(0, 0, 16, 16, Entity.PICARETA_COBRE_EN);
+				item.tipo = "picareta de cobre";
+				
+			}if(ids.contains(Id.ID_PROCESSED_WOOD) && ids.contains(Id.ID_BAR_SILVER) && checkQtSlot() == 3) {
+				item = new Pickaxe(0, 0, 16, 16, Entity.PICARETA_PRATA_EN);
+				item.tipo = "picareta de prata";
+				
+			}if(ids.contains(Id.ID_PROCESSED_WOOD) && ids.contains(Id.ID_BAR_GOLD) && checkQtSlot() == 3) {
+				item = new Pickaxe(0, 0, 16, 16, Entity.PICARETA_OURO_EN);
+				item.tipo = "picareta de ouro";
+				
+			}if(ids.contains(Id.ID_PROCESSED_WOOD) && ids.contains(Id.ID_DIAMOND) && checkQtSlot() == 3) {
+				item = new Pickaxe(0, 0, 16, 16, Entity.PICARETA_DIAMANTE_EN);
+				item.tipo = "picareta de diamante";
+				
+			}else {
+				Game.player.clickCraft = true;
+			}
+			
 		}else if(numSlot == 4) {
+			
 			
 		}
 		
 		return item;
 		
+	}
+	
+	public int checkQtSlot() {
+		
+		int qt = 0;
+		
+		for(int i=0; i<slot.length; i++) {
+			if(slot[i] != null) {
+				qt++;
+			}
+		}
+		
+		return qt;
 	}
 
 }

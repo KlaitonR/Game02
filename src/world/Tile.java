@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import entities.Entity;
 import main.Game;
+import tiles.WallRoomHouse;
 import util.Mapa;
 import util.Regiao;
 
@@ -49,7 +50,7 @@ public class Tile {
 	public boolean show;
 	public boolean open;
 	
-	protected BufferedImage sprite;
+	private BufferedImage sprite;
 	protected int x,y,z;
 	public int psTiles;
 	public int maskx, masky, mwidth, mheigth;
@@ -58,6 +59,21 @@ public class Tile {
 		this.x = x;
 		this.y = y;
 		this.sprite = sprite;
+	}
+	
+	public static boolean isCollidingAll() {
+	
+		for(int i=0; i<Game.world.tiles.length; i++) {
+			if((Game.world.tiles[i] instanceof WaterTile ||
+					Game.world.tiles[i] instanceof WallCal ||
+					Game.world.tiles[i] instanceof WallRoomHouse ||
+					Game.world.tiles[i] instanceof WallTile) &&
+					i == Game.player.psTiles) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	public static boolean isColidding(Tile e1, Entity player) {
@@ -88,6 +104,14 @@ public class Tile {
 
 	public void setY(int y) {
 		this.y = y;
+	}
+
+	public BufferedImage getSprite() {
+		return sprite;
+	}
+
+	public void setSprite(BufferedImage sprite) {
+		this.sprite = sprite;
 	}
 	
 }

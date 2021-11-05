@@ -35,15 +35,16 @@ public class Player extends Entity{
 	
 	public boolean hasGun, hasAxe, hasFishingRod, hasHoe, hasPickaxe;
 	public boolean shoot, mouseShoot, openLvls, offLvls = true, openMap, offMap = true;
-	public boolean useLighter, useBag, openDoor, enter, enterRoom, creation, getFish, fishing,
+	public boolean useLighter, useBag, openDoor, enter, enterRoom, creation, getFish, fishing, build,
 					cuttingTree, getFirewood, getOre, mining;
-	public boolean clickInv, clickBag, clickCreation, clickCraft;
+	public boolean clickInv, clickBag, clickCreation, clickCraft, clickBuild, clickBuildDescription, clickCraftOvenBonfire, clickOvenBonfire,
+	clickConstruction, clickDestruct, clickDestruction, openOven, coocking;
 	public boolean dropItem, getItem, useItem;
 
-	public double life = 100, maxLife = 100, exp;
-	public double [] maxExp = {100, 500, 1000, 5000, 10000};
-	public int ammo = 1000, levelPlayer, maxLevel = 4;
-	
+	public double life = 100, maxLife = 100, exp, expAtatck, expWoodCutting, expWoodCuttingTtl;
+	public double [] maxExp = {500, 1000, 5000, 10000, 20000};
+	public int ammo = 1000, levelPlayer, levelAttack, levelWoodCutting, maxLevel = 4, money = 120000, indexDescription = -1;
+
 	public String levelRoom;
 	public Mapa nextRoom;
 	public Mapa backRoom;
@@ -151,6 +152,7 @@ public class Player extends Entity{
 		super(x, y, width, height, sprite);
 		
 		maskx = 4; masky = 0; mwidth = 8; mheigth = 16;
+		depth = 2;
 		
 		rightPlayer = new BufferedImage[4];
 		leftPlayer = new BufferedImage[4];
@@ -331,43 +333,58 @@ public class Player extends Entity{
 		downPlayerGunDamageJumping = Game.spritePlayer.getSprite(48, 240, 16, 16);
 	}
 	
-	public void checkKillEnemy() {
+	public void checkLevel() {
 		
 		for(int i=0; i<maxExp.length; i++) {
-			if(exp <= maxExp[i]) {
-				levelPlayer = i;
+			
+			if(expAtatck >= maxExp[i]) { 
+				continue;
+			} else {
+				if(levelAttack != i)
+					expAtatck = 0;
+				levelAttack = i;
+				break;
+			}
+		}
+		
+		for(int i=0; i<maxExp.length; i++) {
+			if(expWoodCuttingTtl >= maxExp[i]) {
+				continue;
+			} else {
+				if(levelWoodCutting != i) 
+					expWoodCutting = expWoodCuttingTtl - maxExp[i-1];
+				levelWoodCutting = i;
 				break;
 			}
 		}
 	}
 	
 	public int depthPlayer(Entity e) {
+				
+		double yPlayer = this.y;
+		double yEntity = e.getY();
 		
-		int yPlayer = (int)this.y;
-		int yEntity = (int)e.getY();
-		
-		if(yPlayer > yEntity - 2) { // colocar o player atras dos objetos e dar noção de profundidade
-			depth = e.depth+1;
+		if(yPlayer > yEntity - 2) {
 			return  1;
 		
 		}else {
-			depth = 1;
-			return e.depth+1;
+			return 3;
 		}
+		
 	}
 	
 	public int depthPlayer64x64(Entity e) {
+		
+		e.depth = 2;
 		
 		int yPlayer = (int)this.y;
 		int yEntity = (int)e.getY() + 16;
 		
 		if(yPlayer > yEntity - 2) { // colocar o player atras dos objetos e dar noção de profundidade
-			depth = e.depth+1;
-			return  1;
+			return  e.depth - 1;
 		
 		}else {
-			depth = 1;
-			return e.depth+1;
+			return e.depth + 1;
 		}
 	}
 	
@@ -508,6 +525,7 @@ public class Player extends Entity{
 			
 			if(Game.sysInv.inventario[hi] instanceof Lighter && h instanceof Lighter  && !Game.player.useLighter && !Game.sysTime.day) {
 				Game.player.useLighter = true;
+				Game.collision.controllButtonUseItem = false;
 				Sound.Clips.lighter.play();
 			}else  if(Game.sysInv.inventario[hi] instanceof Lighter && Game.player.useLighter){
 				Game.player.useLighter = false;
@@ -518,6 +536,19 @@ public class Player extends Entity{
 				Game.player.useLighter = false;
 			}
 		}
+	}
+	
+	public void verificaButtonUseItem() {
+		
+		int hi = Game.sysInv.handIndexItem;
+		Entity h = Game.sysInv.handItem;
+		
+		if((Game.sysInv.inventario[hi] instanceof Lighter && h instanceof Lighter  && !Game.player.useLighter && !Game.sysTime.day) ||
+				Game.sysInv.inventario[hi] instanceof LifePack && h instanceof LifePack) 
+			Game.collision.controllButtonUseItem = true;
+		else
+			Game.collision.controllButtonUseItem = false;		
+		
 	}
 	
 	public void useLifePack(int index) {
@@ -654,7 +685,7 @@ public class Player extends Entity{
 	public void colectResource() {
 			
 		//CORTANDO LENHA
-		Tree tr = Game.collision.checkCollisionTree();
+		Tree tr = (Tree)Game.collision.checkCollisionTree();
 		
 		if(tr != null && hasAxe && useItem) {
 			cuttingTree = true;
@@ -750,12 +781,11 @@ public class Player extends Entity{
 	
 	public void checkDesableCollectResource() {
 		
-		if(useBag || getItem || creation) {
+		if(useBag || getItem || creation || build) {
 			mining = false;
 			fishing = false;
 			cuttingTree = false;
 		}
-		
 	}
 	
 	private void framesAnimation() {
@@ -792,25 +822,75 @@ public class Player extends Entity{
 		
 	}
 	
-	public void tick() {
+	private void enterWorld() {
+		if(Game.enterWorld) {
+			useItem = false;
+			useBag = false;
+			creation = false;
+			build = false;
+			
+		}
+	}
+	
+	private void validarAberturaDeAbas(){
 		
-//		depth = 5;
-//		revealMap();
+		if(useItem)
+			Game.collision.checkAbaOvenAndBonfire();
+		
+		if(openOven) {
+			getItem = false;
+			Game.createItemOvenBonfire.createItem();
+		}else {
+			Game.sysOvenBonfire.closeOvenBonfire((int)x, (int)y);
+		}
 		
 		if(creation) {
 			getItem = false;
 			useBag = false;
 			useItem = false;
 			dropItem = false;
+			build = false;
+			openLvls = false;
+			openOven = false;
 			Game.createItem.createItem();
 		}else {
 			Game.sysCre.closeCreation((int)x, (int)y);
 		}
 		
+		if(build) {
+			getItem = false;
+			useBag = false;
+			useItem = false;
+			dropItem = false;
+			creation = false;
+			openLvls = false;
+			openOven = false;
+		}
+		
+	}
+	
+	public void tick() {
+		
+//		depth = 5;
+//		revealMap();
+		
+		if (clickOvenBonfire) {
+			clickOvenBonfire = false;
+			Game.sysOvenBonfire.removeItem(Game.sysOvenBonfire.clickSelectIndexOvenBonfire);
+		}
+		
+		if (clickInv && openOven) {
+			clickInv = false;
+			Game.sysInv.addItemOvenBonfire();
+		}
+		
+		validarAberturaDeAbas();
+		verificaButtonUseItem();
+		
 		Game.sysInv.checkInventoryItemMap();
 		Game.sysBag.checkBagpackItemMap();
 		
-		checkKillEnemy();
+		checkLevel();
 
 		collidingNoInteratorAndSound();
 	
@@ -827,6 +907,10 @@ public class Player extends Entity{
 		Game.collision.checkCollisionStaircase();
 		Game.collision.checkCollisionHouse();
 		Game.collision.checkCollisionDoorHouse();
+		
+		Game.collision.checkButtonEnter();
+		Game.collision.checkButtonUseItem();
+		Game.collision.checkButtonGetItem();
 		
 		Game.collision.checkCollisionStatue();
 		Game.collision.checkCollisionMiningSite();
@@ -848,21 +932,27 @@ public class Player extends Entity{
 		if(clickInv && useBag) {
 			clickInv = false;
 			Game.sysInv.putItemBag();
-		}else if (clickInv && creation) {
-			clickInv = false;
-			Game.sysInv.addItemCreation();
-		}else if (clickCreation && creation) {
-			clickCreation = false;
-			Game.sysCre.removeItem(Game.sysCre.clickSelectIndexCreation);
 		}
 		
-		if(clickBag) {
+		if(clickBag && useBag) {
 			clickBag = false;
 			Game.sysBag.getItemBag();
 		}
 		
+		if (clickInv && creation) {
+			clickInv = false;
+			Game.sysInv.addItemCreation();
+		}
+		
+		if (clickCreation && creation) {
+			clickCreation = false;
+			Game.sysCre.removeItem(Game.sysCre.clickSelectIndexCreation);
+		}
+		
 		checkDesableCollectResource();
 		colectResource();
+		
+		enterWorld();
 		
 		if(openDoor)
 			Game.collision.openDoor();	
@@ -897,7 +987,8 @@ public class Player extends Entity{
 		
 		moved = false;
 		
-		if(!creation && !useBag) {
+		if(!creation && !useBag && !build && !openOven
+				&& !Game.sysBuild.building && !Game.sysDestruct.destruct && !clickDestruct) {
 		
 			if(rigth && Game.world.isFree((int)(x+speed), this.getY(), this.z)
 					&& EntitySolid.solidCollision((int)(x+speed), this.getY()) ) {
@@ -973,10 +1064,10 @@ public class Player extends Entity{
 	public void updateCamera() {
 		
 		if(Game.mapaGame.equals(Mapa.MAPA_ROOM_HOUSE_01)) {
-			Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/2), 0, Game.world.WIDTH*16 - Game.WIDTH + 51);
+			Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/2) + 8, 0, Game.world.WIDTH*16 - Game.WIDTH + 52);
 			Camera.y =  Camera.clamp(this.getY() - (Game.HEIGHT/2), -25, Game.world.HEIGHT*16 - Game.HEIGHT + 25);
 		}else {
-			Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/2), 0, Game.world.WIDTH*16 - Game.WIDTH);
+			Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/2) + 8, 0, Game.world.WIDTH*16 - Game.WIDTH);
 			Camera.y =  Camera.clamp(this.getY() - (Game.HEIGHT/2), 0, Game.world.HEIGHT*16 - Game.HEIGHT);
 		}
 	}

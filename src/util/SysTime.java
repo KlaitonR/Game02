@@ -13,7 +13,7 @@ import main.Sound;
 
 public class SysTime {
 
-	public int hour = 8, minute = 0, second = 0, darken;
+	public int hour = 8, minute = 0, second = 0, days = 0, darken;
 	public boolean dusk, dawn, night, day;
 	public int duskHour = 18, duskFinalHour = 19, dawnHour = 6, dawnFinalHour = 7;
 	public int controlDarken, opacityNight = 235;
@@ -75,7 +75,14 @@ public class SysTime {
 		coutTime(timer);
 		checkDuskOrDawn();
 		controllChuva(timer);
+		disableLigth();
 		
+	}
+	
+	public void disableLigth() {
+		if(hour >= dawnFinalHour && hour < duskHour) {
+			Game.player.useLighter = false;
+		}
 	}
 	
 	public void coutTime(double timer) {
@@ -95,8 +102,10 @@ public class SysTime {
 				hour++;
 			}
 				
-			if(hour == 24)
+			if(hour == 24) {
 				hour = 0;
+				days++;
+			}
 		}
 	}
 	
@@ -207,6 +216,8 @@ public class SysTime {
 				Sound.Clips.chuva.stop();
 			}
 		}
+		
+		chovendo = false;
 		
 		if(chovendo) {
 			if(timer > espera + init + tempMin) {

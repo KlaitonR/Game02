@@ -2,6 +2,8 @@ package entities.construction;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+
+import util.Id;
 import util.Mapa;
 import util.Regiao;
 
@@ -15,6 +17,7 @@ public class Statue extends Construction{
 		mwidth = 58;
 		mheigth = 60;
 		
+		id = Id.ID_STATUE;
 		mapa.add(Mapa.MAPA_CALABOUÇO);
 		regiao.add(Regiao.REGIAO_CALABOUÇO);
 		

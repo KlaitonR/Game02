@@ -11,6 +11,7 @@ public class GramaAgua extends Entity{
 		super(x, y, width, height, sprite);
 		mapa.add(Mapa.MAPA_FLORESTA);
 		regiao.add(Regiao.REGIAO_FLORESTA);
+		depth = 0;
 	}
 	
 }

@@ -53,25 +53,53 @@ public class Entity {
 	public static BufferedImage ENEMY_EN = Game.spritesheet.getSprite(6*16, 16, 16, 16);
 	static public BufferedImage STUMP_EN = Game.spritesheet.getSprite(32, 0, 16, 16);
 	public static BufferedImage RAIZ_EN = Game.spritesheet.getSprite(32, 16, 16, 16);
-	public static BufferedImage AXE_EN = Game.spritesheet.getSprite(0, 96, 16, 16);
+	public static BufferedImage AXE_EN = Game.spritesheet.getSprite(32, 256, 16, 16);
+	public static BufferedImage AXE_WOOD_EN = Game.spritesheet.getSprite(0, 256, 16, 16);
+	public static BufferedImage AXE_COOPER_EN = Game.spritesheet.getSprite(16, 256, 16, 16);
+	public static BufferedImage AXE_SILVER_EN = Game.spritesheet.getSprite(32, 256, 16, 16);
+	public static BufferedImage AXE_GOLD_EN = Game.spritesheet.getSprite(48, 256, 16, 16);
+	public static BufferedImage AXE_DIAMOND_EN = Game.spritesheet.getSprite(64, 256, 16, 16);
 	public static BufferedImage LIGHTER_EN = Game.spritesheet.getSprite(0, 128, 16, 16);
 	static public BufferedImage DOOR_EN = Game.spritesheet.getSprite(16, 16, 16, 16);
-	static public BufferedImage DOOR_LEFT_HOUSE_EN = Game.spritesheet.getSprite(16, 80, 16, 16); 
+	static public BufferedImage DOOR_LEFT_HOUSE_EN = Game.spritesheet.getSprite(80, 96, 16, 16); 
 	static public BufferedImage PLAT_EN = Game.spritesheet.getSprite(16, 176, 16, 16);
-	static public BufferedImage FISHING_ROD_EN = Game.spritesheet.getSprite(0, 208, 16, 16);
-	static public BufferedImage FISH_EN = Game.spritesheet.getSprite(16, 192, 16, 16);
+	static public BufferedImage FISHING_ROD_EN = Game.spritesheet.getSprite(0, 96, 16, 16);
+	static public BufferedImage FISH_EN = Game.spritesheet.getSprite(16, 144, 16, 16);
 	static public BufferedImage HOE_EN = Game.spritesheet.getSprite(16, 96, 16, 16);
+	static public BufferedImage HOE_WOOD_EN = Game.spritesheet.getSprite(0, 208, 16, 16);
+	static public BufferedImage HOE_COOPER_EN = Game.spritesheet.getSprite(16, 208, 16, 16);
+	static public BufferedImage HOE_SILVER_EN = Game.spritesheet.getSprite(32, 208, 16, 16);
+	static public BufferedImage HOE_GOLD_EN = Game.spritesheet.getSprite(48, 208, 16, 16);
+	static public BufferedImage HOE_DIAMOND_EN = Game.spritesheet.getSprite(64, 208, 16, 16);
 	static public BufferedImage GROUND_EN = Game.spritesheet.getSprite(0, 160, 16, 16);
-	static public BufferedImage GROUND_F1_EN = Game.spritesheet.getSprite(16, 208, 16, 16);
-	static public BufferedImage GROUND_F2_EN = Game.spritesheet.getSprite(16, 160, 16, 16);
-	static public BufferedImage GROUND_F3_EN = Game.spritesheet.getSprite(0, 192, 16, 16);
+	static public BufferedImage GROUND_F1_EN = Game.spritesheet.getSprite(16, 160, 16, 16);
+	static public BufferedImage GROUND_F2_EN = Game.spritesheet.getSprite(48, 160, 16, 16);
+	static public BufferedImage GROUND_F3_EN = Game.spritesheet.getSprite(64, 160, 16, 16);
 	public static BufferedImage FISHING_EN;
-	static public BufferedImage PIG_BEEF_EN = Game.spritesheet.getSprite(32, 192, 16, 16);
+	static public BufferedImage PIG_BEEF_EN = Game.spritesheet.getSprite(16, 128, 16, 16);
 	static public BufferedImage CREATION_TABLE_EN = Game.spritesheet.getSprite(16, 304, 16, 16);
 	static public BufferedImage POTION_EN = Game.spritesheet.getSprite(0, 272, 16, 16);
-	static public BufferedImage ESCADA_EN = Game.spritesheet.getSprite(0, 240, 16, 16);
-	static public BufferedImage PICARETA_EN = Game.spritesheet.getSprite(0, 80, 16, 16);
-	static public BufferedImage FORNO_EN = Game.spritesheet.getSprite(16, 288, 16, 16);
+	static public BufferedImage ESCADA_EN = Game.spritesheet.getSprite(0, 144, 16, 16);
+	static public BufferedImage PICARETA_EN = Game.spritesheet.getSprite(32, 240, 16, 16);
+	static public BufferedImage PICARETA_MADEIRA_EN = Game.spritesheet.getSprite(0, 240, 16, 16);
+	static public BufferedImage PICARETA_COBRE_EN = Game.spritesheet.getSprite(16, 240, 16, 16);
+	static public BufferedImage PICARETA_PRATA_EN = Game.spritesheet.getSprite(32, 240, 16, 16);
+	static public BufferedImage PICARETA_OURO_EN = Game.spritesheet.getSprite(48, 240, 16, 16);
+	static public BufferedImage PICARETA_DIAMANTE_EN = Game.spritesheet.getSprite(64, 240, 16, 16);
+	static public BufferedImage FORNO_LIGADO_EN = Game.spritesheet.getSprite(16, 288, 16, 16);
+	static public BufferedImage FORNO_DESLIGADO_EN = Game.spritesheet.getSprite(32, 272, 16, 16);
+	static public BufferedImage BARRA_COBRE_EN = Game.spritesheet.getSprite(64, 288, 16, 16);
+	static public BufferedImage BARRA_PRATA_EN = Game.spritesheet.getSprite(32, 288, 16, 16);
+	static public BufferedImage BARRA_OURO_EN = Game.spritesheet.getSprite(48, 288, 16, 16);
+	static public BufferedImage MADEIRA_PROCESSADA_EN = Game.spritesheet.getSprite(16, 272, 16, 16);
+	static public BufferedImage BLOCO_DE_MADEIRA_EN = Game.spritesheet.getSprite(16, 288, 16, 16);
+	static public BufferedImage ENXOFRE_PROCESSADO_EN = Game.spritesheet.getSprite(144, 288, 16, 16);
+	static public BufferedImage NITRATO_DE_POTASIO_PROCESSADO_EN = Game.spritesheet.getSprite(96, 288, 16, 16);
+	static public BufferedImage CARVAO_VEGETAL_EN = Game.spritesheet.getSprite(112, 288, 16, 16);
+	static public BufferedImage POLVORA_EN = Game.spritesheet.getSprite(160, 288, 16, 16);
+	static public BufferedImage FOGUEIRA_EN = Game.spritesheet.getSprite(48, 272, 16, 16);
+	static public BufferedImage BOMBA_EN = Game.spritesheet.getSprite(128, 303, 16, 16);
+	static public BufferedImage BOMBA_ATIVA_EN = Game.spritesheet.getSprite(144, 303, 16, 16);
 	
 	public BufferedImage getSprite() {
 		return sprite;
@@ -98,8 +126,6 @@ public class Entity {
 		this.masky = 0;
 		this.mwidth = width;
 		this.mheigth = height;
-		
-		depth = 1;
 		
 	}
 	
@@ -201,6 +227,22 @@ public class Entity {
 		return false;
 	}
 	
+//	public int depth(Entity e1, Entity e2) {
+//		
+//		double yEntity1 = e1.getY();
+//		double yEntity2 = e2.getY();
+//		
+//		
+//		
+//		if(yEntity1 > yEntity2 - 2) {
+//			return  1;
+//		
+//		}else {
+//			return 3;
+//		}
+//		
+//	}
+	
 	public static double calculateDistance(int x1, int y1, int x2, int y2) {
 		
 		return Math.sqrt((x1-x2) * (x1-x2) + (y1-y2) * (y1 - y2));
@@ -246,7 +288,6 @@ public class Entity {
 	
 	public void render(Graphics g) {
 		
-//			if(show)
 		g.drawImage(sprite ,this.getX() - Camera.x, this.getY() - Camera.y , null);
 		
 //		g.setColor(Color.red);

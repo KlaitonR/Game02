@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 
 import entities.Entity;
 import entities.itens.Axe;
+import entities.itens.Bomb;
 import entities.itens.FishingRod;
 import entities.itens.Hoe;
 import entities.itens.Lighter;
@@ -100,6 +101,9 @@ public class SystemInventory {
 						//verificações de itens 
 						if(inventario[hi] instanceof Lighter) {
 							Game.player.useLighter = false;
+						}else if(inventario[hi] instanceof Bomb) {
+							Bomb b = (Bomb)inventario[hi];
+							b.drop = true;
 						}
 						
 						//retira do inventario e da mão do player
@@ -214,6 +218,23 @@ public class SystemInventory {
 				}
 			}
 		}
+		
+		public void addItemOvenBonfire() {
+			
+			if(inventario[clickSelectIndexInv] != null) {
+				if(!Game.sysOvenBonfire.checkPackOvenBonfire(inventario[clickSelectIndexInv])) {
+					
+					int indexOvenBonfire = Game.sysOvenBonfire.indexSlotNull();
+					
+					if(indexOvenBonfire >= 0 && indexOvenBonfire < Game.sysCre.slot.length) {
+						Game.sysOvenBonfire.addItem(inventario[clickSelectIndexInv]);
+						handItem = null;
+						inv[clickSelectIndexInv] = null;
+						inventario[clickSelectIndexInv] = null;
+					}
+				}
+			}
+		}
 	
 		//chegar se já existe um pack no inventario do item que estiver pegando
 		public boolean checkPackInv(Entity atual) {
@@ -243,9 +264,11 @@ public class SystemInventory {
 								}
 							}
 							
+							checkTypeItem(atual) ;
 							inventario[i].itensPack.add(atual);
 							Game.entities.remove(atual);
 							return true;
+							
 						}
 					}
 				}
@@ -321,6 +344,15 @@ public class SystemInventory {
 		}
 		
 		return false;
+	}
+
+	private void checkTypeItem(Entity atual) {
+
+		if(atual instanceof Bomb) {
+			Bomb b = (Bomb)atual;
+			b.drop = false;
+		}
+		
 	}
 
 	public void putItemBag() {

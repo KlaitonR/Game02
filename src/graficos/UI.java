@@ -15,7 +15,7 @@ import world.Camera;
 public class UI {
 	
 	private BufferedImage [] button;
-	private BufferedImage [] UI;
+	public BufferedImage [] UI;
 	public InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("fonts/pixelfont.ttf");
 	public InputStream stream02 = ClassLoader.getSystemClassLoader().getResourceAsStream("fonts/pixelfont.ttf");
 	public Font newfont;
@@ -24,11 +24,12 @@ public class UI {
 	public boolean buttonColletct;
 	public boolean buttonEnterRoom;
 	public boolean buttonUseItem;
+	public boolean buttonEsc;
 	
 	public UI(Spritsheet spritButton) {
 		
 		spriteUI =  new Spritsheet("/spritesSheet/spriteUI.png");
-		UI = new BufferedImage[14];
+		UI = new BufferedImage[21];
 		
 		UI[0] = spriteUI.getSprite(0, 0, 128, 48); //Inventario
 		UI[1] = spriteUI.getSprite(0, 48, 32, 32); //Seleção do inventário
@@ -37,13 +38,20 @@ public class UI {
 		UI[4] = spriteUI.getSprite(64, 48, 16, 16); //Icone nível
 		UI[5] = spriteUI.getSprite(80, 48, 16, 16); //Icone mapa
 		UI[6] = spriteUI.getSprite(0, 208, 80, 96); //Aba de níveis
-		UI[7] = spriteUI.getSprite(0, 304, 96, 64); //Craft
+		UI[7] = spriteUI.getSprite(0, 304, 80, 48); //Craft
 		UI[8] = spriteUI.getSprite(64, 64, 16, 16); //Icone Munição
 		UI[9] = spriteUI.getSprite(0, 368, 80, 16); //Life Player
 		UI[10] = spriteUI.getSprite(80, 64, 16, 16); //Button R
 		UI[11] = spriteUI.getSprite(96, 64, 16, 16); //Button G
 		UI[12] = spriteUI.getSprite(112, 64, 16, 16); //Button Z
 		UI[13] = spriteUI.getSprite(80, 80, 16, 16); //Dinheiro $
+		UI[14] = spriteUI.getSprite(128, 0, 48, 80); //Forno
+		UI[15] = spriteUI.getSprite(96, 48, 16, 16); //Icone Build
+		UI[16] = spriteUI.getSprite(112, 48, 16, 16); //Icone Remover
+		UI[17] = spriteUI.getSprite(176, 0, 128, 112); //Aba Build Constructions
+		UI[18] = spriteUI.getSprite(96, 80, 16, 16); //Icone de informação
+		UI[19] = spriteUI.getSprite(160, 80, 16, 16); //Forno ligado
+		UI[20] = spriteUI.getSprite(112, 80, 16, 16); //Button ESC
 		
 		button = new BufferedImage[2];
 		button[0] = Game.spriteButton.getSprite(0, 0, 5, 5);
@@ -73,6 +81,9 @@ public class UI {
 				g.drawString("0" + Game.sysTime.hour + ":" + Game.sysTime.minute,  7,  25 );
 			if(Game.sysTime.hour >= 10 && Game.sysTime.minute >= 10) 
 				g.drawString(Game.sysTime.hour + ":" + Game.sysTime.minute,  7,  25 );
+			
+			g.drawString("Day " + Game.sysTime.days, 45, 25);
+			
 		}
 	}
 	
@@ -143,14 +154,16 @@ public class UI {
 	
 	private void levelTab(Graphics g) {
 		
-		
 		g.drawImage(UI[4], 7, 28, null);
 		g.drawImage(UI[5], 7, 41, null);
+		g.drawImage(UI[15], 7, 54, null);
+		g.drawImage(UI[16], 7, 67, null);
 			
 		if(Game.player.openLvls && !Game.player.offLvls) {
 			
 			g.drawImage(UI[6], 23 ,29 , null);
 				
+			//attack
 			g.setColor(Color.black);
 			g.fillRect(58, 44, 40, 5);
 			g.setColor(new Color(93,128,158));
@@ -170,6 +183,7 @@ public class UI {
 				g.fillRect(58, 65,(int)(((Game.player.exp + dif)/Game.player.maxExp[Game.player.levelPlayer])*38), 3);
 			}
 			
+			//WoodCutting
 			g.setColor(Color.black);
 			g.fillRect(58, 55, 40, 5);
 			g.setColor(new Color(93,128,158));
@@ -178,16 +192,20 @@ public class UI {
 			
 			g.setFont(new Font("arial", Font.BOLD, 7));
 			g.setColor(Color.white);
-			g.drawString("" + (int)Game.player.exp + "/" + (int)Game.player.maxExp[Game.player.levelPlayer], 37, 60);
+			g.drawString("" + (int)Game.player.expWoodCutting + "/" + (int)Game.player.maxExp[Game.player.levelWoodCutting], 37, 60);
 			
 			double dif2;
-			dif2 = Game.player.maxExp[Game.player.levelPlayer] - Game.player.exp;
+			dif2 = Game.player.maxExp[Game.player.levelWoodCutting] - Game.player.expWoodCutting;
 			
-			if(dif2 <= Game.player.maxExp[Game.player.levelPlayer] && dif2 > 0){
-				g.fillRect(58, 65,(int)((Game.player.exp/Game.player.maxExp[Game.player.levelPlayer])*38), 3);
+			if(dif2 <= Game.player.maxExp[Game.player.levelWoodCutting] && dif2 > 0) {
+				g.fillRect(58, 56,(int)((Game.player.expWoodCutting/Game.player.maxExp[Game.player.levelWoodCutting])*39), 3);
 			}else {
-				g.fillRect(58, 65,(int)(((Game.player.exp + dif2)/Game.player.maxExp[Game.player.levelPlayer])*38), 3);
+				g.fillRect(58, 56,(int)(((Game.player.expWoodCutting + dif2)/Game.player.maxExp[Game.player.levelWoodCutting])*39), 3);
 			}
+			
+//			System.out.println(Game.player.levelWoodCutting);
+			System.out.println(Game.player.expWoodCutting);
+//			System.out.println(Game.player.expWoodCuttingTtl);
 			
 			g.setColor(Color.black);
 			g.fillRect(58, 66, 40, 5);
@@ -241,21 +259,45 @@ public class UI {
 			
 			g.setFont(new Font("arial", Font.BOLD, 7));
 			g.setColor(new Color(255,157,0));
-			g.drawString("" + (int)(Game.player.levelPlayer + 1), 54, 122);
+			g.drawString("" + (int)(Game.player.levelPlayer), 54, 122);
 			
 		}else {
 			Game.player.offLvls = false;
 		}
 	}
 	
+	private void abaBuild(Graphics g) {
+		
+		if(Game.player.build) {
+			g.drawImage(UI[17], 65, 30, null);
+			g.drawImage(Game.sysBuild.buildImage[0], 67, 38, null);
+			g.drawImage(Game.sysBuild.buildImage[1], 86, 38, null);
+			g.drawImage(Game.sysBuild.buildImage[2], 105, 38, null);
+			
+			if(Game.player.clickBuildDescription) {
+				g.drawImage(UI[18], 64, 90, null);
+				g.drawImage(UI[13], 65, 114, null);
+			}
+		}
+	}
+	
+//	public void sysBuild(Graphics g){
+//		
+//		Graphics2D g2 = (Graphics2D) g;
+//		g2.setColor(new Color(48, 204, 40, 150));
+//		if(Game.sysBuild.building)
+//			g2.fillRect(Game.sysBuild.xTarget, Game.sysBuild.yTarget, 16, 16);
+//		
+//	}
+	
 	public void systemBag(Graphics g) {
 		
-		g.drawImage(UI[2], 85 ,10 , null);
+		g.drawImage(UI[2], 85 , 8 , null);
 		
 		//Apenas renderizando oque foi colocado no buffer do inventario
 		for(int j=0; j < 6; j++) {
 			for(int i=0; i < 4; i++) {
-				g.drawImage(Game.sysBag.bag[i][j], 87 + (i*19), 20 + (j*18), null);
+				g.drawImage(Game.sysBag.bag[i][j], 87 + (i*19), 19 + (j*18), null);
 				
 				if(Game.sysBag.bag[i][j] != null &&
 					Game.sysBag.bagpack[i][j] != null &&
@@ -269,32 +311,32 @@ public class UI {
 	
 		int [] index = Game.sysBag.getIndexClickBag();
 		if(index != null)
-			g.drawImage(UI[3], 87 + (index[1]*19), 21 + (index[0]*18) , null);
+			g.drawImage(UI[3], 87 + (index[1]*19), 20 + (index[0]*18) , null);
 		
 	}
 	
 	public void systemCreation(Graphics g) {
 		
-		g.drawImage(UI[7], 75 , 50, null);	
+		g.drawImage(UI[7], 85 , 50, null);	
 		
 		//Apenas renderizando oque foi colocado no buffer do inventari
 							
-		g.drawImage(Game.sysCre.itens[0], 83, 60, null);
+		g.drawImage(Game.sysCre.itens[0], 89, 60, null);
 		
-		g.drawImage(Game.sysCre.itens[1], 115, 60, null);
+		g.drawImage(Game.sysCre.itens[1], 108, 60, null);
 		
-		g.drawImage(Game.sysCre.itens[2], 83, 90, null);
+		g.drawImage(Game.sysCre.itens[2], 89, 78, null);
 		
-		g.drawImage(Game.sysCre.itens[3], 115, 90, null);
+		g.drawImage(Game.sysCre.itens[3], 108, 78, null);
 		
-		g.drawImage(Game.sysCre.itens[4], 148, 75, null);
+		g.drawImage(Game.sysCre.itens[4], 133, 69, null);
 					
 		if(Game.sysCre.slot[0] != null &&
 				Game.sysCre.slot[0] != null &&
 						Game.sysCre.slot[0].itensPack.size()+1 > 1 ){
 			g.setFont(new Font("arial", Font.BOLD, 9));
 			g.setColor(Color.white);
-			g.drawString((Game.sysCre.slot[0].itensPack.size() + 1) + "", 83, 75);
+			g.drawString((Game.sysCre.slot[0].itensPack.size() + 1) + "", 89, 75);
 		}
 		
 		if(Game.sysCre.slot[1] != null &&
@@ -302,7 +344,7 @@ public class UI {
 						Game.sysCre.slot[1].itensPack.size()+1 > 1 ){
 			g.setFont(new Font("arial", Font.BOLD, 9));
 			g.setColor(Color.white);
-			g.drawString((Game.sysCre.slot[1].itensPack.size() + 1) + "", 115, 75);
+			g.drawString((Game.sysCre.slot[1].itensPack.size() + 1) + "", 108, 75);
 		}
 		
 		if(Game.sysCre.slot[2] != null &&
@@ -310,7 +352,7 @@ public class UI {
 						Game.sysCre.slot[2].itensPack.size()+1 > 1 ){
 			g.setFont(new Font("arial", Font.BOLD, 9));
 			g.setColor(Color.white);
-			g.drawString((Game.sysCre.slot[2].itensPack.size() + 1) + "", 83, 105);
+			g.drawString((Game.sysCre.slot[2].itensPack.size() + 1) + "", 89, 93);
 		}
 		
 		if(Game.sysCre.slot[3] != null &&
@@ -318,7 +360,7 @@ public class UI {
 						Game.sysCre.slot[3].itensPack.size()+1 > 1 ){
 			g.setFont(new Font("arial", Font.BOLD, 9));
 			g.setColor(Color.white);
-			g.drawString((Game.sysCre.slot[3].itensPack.size() + 1) + "", 115, 105);
+			g.drawString((Game.sysCre.slot[3].itensPack.size() + 1) + "", 108, 93);
 		}
 		
 		if(Game.sysCre.slot[4] != null &&
@@ -352,6 +394,40 @@ public class UI {
 		}
 	}
 	
+	public void sysOven(Graphics g) {
+		
+		g.drawImage(UI[14], 95, 40, null);
+		
+		if(Game.sysOvenBonfire.imageSlot[2] != null)
+			g.drawImage(UI[19], 111, 56, null);
+		
+		g.drawImage(Game.sysOvenBonfire.imageSlot[0], 111, 89, null);
+		g.drawImage(Game.sysOvenBonfire.imageSlot[1], 111, 69, null);
+		g.drawImage(Game.sysOvenBonfire.imageSlot[2], 111, 42, null);
+		
+		g.setFont(new Font("arial", Font.BOLD, 9));
+		g.setColor(Color.white);
+		
+		if(Game.sysOvenBonfire.slot[0] != null &&
+						Game.sysOvenBonfire.slot[0].itensPack.size()+1 > 1 ){
+			g.drawString((Game.sysOvenBonfire.slot[0].itensPack.size() + 1) + "", 111, 105);
+			
+		}
+		
+		if(Game.sysOvenBonfire.slot[1] != null &&
+				Game.sysOvenBonfire.slot[1].itensPack.size()+1 > 1 ){
+				g.drawString((Game.sysOvenBonfire.slot[1].itensPack.size() + 1) + "", 111, 85);
+	
+		}
+		
+		if(Game.sysOvenBonfire.slot[2] != null ){
+				g.drawString((Game.sysOvenBonfire.slot[2].itensPack.size() + 1) + "", 111, 57);
+	
+		}
+		
+		
+	}
+	
 	public void render(Graphics g) {
 		
 		lifeMobs(g);
@@ -363,12 +439,12 @@ public class UI {
 		g.setColor(Color.yellow);
 		g.drawString("" + Game.player.ammo, 220, 8);
 		
-		g.drawImage(UI[13], 207, 10, null); 
+		g.drawImage(UI[13], 201, 10, null); 
 		g.setFont(new Font("arial", Font.BOLD, 8));
 		g.setColor(Color.black);
-		g.drawString("" + 245, 222, 19);
+		g.drawString("" + Game.player.money, 215, 19);
 		g.setColor(new Color(0,210,25));
-		g.drawString("" + 245, 221, 19);
+		g.drawString("" + Game.player.money, 214, 19);
 		
 //		g.setColor(Color.darkGray); 
 //		g.drawString("Level " + Game.CUR_LEVEL, 10, 745);
@@ -377,7 +453,18 @@ public class UI {
 		timeSystem(g);
 		invSystem(g);
 		levelTab(g);
+		abaBuild(g);
+//		sysBuild(g);
 		systemDialog(g);
+		
+//		Game.abaOvenAndBonfire = false;
+//		Game.player.openOven = false;
+//		
+//		Game.abaOvenAndBonfire = true;
+//		Game.player.openOven = true;
+		if(Game.player.openOven)
+			sysOven(g);
+		
 		
 		if(Game.player.useBag)
 			systemBag(g);
@@ -395,6 +482,10 @@ public class UI {
 		
 		if (buttonEnterRoom) {
 			g.drawImage(UI[12], 220, 140, null);
+		}
+		
+		if(buttonEsc) {
+			g.drawImage(UI[20], 220, 140, null);
 		}
 	
 	}

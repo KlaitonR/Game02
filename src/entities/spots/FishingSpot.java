@@ -91,11 +91,11 @@ public class FishingSpot extends Entity{
 	public void render(Graphics g) {
 		super.render(g);
 		
-		maskx = 0;
-		masky = -1;
-		mwidth = 16;
-		mheigth = 13;
-		
+//		maskx = -1;
+//		masky = -2;
+//		mwidth = 18;
+//		mheigth = 20;
+//		
 //		g.setColor(Color.black);
 //		g.fillRect(this.getX() - Camera.x + maskx, this.getY() - Camera.y + masky, mwidth, mheigth);
 		

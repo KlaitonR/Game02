@@ -16,6 +16,9 @@ public class Ore extends Entity{
 	static public BufferedImage ORE_COAL_EN = Game.spritesheet.getSprite(32, 128, 16, 16);
 	static public BufferedImage EMERALD_EN = Game.spritesheet.getSprite(32, 144, 16, 16);
 	static public BufferedImage STONE_EN = Game.spritesheet.getSprite(32, 48, 16, 16);
+	static public BufferedImage SULFOR_EN = Game.spritesheet.getSprite(128, 288, 16, 16);
+	static public BufferedImage POTASSIUM_NITRATE_EN = Game.spritesheet.getSprite(80, 288, 16, 16);
+	static public BufferedImage PHOSPHOR_EN = Game.spritesheet.getSprite(112, 64, 16, 16);
 	
 	public Ore(double x, double y, int width, int height, BufferedImage sprite) {
 		super(x, y, width, height, sprite);

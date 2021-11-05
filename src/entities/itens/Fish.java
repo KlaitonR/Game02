@@ -15,8 +15,8 @@ public class Fish extends Entity {
 		
 		mwidth = 14;
 		mheigth = 12;
-		maskx = + 2;
-		masky = + 2;
+		maskx = 2;
+		masky = 2;
 		
 		pack = true;
 		qtPack = 63;

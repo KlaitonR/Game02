@@ -2,13 +2,15 @@ package world;
 
 import entities.Staircase;
 import entities.NPC.Npc;
-import entities.construction.Bed;
-import entities.construction.Cabinet;
-import entities.construction.FlowerVase;
 import entities.construction.House;
 import entities.construction.Mine;
+import entities.construction.MineLand;
 import entities.construction.Statue;
-import entities.construction.Table;
+import entities.construction.Thorn;
+import entities.construction.mobilia.Bed;
+import entities.construction.mobilia.Cabinet;
+import entities.construction.mobilia.FlowerVase;
+import entities.construction.mobilia.Table;
 import entities.spots.FishingSpot;
 import entities.spots.MiningSite;
 import entities.spots.Tree;
@@ -29,7 +31,9 @@ public class EntitySolid {
 				MobiliaBed(xNext, yNext) &&
 				MobiliaTable(xNext, yNext) &&
 				MobiliaCabinet(xNext, yNext) &&
-				MobiliaVase(xNext, yNext)) {
+				MobiliaVase(xNext, yNext) &&
+				solidThorn(xNext, yNext) &&
+				solidMineLand(xNext, yNext)) {
 			return true;
 		}
 		return false;
@@ -107,13 +111,13 @@ public class EntitySolid {
 	
 	public static boolean solidMine(int xNext, int yNext) {
 		
-		int x1 = (xNext + 4) / Game.world.TILE_SIZE;
+		int x1 = (xNext + 5) / Game.world.TILE_SIZE;
 		int y1 = (yNext + 8) / Game.world.TILE_SIZE;
 		
 		int x2 = (xNext + Game.world.TILE_SIZE - 9) / Game.world.TILE_SIZE;
 		int y2 = (yNext + 8) / Game.world.TILE_SIZE;
 		
-		int x3 = (xNext + 4) / Game.world.TILE_SIZE; 
+		int x3 = (xNext + 5) / Game.world.TILE_SIZE; 
 		int y3 = (yNext + Game.world.TILE_SIZE - 8) / Game.world.TILE_SIZE; 
 		
 		int x4 = (xNext + Game.world.TILE_SIZE - 9) / Game.world.TILE_SIZE; 
@@ -174,6 +178,54 @@ public class EntitySolid {
 				(Game.world.tiles[x4 + (y4*Game.world.WIDTH)].en instanceof House)){
 			return true;
 		}
+		return false;
+	}
+	
+	public static boolean solidThorn(int xNext, int yNext) {
+		
+		int x1 = (xNext + 5) / Game.world.TILE_SIZE;
+		int y1 = (yNext + 2) / Game.world.TILE_SIZE;
+		
+		int x2 = (xNext + Game.world.TILE_SIZE - 6) / Game.world.TILE_SIZE;
+		int y2 = (yNext + 2) / Game.world.TILE_SIZE;
+		
+		int x3 = (xNext + 5) / Game.world.TILE_SIZE;
+		int y3 = (yNext + Game.world.TILE_SIZE -1) / Game.world.TILE_SIZE;
+		
+		int x4 = (xNext + Game.world.TILE_SIZE - 6) / Game.world.TILE_SIZE;
+		int y4 = (yNext + Game.world.TILE_SIZE -1) / Game.world.TILE_SIZE;
+		
+		if (!((Game.world.tiles[x1 + (y1*Game.world.WIDTH)].en instanceof Thorn) ||
+				(Game.world.tiles[x2 + (y2*Game.world.WIDTH)].en instanceof Thorn) ||
+				(Game.world.tiles[x3 + (y3*Game.world.WIDTH)].en instanceof Thorn) ||
+				(Game.world.tiles[x4 + (y4*Game.world.WIDTH)].en instanceof Thorn))){		
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public static boolean solidMineLand(int xNext, int yNext) {
+		
+		int x1 = (xNext + 5) / Game.world.TILE_SIZE;
+		int y1 = (yNext + 2) / Game.world.TILE_SIZE;
+		
+		int x2 = (xNext + Game.world.TILE_SIZE - 6) / Game.world.TILE_SIZE;
+		int y2 = (yNext + 2) / Game.world.TILE_SIZE;
+		
+		int x3 = (xNext + 5) / Game.world.TILE_SIZE;
+		int y3 = (yNext + Game.world.TILE_SIZE -1) / Game.world.TILE_SIZE;
+		
+		int x4 = (xNext + Game.world.TILE_SIZE - 6) / Game.world.TILE_SIZE;
+		int y4 = (yNext + Game.world.TILE_SIZE -1) / Game.world.TILE_SIZE;
+		
+		if (!((Game.world.tiles[x1 + (y1*Game.world.WIDTH)].en instanceof MineLand) ||
+				(Game.world.tiles[x2 + (y2*Game.world.WIDTH)].en instanceof MineLand) ||
+				(Game.world.tiles[x3 + (y3*Game.world.WIDTH)].en instanceof MineLand) ||
+				(Game.world.tiles[x4 + (y4*Game.world.WIDTH)].en instanceof MineLand))){		
+			return true;
+		}
+		
 		return false;
 	}
 	
@@ -239,8 +291,8 @@ public class EntitySolid {
 	}
 	
 	public static boolean MobiliaCabinet(int xNext, int yNext) {
-		int x1 = (xNext + 8) / Game.world.TILE_SIZE;
-		int y1 = (yNext ) / Game.world.TILE_SIZE;
+		int x1 = (xNext + 7) / Game.world.TILE_SIZE;
+		int y1 = (yNext + 2) / Game.world.TILE_SIZE;
 		
 		if (!((Game.world.tiles[x1 + (y1*Game.world.WIDTH)].en instanceof Cabinet))){
 			return true;

@@ -29,20 +29,27 @@ import entities.Enemy;
 import entities.Entity;
 import entities.Particle;
 import entities.Player;
+import entities.construction.Mine;
+import entities.construction.MineLand;
+import entities.construction.Thorn;
 import entities.mobs.Mob;
 import entities.objectMap.GramaAgua;
 import entities.objectMap.VitoriaRegia;
 import graficos.Spritsheet;
 import graficos.UI;
 import util.CollisonPlayer;
+import util.CreateItemOvenBonfire;
 import util.CreationItem;
 import util.GetResource;
 import util.Mapa;
 import util.Regiao;
 import util.SysTime;
 import util.SystemBag;
+import util.SystemBuild;
 import util.SystemCreation;
+import util.SystemDestruct;
 import util.SystemInventory;
+import util.SystemOvenBonfire;
 import world.WaterTile;
 import world.World;
 
@@ -71,6 +78,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	static public Spritsheet spriteMobs;
 	static public Spritsheet spriteContruction;
 	static public Spritsheet spriteButton;
+	static public Spritsheet spriteBomb;
 
 	static public Mapa mapaGame;
 	static public Regiao regiaoGame;
@@ -80,8 +88,12 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public static CollisonPlayer collision;
 	public static SystemCreation sysCre;
 	public static CreationItem createItem;
+	public static CreateItemOvenBonfire createItemOvenBonfire;
 	public static SystemInventory sysInv;
 	public static SystemBag sysBag;
+	public static SystemBuild sysBuild;
+	public static SystemDestruct sysDestruct;
+	public static SystemOvenBonfire sysOvenBonfire;
 	public static SysTime sysTime;
 	public static GetResource getResource;
 	public Menu menu;
@@ -126,7 +138,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public static int jogando = 3;
 	public static int estado_cena = jogando;
 	public int darkenScena = 255;
-	public boolean enterWorld;
+	public static boolean enterWorld, modeConstruction, modeDesreuct;
 
 	public int timeCena = 0, maxTimeCena = 60 * 3;
 
@@ -184,6 +196,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		spritePlayerAnimation = new Spritsheet("/spritesSheet/spritePlayerAnimation.png");
 		spriteMobs = new Spritsheet("/spritesSheet/spriteMobs.png");
 		spriteContruction = new Spritsheet("/spritesSheet/spriteConstruction.png");
+		spriteBomb = new Spritsheet("/spritesSheet/spriteBomb.png");
 		player = new Player(0, 0, 16, 16, spritePlayer.getSprite(0, 0, 16, 16));
 		player.mapa.addAll(Mapa.addAll());
 		player.regiao.addAll(Regiao.addAll());
@@ -191,7 +204,11 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		sysBag = new SystemBag();
 		sysCre = new SystemCreation();
 		sysTime = new SysTime();
+		sysBuild = new SystemBuild();
+		sysDestruct = new SystemDestruct();
+		sysOvenBonfire = new SystemOvenBonfire();
 		createItem = new CreationItem();
+		createItemOvenBonfire = new CreateItemOvenBonfire();
 		collision = new CollisonPlayer();
 		getResource = new GetResource();
 		entities.add(player);
@@ -398,32 +415,36 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 
 					world = worlds.get(indexRoom);
 
+					//calabouço >> floresta
 					if (mapaGame.equals(Mapa.MAPA_FLORESTA) &&
 							regiaoGame.equals(Regiao.REGIAO_FLORESTA) &&
 							player.backRoom.equals(Mapa.MAPA_CALABOUÇO)) {
-						player.setX(120);
-						player.setY(56);
+						player.setX(Mine.psX + 8);
+						player.setY(Mine.psY + 24);
 						player.dir = player.rightDir;
 						
+					//floresta >> calabouco
 					} else if (mapaGame.equals(Mapa.MAPA_CALABOUÇO) &&
 							regiaoGame.equals(Regiao.REGIAO_CALABOUÇO) &&
 							player.backRoom.equals(Mapa.MAPA_FLORESTA)) {
-						player.setX(14);
-						player.setY(96);
+						player.setX((1*world.TILE_SIZE)-1);
+						player.setY(6*world.TILE_SIZE);
 						player.dir = player.rightDir;
 						
+					//floresta >> casa
 					} else if (mapaGame.equals(Mapa.MAPA_ROOM_HOUSE_01) &&
 							regiaoGame.equals(Regiao.REGIAO_ROOM_HOUSE_01) &&
 							player.backRoom.equals(Mapa.MAPA_FLORESTA)) {
-						player.setX(14);
-						player.setY(48);
+						player.setX((1*world.TILE_SIZE)-2);
+						player.setY(3*world.TILE_SIZE);
 						player.dir = player.rightDir;
 						
+					//casa >> floresta
 					} else if (mapaGame.equals(Mapa.MAPA_FLORESTA) &&
 							regiaoGame.equals(Regiao.REGIAO_FLORESTA) &&
 							player.backRoom.equals(Mapa.MAPA_ROOM_HOUSE_01)) {
-						player.setX(202);
-						player.setY(66);
+						player.setX((50*world.TILE_SIZE)-8);
+						player.setY((51*world.TILE_SIZE)+2);
 						player.dir = player.leftDir;
 						
 					}
@@ -464,6 +485,8 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			tickWaterFrames();
 			// CHUVA
 			sysTime.tick(timer);
+			sysBuild.tick();
+			sysDestruct.tick();
 		}
 
 	}
@@ -519,6 +542,16 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 
 		}
 	}
+	
+	public void verificaUnlockedBuilding() {
+		
+		if(player.levelPlayer >= 0) {
+			Mine.unlocked = true;
+			Thorn.unlocked = true;
+			MineLand.unlocked = true;
+		}
+		
+	}
 
 //	public void drawRectangleExemple(int xoff, int yoff) {
 //		for (int xx = 0; xx<32; xx++) {
@@ -572,12 +605,14 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		}
 	}
 	
-	private void shadeEnterWorld(Graphics g) {
+	private void shade(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
-		darkenScena -= 5;
+		darkenScena -= 4; 
 		if (darkenScena < 0) {
 			g2.setColor(new Color(0, 0, 0, 0));
 			enterWorld = false;
+			modeConstruction = false;
+			modeDesreuct = false;
 			darkenScena = 255;
 		}else {
 			g2.setColor(new Color(0, 0, 0, darkenScena));
@@ -603,7 +638,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		}
 		
 		world.render(g);
-		// depth
+		// ordenar depth
 		Collections.sort(entities, Entity.nodeSorter);
 
 		for (int i = 0; i < mobs.size(); i++) {
@@ -615,10 +650,8 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 
 		for (int i = 0; i < entities.size(); i++) {
 			Entity e = entities.get(i);
-//			if(e.show)
-			if (e.mapa.contains(Game.mapaGame) && e.regiao.contains(Game.regiaoGame)) {
+			if (e.mapa.contains(Game.mapaGame) && e.regiao.contains(Game.regiaoGame)) 
 				e.render(g);
-			}
 		}
 
 		for (int i = 0; i < bulletShootes.size(); i++) {
@@ -648,9 +681,11 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 
 		if (gameState.equals("NORMAL")) {
 			sysTime.render(g);
+			sysBuild.renderBuilding(g);
+			sysDestruct.renderDestruct(g);
 			
-			if(enterWorld) {
-				shadeEnterWorld(g);
+			if(enterWorld || modeConstruction || modeDesreuct) {
+				shade(g);
 			}
 			
 		}
@@ -661,7 +696,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		if (estado_cena == comecar) {
 			g.setFont(new Font("arial", Font.BOLD, 50));
 			g.setColor(Color.white);
-			g.drawString("GO!", Game.WIDTH / 2 - 40, Game.HEIGHT / 2 + 20);
+			g.drawString("1999", Game.WIDTH / 2 - 40, Game.HEIGHT / 2 + 20);
 		} else if (estado_cena == entrada) {
 			player.render(g);
 		}
@@ -679,8 +714,13 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		if (gameState.equals("NORMAL") || Menu.pause) {
 
 			if (player.openMap)
-				g.drawImage(world.minimapa, 1070, 40, Toolkit.getDefaultToolkit().getScreenSize().width / 5,
+				g.drawImage(world.minimapa, 1070, 105, Toolkit.getDefaultToolkit().getScreenSize().width / 5,
 						Toolkit.getDefaultToolkit().getScreenSize().height / 3, null);
+			
+			//Apresentar descrição e preço das construções
+			renderDescription(g);
+			renderMessageErrorConstruction(g);
+			
 		}
 
 		if (gameState.equals("GAME OVER")) {
@@ -728,6 +768,44 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 //		g.fillRect(200, 200, 50, 50);
 
 		bs.show();
+	}
+	
+	public void renderDescription(Graphics g) {
+		if(player.clickBuildDescription && player.build && !player.clickConstruction) {
+			
+			g.setFont(new Font("arial", Font.BOLD, 20));
+			g.setColor(Color.white);
+			
+			if(Game.player.indexDescription == 0) {
+				g.drawString("" + Mine.description, 450, 475);
+				g.drawString("" + Mine.price, 450, 580);
+				
+			}else if(Game.player.indexDescription == 1){
+				g.drawString("" + Thorn.description, 450, 475);
+				g.drawString("" + Thorn.price, 450, 580);
+				
+			}else if(Game.player.indexDescription == 2){
+				g.drawString("" + MineLand.description, 450, 475);
+				g.drawString("" + MineLand.price, 450, 580);
+			}
+		}
+	}
+	
+	public void renderMessageErrorConstruction(Graphics g) {
+		if(sysBuild.message != null) {
+			
+			g.setColor(new Color(0,0,0,200));
+			g.fillRect(12, 522, 500, 45);
+			
+//			g.setColor(new Color(255,255,255,150));
+//			g.drawRect(14, 524, 495, 40);
+			
+			g.drawImage(ui.UI[18], 1 ,514, ui.UI[18].getWidth()*4, ui.UI[18].getHeight()*4, null);
+			
+			g.setFont(new Font("arial", Font.BOLD, 20));
+			g.setColor(new Color(255,255,255,255));
+			g.drawString("" + sysBuild.message, 60, 552);
+		}
 	}
 
 	@Override
@@ -802,18 +880,20 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			}
 
 			if (e.getKeyCode() == KeyEvent.VK_R) {
-				if (gameState.equals("NORMAL"))
+				if (gameState.equals("NORMAL")) {
 					player.useItem = true;
+				}
 			}
 
 			if (e.getKeyCode() == KeyEvent.VK_F) {
 				if (gameState.equals("NORMAL"))
 					player.dropItem = true;
 			}
-
+			
 			if (e.getKeyCode() == KeyEvent.VK_G) {
 				if (gameState.equals("NORMAL")) {
-					player.getItem = true;
+					if(!player.openOven)
+						player.getItem = true;
 				}
 			}
 
@@ -830,7 +910,8 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			if (e.getKeyCode() == KeyEvent.VK_B) {
 
 				if (gameState.equals("NORMAL")) {
-					if (!player.creation && !player.openLvls) {
+					if (!player.creation && !player.openLvls && !player.build && !Game.player.openOven &&
+							 !Game.sysBuild.building && !Game.sysDestruct.destruct) {
 						if (!player.useBag)
 							player.useBag = true;
 						else
@@ -843,7 +924,8 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 
 			if (e.getKeyCode() == KeyEvent.VK_K) {
 				if (gameState.equals("NORMAL")) {
-					if (!player.useBag && !player.openLvls) {
+					if (!player.useBag && !player.openLvls && !player.build && !Game.player.openOven &&
+							!Game.sysBuild.building && !Game.sysDestruct.destruct) {
 						if (!player.creation)
 							player.creation = true;
 						else
@@ -855,7 +937,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 
 			if (e.getKeyCode() == KeyEvent.VK_Z) {
 				if (gameState.equals("NORMAL")) {
-					if (!player.creation && !player.useBag)
+					if (!player.creation && !player.useBag && !enterWorld && !Game.player.openOven)
 						player.enter = true;
 				}
 			}
@@ -899,7 +981,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 				player.down = false;
 			}
 
-			if (e.getKeyCode() == KeyEvent.VK_R) {
+			if (e.getKeyCode() == KeyEvent.VK_R) {				
 				player.useItem = false;
 			}
 
@@ -916,7 +998,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			}
 
 			if (e.getKeyCode() == KeyEvent.VK_Z) {
-				player.enter = false;
+					player.enter = false;
 			}
 
 		}
@@ -929,10 +1011,18 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		}
 
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+			
+			Game.ui.buttonEsc = false;
 
 			if (gameState.equals("NORMAL")) {
-				gameState = "MENU";
-				Menu.pause = true;
+				if(!sysBuild.building && !sysDestruct.destruct) {
+					gameState = "MENU";
+					Menu.pause = true;
+				}else {
+					sysBuild.building = false;
+					sysBuild.index = -1;
+					sysDestruct.destruct = false;
+				}
 			} else if (gameState.equals("MENU")) {
 				gameState = "NORMAL";
 			}
@@ -946,7 +1036,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-
+		
 		player.mouseShoot = true;
 		player.mx = e.getX() / 3;
 		player.my = e.getY() / 3;
@@ -957,203 +1047,233 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 //		System.out.println("x: " + player.mx + "    y:" + player.my);
 
 		if (gameState.equals("NORMAL")) {
-			if (!player.useBag && !player.openLvls && player.mx >= 10 && player.my >= 43 && player.mx <= 37
-					&& player.my <= 63) {
+			
+			//Aba levels
+			if (!player.useBag && !player.creation && !player.build && !player.openLvls &&  !Game.player.openOven &&
+					!sysBuild.building && !sysDestruct.destruct &&
+					player.mx >= 15 && player.my >= 48 && player.mx <= 41 && player.my <= 69) {
 				player.openLvls = true;
 				player.offLvls = false;
 				player.mouseShoot = false;
 				Sound.Clips.selectedInventory.play();
 
-			} else if (!player.offLvls && player.mx >= 10 && player.my >= 43 && player.mx <= 37 && player.my <= 63) {
+			} else if (!player.offLvls && 
+					player.mx >= 15 && player.my >= 48 && player.mx <= 41 && player.my <= 69) {
 				player.offLvls = true;
 				player.openLvls = false;
 				player.mouseShoot = false;
 				Sound.Clips.selectedInventory.play();
 			}
 
-			if (!player.openMap && player.mx >= 11 && player.my >= 64 && player.mx <= 37 && player.my <= 83) {
+			//Mapa
+			if (!player.openMap && !sysBuild.building && !sysDestruct.destruct &&
+					player.mx >= 15 && player.my >= 69 && player.mx <= 41 && player.my <= 88) {
 				player.openMap = true;
 				player.offMap = false;
 				player.mouseShoot = false;
 				Sound.Clips.paper.play();
 
-			} else if (!player.offMap && player.mx >= 11 && player.my >= 64 && player.mx <= 37 && player.my <= 83) {
+			} else if (!player.offMap && !sysBuild.building &&
+					player.mx >= 15 && player.my >= 69 && player.mx <= 41 && player.my <= 88) {
 				player.offMap = true;
 				player.openMap = false;
 				player.mouseShoot = false;
 				Sound.Clips.paper.play();
 
 			}
+			
+			//Aba Build
+			if (!player.build && !player.useBag && !player.creation && !player.openLvls && !sysBuild.building &&
+					!sysDestruct.destruct &&  !Game.player.openOven &&
+					player.mx >= 15 && player.my >= 89 && player.mx <= 41 && player.my <= 109) {
+				if(!Game.mapaGame.equals(Mapa.MAPA_ROOM_HOUSE_01)) {
+					player.build = true;
+					player.mouseShoot = false;
+					modeConstruction = true;
+					sysBuild.ajustaPosicaoPlayerMapa();
+					verificaUnlockedBuilding();
+				}else {
+					sysBuild.message = "Você não pode construir aqui.";
+				}
+				
+				Sound.Clips.selectedInventory.play();
+
+			} else if (player.build && player.mx >= 15 && player.my >= 89 && player.mx <= 41 && player.my <= 109) {
+				player.build = false;
+				player.clickBuildDescription = false;
+				player.indexDescription = -1;
+				player.mouseShoot = false;
+				Sound.Clips.selectedInventory.play();
+
+			}
+			
+			//Botão de remover
+			if (!player.build && !player.useBag && !player.creation && !player.openLvls && 
+					!Game.sysDestruct.destruct &&  !Game.player.openOven &&
+					player.mx >= 15 && player.my >= 110 && player.mx <= 41 && player.my <= 130) {
+				
+				if(!Game.mapaGame.equals(Mapa.MAPA_ROOM_HOUSE_01)) {
+					modeDesreuct = true;
+					player.mouseShoot = false;
+					player.clickDestruct = true;
+					sysDestruct.ajustaPosicaoPlayerMapa();
+				}else {
+					sysBuild.message = "Não há nada para destruir aqui...";
+				}
+				
+				Sound.Clips.selectedInventory.play();
+			}
+			
 		}
 
 		if (player.useBag) {
 
 			player.mouseShoot = false;
 
-			// Mascaras do inventario
-			if (player.mx >= 138 && player.my >= 218 && player.mx <= 170 && player.my <= 245) {
-				sysInv.checkClickPositionItemInv(0);
-				player.clickInv = true;
-
-			} else if (player.mx >= 174 && player.my >= 218 && player.mx <= 206 && player.my <= 245) {
-				sysInv.checkClickPositionItemInv(1);
-				player.clickInv = true;
-
-			} else if (player.mx >= 210 && player.my >= 218 && player.mx <= 242 && player.my <= 245) {
-				sysInv.checkClickPositionItemInv(2);
-				player.clickInv = true;
-
-			} else if (player.mx >= 245 && player.my >= 218 && player.mx <= 278 && player.my <= 245) {
-				sysInv.checkClickPositionItemInv(3);
-				player.clickInv = true;
-
-			} else if (player.mx >= 282 && player.my >= 218 && player.mx <= 314 && player.my <= 245) {
-				sysInv.checkClickPositionItemInv(4);
-				player.clickInv = true;
-
-			}
+			// inventario
+			checkClickInv();
 
 			int[] index = { -1, -1 };
 			// Mascaras da mochila
-			if (player.mx >= 158 && player.my >= 27 && player.mx <= 191 && player.my <= 54) {
+			if (player.mx >= 164 && player.my >= 32 && player.mx <= 194 && player.my <= 56) {
 				index[0] = 0;
 				index[1] = 0;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 195 && player.my >= 27 && player.mx <= 227 && player.my <= 54) {
+			} else if (player.mx >= 200 && player.my >= 32 && player.mx <= 230 && player.my <= 56) {
 				index[0] = 0;
 				index[1] = 1;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 230 && player.my >= 27 && player.mx <= 263 && player.my <= 54) {
+			} else if (player.mx >= 235 && player.my >= 32 && player.mx <= 266 && player.my <= 56) {
 				index[0] = 0;
 				index[1] = 2;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 266 && player.my >= 27 && player.mx <= 300 && player.my <= 54) {
+			} else if (player.mx >= 271 && player.my >= 32 && player.mx <= 303 && player.my <= 56) {
 				index[0] = 0;
 				index[1] = 3;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 158 && player.my >= 56 && player.mx <= 191 && player.my <= 82) {
+			} else if (player.mx >= 164 && player.my >= 60 && player.mx <= 194 && player.my <= 84) {
 				index[0] = 1;
 				index[1] = 0;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 195 && player.my >= 56 && player.mx <= 227 && player.my <= 82) {
+			} else if (player.mx >= 200 && player.my >= 60 && player.mx <= 230 && player.my <= 84) {
 				index[0] = 1;
 				index[1] = 1;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 230 && player.my >= 56 && player.mx <= 263 && player.my <= 82) {
+			} else if (player.mx >= 235 && player.my >= 60 && player.mx <= 266 && player.my <= 84) {
 				index[0] = 1;
 				index[1] = 2;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 266 && player.my >= 56 && player.mx <= 300 && player.my <= 82) {
+			} else if (player.mx >= 271 && player.my >= 60 && player.mx <= 303 && player.my <= 84) {
 				index[0] = 1;
 				index[1] = 3;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 158 && player.my >= 85 && player.mx <= 191 && player.my <= 111) {
+			} else if (player.mx >= 164 && player.my >= 89 && player.mx <= 194 && player.my <= 113) {
 				index[0] = 2;
 				index[1] = 0;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 195 && player.my >= 85 && player.mx <= 227 && player.my <= 111) {
+			} else if (player.mx >= 200 && player.my >= 89 && player.mx <= 230 && player.my <= 113) {
 				index[0] = 2;
 				index[1] = 1;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 230 && player.my >= 85 && player.mx <= 263 && player.my <= 111) {
+			} else if (player.mx >= 235 && player.my >= 89 && player.mx <= 266 && player.my <= 113) {
 				index[0] = 2;
 				index[1] = 2;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 266 && player.my >= 85 && player.mx <= 300 && player.my <= 111) {
+			} else if (player.mx >= 271 && player.my >= 89 && player.mx <= 303 && player.my <= 113) {
 				index[0] = 2;
 				index[1] = 3;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 158 && player.my >= 113 && player.mx <= 191 && player.my <= 140) {
+			} else if (player.mx >= 164 && player.my >= 118 && player.mx <= 194 && player.my <= 142) {
 				index[0] = 3;
 				index[1] = 0;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 195 && player.my >= 113 && player.mx <= 227 && player.my <= 140) {
+			} else if (player.mx >= 200 && player.my >= 118 && player.mx <= 230 && player.my <= 142) {
 				index[0] = 3;
 				index[1] = 1;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 230 && player.my >= 113 && player.mx <= 263 && player.my <= 140) {
+			} else if (player.mx >= 235 && player.my >= 118 && player.mx <= 266 && player.my <= 142) {
 				index[0] = 3;
 				index[1] = 2;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 266 && player.my >= 113 && player.mx <= 300 && player.my <= 140) {
+			} else if (player.mx >= 271 && player.my >= 118 && player.mx <= 303 && player.my <= 142) {
 				index[0] = 3;
 				index[1] = 3;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 158 && player.my >= 142 && player.mx <= 191 && player.my <= 168) {
+			} else if (player.mx >= 164 && player.my >= 147 && player.mx <= 194 && player.my <= 171) {
 				index[0] = 4;
 				index[1] = 0;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 195 && player.my >= 142 && player.mx <= 227 && player.my <= 168) {
+			} else if (player.mx >= 200 && player.my >= 147 && player.mx <= 230 && player.my <= 171) {
 				index[0] = 4;
 				index[1] = 1;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 230 && player.my >= 142 && player.mx <= 263 && player.my <= 168) {
+			} else if (player.mx >= 235 && player.my >= 147 && player.mx <= 266 && player.my <= 171) {
 				index[0] = 4;
 				index[1] = 2;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 266 && player.my >= 142 && player.mx <= 300 && player.my <= 168) {
+			} else if (player.mx >= 271 && player.my >= 147 && player.mx <= 303 && player.my <= 171) {
 				index[0] = 4;
 				index[1] = 3;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 158 && player.my >= 171 && player.mx <= 191 && player.my <= 198) {
+			} else if (player.mx >= 164 && player.my >= 176 && player.mx <= 194 && player.my <= 200) {
 				index[0] = 5;
 				index[1] = 0;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 195 && player.my >= 171 && player.mx <= 227 && player.my <= 198) {
+			} else if (player.mx >= 200 && player.my >= 176 && player.mx <= 230 && player.my <= 200) {
 				index[0] = 5;
 				index[1] = 1;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 230 && player.my >= 171 && player.mx <= 263 && player.my <= 198) {
+			} else if (player.mx >= 235 && player.my >= 176 && player.mx <= 266 && player.my <= 200) {
 				index[0] = 5;
 				index[1] = 2;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 266 && player.my >= 171 && player.mx <= 300 && player.my <= 198) {
+			} else if (player.mx >= 271 && player.my >= 176 && player.mx <= 303 && player.my <= 200) {
 				index[0] = 5;
 				index[1] = 3;
 				sysBag.checkClickPositionItemBag(index);
@@ -1167,56 +1287,179 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			player.mouseShoot = false;
 
 			// inventario
-			if (player.mx >= 138 && player.my >= 218 && player.mx <= 170 && player.my <= 245) {
-				sysInv.checkClickPositionItemInv(0);
-				player.clickInv = true;
-
-			} else if (player.mx >= 174 && player.my >= 218 && player.mx <= 206 && player.my <= 245) {
-				sysInv.checkClickPositionItemInv(1);
-				player.clickInv = true;
-
-			} else if (player.mx >= 210 && player.my >= 218 && player.mx <= 242 && player.my <= 245) {
-				sysInv.checkClickPositionItemInv(2);
-				player.clickInv = true;
-
-			} else if (player.mx >= 245 && player.my >= 218 && player.mx <= 278 && player.my <= 245) {
-				sysInv.checkClickPositionItemInv(3);
-				player.clickInv = true;
-
-			} else if (player.mx >= 282 && player.my >= 218 && player.mx <= 314 && player.my <= 245) {
-				sysInv.checkClickPositionItemInv(4);
-				player.clickInv = true;
-
-			}
+			checkClickInv();
 
 			// mascaras do Creation
-			if (player.mx >= 147 && player.my >= 91 && player.mx <= 179 && player.my <= 117) {
+			if (player.mx >= 168 && player.my >= 97 && player.mx <= 198 && player.my <= 121) {
 				sysCre.checkClickPositionItemCreation(0);
 				player.clickCreation = true;
 
-			} else if (player.mx >= 208 && player.my >= 92 && player.mx <= 239 && player.my <= 117) {
+			} else if (player.mx >= 203 && player.my >= 97 && player.mx <= 234 && player.my <= 121) {
 				sysCre.checkClickPositionItemCreation(1);
 				player.clickCreation = true;
 
-			} else if (player.mx >= 147 && player.my >= 140 && player.mx <= 179 && player.my <= 164) {
+			} else if (player.mx >= 167 && player.my >= 125 && player.mx <= 198 && player.my <= 149) {
 				sysCre.checkClickPositionItemCreation(2);
 				player.clickCreation = true;
 
-			} else if (player.mx >= 207 && player.my >= 140 && player.mx <= 239 && player.my <= 165) {
+			} else if (player.mx >= 203 && player.my >= 125 && player.mx <= 234 && player.my <= 149) {
 				sysCre.checkClickPositionItemCreation(3);
 				player.clickCreation = true;
 
-			} else if (player.mx >= 270 && player.my >= 116 && player.mx <= 302 && player.my <= 140) {
+			} else if (player.mx >= 251 && player.my >= 111 && player.mx <= 282 && player.my <= 134) {
 				sysCre.checkClickPositionItemCreation(4);
 				player.clickCraft = true;
 			}
+
+		}
+		
+		if(player.build) {
+			// mascaras do build
+			
+			sysBuild.message = null;
+			
+			if (player.mx >= 126 && player.my >= 60 && player.mx <= 156 && player.my <= 84) { //1
+				if(Mine.unlocked && e.getButton() == MouseEvent.BUTTON1) {
+					sysBuild.index = 0;
+				}else {
+					if (e.getButton() != MouseEvent.BUTTON3) 
+						sysBuild.message = "Este recurso está bloaqueado!";
+				}
+				
+				if (e.getButton() == MouseEvent.BUTTON3) {
+					player.clickBuildDescription = true;
+					player.indexDescription = 0;
+				}
+				
+			} else if (player.mx >= 162 && player.my >= 55 && player.mx <= 192 && player.my <= 84) { //2
+				if(Thorn.unlocked && e.getButton() == MouseEvent.BUTTON1) {
+					sysBuild.index = 1;
+				}else {
+					if (e.getButton() != MouseEvent.BUTTON3) 
+						sysBuild.message = "Este recurso está bloaqueado!";
+				}
+				
+				if (e.getButton() == MouseEvent.BUTTON3) {
+					player.clickBuildDescription = true;
+					player.indexDescription = 1;
+				}
+				
+			} else if (player.mx >= 198 && player.my >= 60 && player.mx <= 228 && player.my <= 84) { //3
+				
+				if(MineLand.unlocked && e.getButton() == MouseEvent.BUTTON1) {
+					sysBuild.index = 2;
+				}else {
+					if (e.getButton() != MouseEvent.BUTTON3) 
+						sysBuild.message = "Este recurso está bloaqueado!";
+				}
+				
+				if (e.getButton() == MouseEvent.BUTTON3) {
+					player.clickBuildDescription = true;
+					player.indexDescription = 2;
+				}
+				
+			} else if (player.mx >= 234 && player.my >= 60 && player.mx <= 264 && player.my <= 84) { //4
+				
+			} else if (player.mx >= 270 && player.my >= 60 && player.mx <= 301 && player.my <= 84) { //5
+				
+			} else if (player.mx >= 306 && player.my >= 60 && player.mx <= 337 && player.my <= 84) { //6
+				
+			}
+			
+			
+			else if (player.mx >= 126 && player.my >= 88 && player.mx <= 156 && player.my <= 113) { //7
+				
+			}else if (player.mx >= 162 && player.my >= 88 && player.mx <= 192 && player.my <= 113) { //8
+				
+			}else if (player.mx >= 198 && player.my >= 88 && player.mx <= 228 && player.my <= 113) { //9
+				
+			}else if (player.mx >= 234 && player.my >= 88 && player.mx <= 264 && player.my <= 113) { //10
+				
+			}else if (player.mx >= 270 && player.my >= 88 && player.mx <= 301 && player.my <= 113) { //11
+				
+			}else if (player.mx >= 306 && player.my >= 88 && player.mx <= 337 && player.my <= 113) { //12
+				
+			}
+			
+			
+			else if (player.mx >= 126 && player.my >= 117 && player.mx <= 156 && player.my <= 141) { //13
+				
+			}else if (player.mx >= 162 && player.my >= 117 && player.mx <= 192 && player.my <= 141) { //14
+				
+			}else if (player.mx >= 198 && player.my >= 117 && player.mx <= 228 && player.my <= 141) { //15
+				
+			}else if (player.mx >= 234 && player.my >= 117 && player.mx <= 264 && player.my <= 141) { //16
+				
+			}else if (player.mx >= 270 && player.my >= 117 && player.mx <= 301 && player.my <= 141) { //17
+				
+			}else if (player.mx >= 306 && player.my >= 117 && player.mx <= 337 && player.my <= 141) { //18
+				
+			}
+		}
+		
+		if(player.openOven) {
+			
+			player.mouseShoot = false;
+			
+			// inventario
+			checkClickInv();
+			
+			if (player.mx >= 210 && player.my >= 143 && player.mx <= 240 && player.my <= 166) { //7
+				sysOvenBonfire.checkClickPositionOvenBonfire(0);
+				player.clickOvenBonfire = true;
+
+			}else if (player.mx >= 210 && player.my >= 111 && player.mx <= 240 && player.my <= 135) { //8
+				sysOvenBonfire.checkClickPositionOvenBonfire(1);
+				player.clickOvenBonfire = true;
+				
+			}else if (player.mx >= 210 && player.my >= 68 && player.mx <= 240 && player.my <= 91) { //9
+				sysOvenBonfire.checkClickPositionOvenBonfire(2);
+				player.clickCraftOvenBonfire = true;
+			}
+		}
+		
+		if(sysBuild.building) {
+			player.clickConstruction = true;
+			sysBuild.xTarget = (int)(e.getX() / 5.7);
+			sysBuild.yTarget = (int)(e.getY() / 4.7);
+		}
+		
+		if(sysDestruct.destruct) {
+			player.clickDestruction = true;
+			sysDestruct.xTarget = (int)(e.getX() / 5.7);
+			sysDestruct.yTarget = (int)(e.getY() / 4.7);
+		}
+
+
+	}
+	
+	public void checkClickInv() {
+		// Mascaras do inventario
+		if (player.mx >= 143 && player.my >= 223 && player.mx <= 174 && player.my <= 247) {
+			sysInv.checkClickPositionItemInv(0);
+			player.clickInv = true;
+
+		} else if (player.mx >= 178 && player.my >= 223 && player.mx <= 210 && player.my <= 247) {
+			sysInv.checkClickPositionItemInv(1);
+			player.clickInv = true;
+
+		} else if (player.mx >= 214 && player.my >= 223 && player.mx <= 246 && player.my <= 247) {
+			sysInv.checkClickPositionItemInv(2);
+			player.clickInv = true;
+
+		} else if (player.mx >= 250 && player.my >= 223 && player.mx <= 282 && player.my <= 247) {
+			sysInv.checkClickPositionItemInv(3);
+			player.clickInv = true;
+
+		} else if (player.mx >= 287 && player.my >= 223 && player.mx <= 318 && player.my <= 247) {
+			sysInv.checkClickPositionItemInv(4);
+			player.clickInv = true;
 
 		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-
 	}
 
 	@Override
@@ -1239,8 +1482,13 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public void mouseMoved(MouseEvent e) {
 
 		if (player != null) {
-			player.moveMx = ((e.getX() / 5.6));
-			player.moveMy = ((e.getY() / 4.8));
+			player.moveMx = ((e.getX() / 5.7));
+			player.moveMy = ((e.getY() / 4.7));
+			
+//			if(sysBuild != null) {
+//				sysBuild.xTarget = (int)(e.getX() / 5.7);
+//				sysBuild.yTarget = (int)(e.getY() / 4.7);
+//			}
 
 		}
 	}

@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import entities.spots.Tree;
 import entities.spots.TreeOak;
 import entities.spots.TreePine;
+import entities.spots.TreeWillow;
 import main.Game;
 import util.Mapa;
 import util.Regiao;
@@ -24,9 +25,9 @@ public class Ground extends Entity{
 	public Ground(double x, double y, int width, int height, BufferedImage sprite, int ps) {
 		super(x, y, width, height, sprite);
 		this.psTiles = ps;
-		depth = 10;
 		mapa.add(Mapa.MAPA_FLORESTA);
 		regiao.add(Regiao.REGIAO_FLORESTA);
+		depth = 0;
 	}
 	
 	public void plant() {
@@ -41,22 +42,26 @@ public class Ground extends Entity{
 				this.setSprite(Entity.GROUND_F2_EN);
 			}else if(time < f3) {
 				this.setSprite(Entity.GROUND_F3_EN);
+				depth = Game.player.depthPlayer(this);
 			}
 			
 			if (time == f3 && !Game.collision.checkColisionGroundToTree(this)) {
 				
 				if(tipo.equals("terreno de carvalho")) {
-					 tr = new TreeOak(this.x, this.y, 16, 16, Tree.CARVALHO_EN);
-					 tr.tipo = "carvalho";
+					tr = new TreeOak(this.x, this.y, 16, 16, Tree.CARVALHO_EN);
+					tr.tipo = "carvalho";
 					 
 				}else if (tipo.equals("terreno de pinheiro")){
 					tr = new TreePine(this.x, this.y, 16, 16, Tree.PINHEIRO_EN);
 					tr.tipo = "pinheiro";
+					
+				}else if (tipo.equals("terreno de salgueiro")) {
+					tr = new TreeWillow(this.x, this.y, 16, 16, Tree.SALGUEIRO_EN);
+					tr.tipo = "salgueito";
 				}
 				
 				Game.entities.add(tr);
 				Game.world.tiles[this.psTiles].en = tr;
-				tr.show = true;
 				tr.psTiles = this.psTiles;
 				plant = false;
 				Game.entities.remove(this);
@@ -69,7 +74,7 @@ public class Ground extends Entity{
 	}
 	
 	public void generateFloor() {
-		
+	
 		cont++;
 		
 		if(!plant && cont >= 900){
@@ -86,7 +91,6 @@ public class Ground extends Entity{
 	
 	public void tick() {
 		
-		depth = 0;
 		plant();
 		generateFloor();
 		

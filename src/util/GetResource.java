@@ -15,18 +15,24 @@ import entities.itens.OreCoal;
 import entities.itens.OreCopper;
 import entities.itens.OreGold;
 import entities.itens.OreSilver;
+import entities.itens.Phosphor;
+import entities.itens.PotassiumNitrate;
 import entities.itens.Seed;
 import entities.itens.SeedOak;
 import entities.itens.SeedPine;
 import entities.itens.SeedWillow;
 import entities.itens.Stone;
+import entities.itens.Sulfor;
 import entities.spots.MiningSite;
 import entities.spots.MiningSiteCoal;
 import entities.spots.MiningSiteCopper;
 import entities.spots.MiningSiteDiamond;
 import entities.spots.MiningSiteEmerald;
 import entities.spots.MiningSiteGold;
+import entities.spots.MiningSitePhosphor;
+import entities.spots.MiningSitePotassiumNitrate;
 import entities.spots.MiningSiteSilver;
+import entities.spots.MiningSiteSulfor;
 import entities.spots.Tree;
 import entities.spots.TreeOak;
 import entities.spots.TreePine;
@@ -210,6 +216,21 @@ public void getFirewood(Tree tr) {
 		}else if (ms instanceof MiningSiteEmerald) {
 			Emerald e = new Emerald(0, 0, 16, 16, Ore.EMERALD_EN);
 			e.tipo = "esmeralda";
+			ore = e;
+			
+		}else if (ms instanceof MiningSiteSulfor) {
+			Sulfor e = new Sulfor(0, 0, 16, 16, Ore.SULFOR_EN);
+			e.tipo = "enxofre";
+			ore = e;
+			
+		}else if (ms instanceof MiningSitePotassiumNitrate) {
+			PotassiumNitrate e = new PotassiumNitrate(0, 0, 16, 16, Ore.POTASSIUM_NITRATE_EN);
+			e.tipo = "nitrato de potásio";
+			ore = e;
+			
+		}else if (ms instanceof MiningSitePhosphor) {
+			Phosphor e = new Phosphor(0, 0, 16, 16, Ore.PHOSPHOR_EN);
+			e.tipo = "fósforo";
 			ore = e;
 			
 		}
