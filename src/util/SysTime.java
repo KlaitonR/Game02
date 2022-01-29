@@ -217,7 +217,7 @@ public class SysTime {
 			}
 		}
 		
-		chovendo = false;
+//		chovendo = false;
 		
 		if(chovendo) {
 			if(timer > espera + init + tempMin) {
