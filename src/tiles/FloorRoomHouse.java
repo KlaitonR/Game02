@@ -14,7 +14,4 @@ public class FloorRoomHouse extends Tile{
 		mapa.add(Mapa.MAPA_ROOM_HOUSE_01);
 		regiao.add(Regiao.REGIAO_ROOM_HOUSE_01);
 	}
-	
-	
-
 }

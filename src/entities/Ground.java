@@ -31,7 +31,6 @@ public class Ground extends Entity{
 	}
 	
 	public void plant() {
-		
 		if(plant && time < f3) {
 			Tree tr = null;
 			time++;
@@ -67,14 +66,13 @@ public class Ground extends Entity{
 				Game.entities.remove(this);
 				
 			}else if(time == f3){
+				depth = Game.player.depthPlayer(this);
 				time = f2;
 			}
 		}
-		
 	}
 	
 	public void generateFloor() {
-	
 		cont++;
 		
 		if(!plant && cont >= 900){
@@ -86,7 +84,6 @@ public class Ground extends Entity{
 			Game.world.tiles[psTiles].show = true;
 			Game.entities.remove(this);
 		}
-		
 	}
 	
 	public void tick() {

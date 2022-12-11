@@ -20,7 +20,5 @@ public class Seed extends Entity{
 		qtPack = 63;
 		mapa.add(Mapa.MAPA_FLORESTA);
 		regiao.add(Regiao.REGIAO_FLORESTA);
-		
-		}
-
+	}
 }

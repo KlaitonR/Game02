@@ -191,7 +191,7 @@ public class CollisonPlayer {
 						atual.depth = Game.player.depthPlayer(atual);
 						Game.player.enterRoom = true;
 						controllButtonEnterRoom = true;
-						Game.player.nextRoom = Mapa.MAPA_CALABOUÇO;
+						Game.player.nextRoom = Mapa.MAPA_CALABOUCO;
 						Game.player.backRoom = Mapa.MAPA_FLORESTA;
 
 					} else {
@@ -211,7 +211,7 @@ public class CollisonPlayer {
 						Game.player.enterRoom = true;
 						controllButtonEnterRoom = true;
 						Game.player.nextRoom = Mapa.MAPA_FLORESTA;
-						Game.player.backRoom = Mapa.MAPA_CALABOUÇO;
+						Game.player.backRoom = Mapa.MAPA_CALABOUCO;
 
 					} else {
 						Game.ui.buttonEnterRoom = false;
@@ -428,11 +428,11 @@ public class CollisonPlayer {
 	public boolean createGround() {
 
 		for (int i = 0; i < Game.world.tiles.length; i++) {
-
 			Tile atual = Game.world.tiles[i];
 			if (atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
 				if (World.isColiddingFloorTileToGround(Game.player, atual) && Game.player.hasHoe && Game.player.useItem
 						&& atual instanceof FloorTile && (atual.en == null)) {
+					System.out.println("Criando terreno");
 					Ground gd = new Ground(atual.getX(), atual.getY(), 16, 16, Entity.GROUND_EN, atual.psTiles);
 					if(!checkCollisionGround(gd)) {
 						gd.tipo = "terreno";
@@ -460,40 +460,38 @@ public class CollisonPlayer {
 	}
 
 	public void checkColisionGround() {
-
 		for (int i = 0; i < Game.entities.size(); i++) {
 			Entity atual = Game.entities.get(i);
 			if (atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
 				if (atual instanceof Ground) {
 					if (Entity.isColidding(Game.player, atual)) {
-						if (Game.sysInv.inventario[Game.sysInv.handIndexItem] != null) {
-							if (Game.sysInv.inventario[Game.sysInv.handIndexItem] instanceof Seed) {
-								controllButtonUseItem = true;
-								if(Game.player.useItem) {
-									if (Game.sysInv.inventario[Game.sysInv.handIndexItem].tipo
-											.equals("semente de carvalho")) {
-										((Ground) atual).tipo = "terreno de carvalho";
-									} else if (Game.sysInv.inventario[Game.sysInv.handIndexItem].tipo
-											.equals("semente de pinheiro")) {
-										((Ground) atual).tipo = "terreno de pinheiro";
-									} else if (Game.sysInv.inventario[Game.sysInv.handIndexItem].tipo
-											.equals("semente de salgueiro")) {
-										((Ground) atual).tipo = "terreno de salgueiro";
-									}
-	
-									((Ground) atual).plant = true;
-	
-									if (!Game.sysInv.inventario[Game.sysInv.handIndexItem].itensPack.isEmpty()) {
-										Game.sysInv.inventario[Game.sysInv.handIndexItem].itensPack.remove(0);
-										return;
-									} else {
-										Game.sysInv.inventario[Game.sysInv.handIndexItem] = null;
-										Game.sysInv.inv[Game.sysInv.handIndexItem] = null;
-									}
+						if (Game.sysInv.inventario[Game.sysInv.handIndexItem] != null
+								&& Game.sysInv.inventario[Game.sysInv.handIndexItem] instanceof Seed) {
+							controllButtonUseItem = true;
+							if (Game.player.useItem && !((Ground) atual).plant) {
+								if (Game.sysInv.inventario[Game.sysInv.handIndexItem].tipo
+										.equals("semente de carvalho")) {
+									((Ground) atual).tipo = "terreno de carvalho";
+								} else if (Game.sysInv.inventario[Game.sysInv.handIndexItem].tipo
+										.equals("semente de pinheiro")) {
+									((Ground) atual).tipo = "terreno de pinheiro";
+								} else if (Game.sysInv.inventario[Game.sysInv.handIndexItem].tipo
+										.equals("semente de salgueiro")) {
+									((Ground) atual).tipo = "terreno de salgueiro";
+								}
+
+								((Ground) atual).plant = true;
+
+								if (!Game.sysInv.inventario[Game.sysInv.handIndexItem].itensPack.isEmpty()) {
+									Game.sysInv.inventario[Game.sysInv.handIndexItem].itensPack.remove(0);
+									return;
+								} else {
+									Game.sysInv.inventario[Game.sysInv.handIndexItem] = null;
+									Game.sysInv.inv[Game.sysInv.handIndexItem] = null;
 								}
 							}
 						}
-					}else {
+					} else {
 						controllButtonUseItem = false;
 					}
 				}
@@ -502,19 +500,14 @@ public class CollisonPlayer {
 	}
 
 	public boolean checkColisionGroundToTree(Ground gd) {
-
 		if (Entity.isColidding(Game.player, gd)) {
 			return true;
 		}
-
 		return false;
-
 	}
 
 	public void checkCollisionStump() {
-
 		for (int i = 0; i < Game.entities.size(); i++) {
-
 			Entity atual = Game.entities.get(i);
 			if (atual.mapa.contains(Game.mapaGame) && atual.regiao.contains(Game.regiaoGame)) {
 				if (atual instanceof Stump) {
@@ -551,7 +544,6 @@ public class CollisonPlayer {
 	}
 	
 	public boolean checkCollisionGround(Ground groud) {
-		
 		for(int i=0; i<Game.entities.size(); i++) {
 			if(Entity.isColidding(groud, Game.entities.get(i)) 
 					&& !(Game.entities.get(i) instanceof Player)
@@ -559,7 +551,6 @@ public class CollisonPlayer {
 				return true;
 			}
 		}
-		
 		return false;
 	}
 	

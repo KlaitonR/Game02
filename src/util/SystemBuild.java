@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import entities.Entity;
 import entities.construction.Construction;
+import entities.construction.House;
 import entities.construction.Mine;
 import entities.construction.MineLand;
 import entities.construction.Thorn;
@@ -780,12 +781,12 @@ public class SystemBuild {
 	}
 
 	public boolean build() {
-			
-			if(!Entity.isColidding(construction, Game.player)) {
-				if(!checkCollidingEntities()) {
-					psX = (int)(psX/16);
-					psY = (int)(psY/16);
-					construction.psTiles = psX + (psY*Game.world.WIDTH);
+		if (!Entity.isColidding(construction, Game.player)) {
+			if (!checkCollidingEntities()) {
+				if (!checkCollidingConstructions()) {
+					psX = (int) (psX / 16);
+					psY = (int) (psY / 16);
+					construction.psTiles = psX + (psY * Game.world.WIDTH);
 					construction.xTile = psX;
 					construction.yTile = psY;
 					Game.world.tiles[construction.psTiles].en = construction;
@@ -794,27 +795,40 @@ public class SystemBuild {
 					Game.player.indexDescription = -1;
 					Game.player.clickConstruction = false;
 					return true;
-				}else {
-					message = "Há alguma coisa sobre o local da construção!";
+				} else {
+					message = "Você não pode construir aqui!";
 					construction = null;
 					return false;
 				}
-			}else {
-				message = "Você está em cima do local da construção!";
+			} else {
+				message = "Há alguma coisa sobre o local da construção!";
 				construction = null;
 				return false;
 			}
-		
+		} else {
+			message = "Você está em cima do local da construção!";
+			construction = null;
+			return false;
+		}
 	}
 	
 	public boolean checkCollidingEntities() {
-		
 		for(int i=0; i<Game.entities.size(); i++) {
 			if(Entity.isColidding(Game.entities.get(i), construction)) {
 				return true;
 			}
 		}
-		
+		return false;
+	}
+	
+	public boolean checkCollidingConstructions() {
+		for(int i=0; i<Game.entities.size(); i++) {
+			if((Game.entities.get(i) instanceof House
+					|| Game.entities.get(i) instanceof Mine) 
+					&& Entity.isColiddingConstruction((Construction)Game.entities.get(i), construction)) {
+				return true;
+			}
+		}
 		return false;
 	}
 	

@@ -29,7 +29,7 @@ public class Pig extends Mob {
 		
 		speed = Game.rand.nextDouble();
 		ps = true;
-		life = 5; maxLife = 5; exp = 100;
+		life = 5; maxLife = 5; exp = 200;
 		
 		if(Game.rand.nextInt(100)>50) {
 			dirRight = true;
@@ -205,6 +205,10 @@ public class Pig extends Mob {
 			pigBeef.tipo = "carne de porco";
 			pigBeef.id = Id.ID_PIG_BEEF;
 			pigBeef.clear = true;
+			if (Game.player.expAttackTtl < Game.player.expMaxPossivel) {
+				Game.player.expAttackTtl += exp;
+				Game.player.expAttack += exp;
+			}
 			Game.mobs.remove(this);
 			Game.entities.remove(this);
 			Game.entities.add(pigBeef);

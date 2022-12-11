@@ -16,14 +16,13 @@ public class WallCal extends WallTile{
 
 	public WallCal(int x, int y, BufferedImage sprite) {
 		super(x, y, sprite);
-		mapa.add(Mapa.MAPA_CALABOUÇO);
+		mapa.add(Mapa.MAPA_CALABOUCO);
 		regiao.add(Regiao.REGIAO_CALABOUÇO);
 		
 		borderUpLeft = Game.spritesheet.getSprite(256, 128, 16, 16);
 		borderUpRight = Game.spritesheet.getSprite(272, 128, 16, 16);
 		borderDownLeft = Game.spritesheet.getSprite(288, 128, 16, 16);
 		borderDownRight = Game.spritesheet.getSprite(304, 128, 16, 16);
-		
 	}
 	
 	public void render(Graphics g) {
@@ -47,7 +46,5 @@ public class WallCal extends WallTile{
 			g.drawImage(borderDownRight, x - Camera.x ,y - Camera.y ,null);
 		else if(right && !left && !up && down)
 			g.drawImage(borderUpRight, x - Camera.x ,y - Camera.y ,null);
-	
 	}
-
 }

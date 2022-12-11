@@ -10,6 +10,7 @@ import java.io.InputStream;
 import entities.NPC.Npc;
 import main.Game;
 import main.Menu;
+import util.SystemBuild;
 import world.Camera;
 
 public class UI {
@@ -25,19 +26,22 @@ public class UI {
 	public boolean buttonEnterRoom;
 	public boolean buttonUseItem;
 	public boolean buttonEsc;
+	public static SystemBuild sysBuild;
 	
 	public UI(Spritsheet spritButton) {
 		
 		spriteUI =  new Spritsheet("/spritesSheet/spriteUI.png");
-		UI = new BufferedImage[21];
+		UI = new BufferedImage[22];
 		
 		UI[0] = spriteUI.getSprite(0, 0, 128, 48); //Inventario
 		UI[1] = spriteUI.getSprite(0, 48, 32, 32); //Seleção do inventário
 		UI[2] = spriteUI.getSprite(0, 80, 80, 128); //Mochila
 		UI[3] = spriteUI.getSprite(32, 48, 32, 32); //Selecção da mochila
+		
 		UI[4] = spriteUI.getSprite(64, 48, 16, 16); //Icone nível
+		
 		UI[5] = spriteUI.getSprite(80, 48, 16, 16); //Icone mapa
-		UI[6] = spriteUI.getSprite(0, 208, 80, 96); //Aba de níveis
+		UI[6] = spriteUI.getSprite(0, 208, 112, 96); //Aba de níveis
 		UI[7] = spriteUI.getSprite(0, 304, 80, 48); //Craft
 		UI[8] = spriteUI.getSprite(64, 64, 16, 16); //Icone Munição
 		UI[9] = spriteUI.getSprite(0, 368, 80, 16); //Life Player
@@ -52,6 +56,7 @@ public class UI {
 		UI[18] = spriteUI.getSprite(96, 80, 16, 16); //Icone de informação
 		UI[19] = spriteUI.getSprite(160, 80, 16, 16); //Forno ligado
 		UI[20] = spriteUI.getSprite(112, 80, 16, 16); //Button ESC
+		UI[21] = spriteUI.getSprite(0, 384, 112, 16); //Caixa de diálogo
 		
 		button = new BufferedImage[2];
 		button[0] = Game.spriteButton.getSprite(0, 0, 5, 5);
@@ -74,16 +79,15 @@ public class UI {
 			g.setColor(Color.white);
 			
 			if(Game.sysTime.hour < 10 && Game.sysTime.minute < 10) 
-				g.drawString("0" + Game.sysTime.hour + ":0" + Game.sysTime.minute,  7,  25 );
+				g.drawString("0" + Game.sysTime.hour + ":0" + Game.sysTime.minute, 7,  25 );
 			if(Game.sysTime.hour >= 10 && Game.sysTime.minute < 10) 
-				g.drawString(Game.sysTime.hour + ":0" + Game.sysTime.minute,  7,  25 );
+				g.drawString(Game.sysTime.hour + ":0" + Game.sysTime.minute, 7,  25 );
 			if(Game.sysTime.hour < 10 && Game.sysTime.minute >= 10) 
-				g.drawString("0" + Game.sysTime.hour + ":" + Game.sysTime.minute,  7,  25 );
+				g.drawString("0" + Game.sysTime.hour + ":" + Game.sysTime.minute, 7,  25 );
 			if(Game.sysTime.hour >= 10 && Game.sysTime.minute >= 10) 
-				g.drawString(Game.sysTime.hour + ":" + Game.sysTime.minute,  7,  25 );
+				g.drawString(Game.sysTime.hour + ":" + Game.sysTime.minute, 7,  25 );
 			
 			g.drawString("Day " + Game.sysTime.days, 45, 25);
-			
 		}
 	}
 	
@@ -135,7 +139,6 @@ public class UI {
 //		g.drawString((int)Game.player.life + "/" + (int)Game.player.maxLife, 25, 11);
 		
 		g.drawImage(UI[9], 3, 1, null);
-		
 	}
 	
 	public void lifeMobs(Graphics g) {
@@ -143,21 +146,24 @@ public class UI {
 		for(int i=0; i<Game.mobs.size();i++) {
 			if(Game.mobs.get(i).mapa.contains(Game.mapaGame)) {
 				g.setColor(Color.black); 
-				g.fillRect((int)Game.mobs.get(i).x + 2 - Camera.x, (int)Game.mobs.get(i).y - 5 - Camera.y, 12, 3);
+				g.fillRect((int)Game.mobs.get(i).x + 2 - Camera.x, (int)Game.mobs.get(i).y - Camera.y, 12, 3);
 				g.setColor(Color.red);
-				g.fillRect((int)Game.mobs.get(i).x + 3 - Camera.x, (int)Game.mobs.get(i).y - 4 - Camera.y, 10, 1);
+				g.fillRect((int)Game.mobs.get(i).x + 3 - Camera.x, (int)Game.mobs.get(i).y + 1 - Camera.y, 10, 1);
 				g.setColor(Color.green);
-				g.fillRect((int)Game.mobs.get(i).x + 3 - Camera.x, (int)Game.mobs.get(i).y - 4 - Camera.y, (int)((Game.mobs.get(i).life/Game.mobs.get(i).maxLife)*10), 1);
+				g.fillRect((int)Game.mobs.get(i).x + 3 - Camera.x, (int)Game.mobs.get(i).y + 1 - Camera.y, (int)((Game.mobs.get(i).life/Game.mobs.get(i).maxLife)*10), 1);
 			}
 		}
 	}
 	
 	private void levelTab(Graphics g) {
 		
-		g.drawImage(UI[4], 7, 28, null);
-		g.drawImage(UI[5], 7, 41, null);
-		g.drawImage(UI[15], 7, 54, null);
-		g.drawImage(UI[16], 7, 67, null);
+//		g.setColor(Color.black);
+//		g.fillRect(ControllerUI.POSICAO_X_ICONE_NIVEIS,ControllerUI.POSICAO_Y_ICONE_NIVEIS, 16,16);
+		
+		g.drawImage(UI[4], ControllerUI.POSICAO_X_ICONE_NIVEIS, ControllerUI.POSICAO_Y_ICONE_NIVEIS, null);
+		g.drawImage(UI[5], ControllerUI.POSICAO_X_ICONE_MAPA,  ControllerUI.POSICAO_Y_ICONE_MAPA, null);
+		g.drawImage(UI[15], ControllerUI.POSICAO_X_ICONE_CONSTRUCAO, ControllerUI.POSICAO_Y_ICONE_CONSTRUCAO , null);
+		g.drawImage(UI[16], ControllerUI.POSICAO_X_ICONE_REMOCAO, ControllerUI.POSICAO_Y_ICONE_REMOCAO, null);
 			
 		if(Game.player.openLvls && !Game.player.offLvls) {
 			
@@ -165,97 +171,76 @@ public class UI {
 				
 			//attack
 			g.setColor(Color.black);
-			g.fillRect(58, 44, 40, 5);
+			g.fillRect(88, 44, 40, 5);
 			g.setColor(new Color(93,128,158));
-			g.fillRect(59, 45, 38, 3);
+			g.fillRect(89, 45, 38, 3);
 			g.setColor(Color.yellow);
-			
-			g.setFont(new Font("arial", Font.BOLD, 7));
+			g.setFont(new Font("arial", Font.BOLD, 8));
 			g.setColor(Color.white);
-			g.drawString("" + (int)Game.player.exp + "/" + (int)Game.player.maxExp[Game.player.levelPlayer], 37, 49);
-			
-			double dif;
-			dif = Game.player.maxExp[Game.player.levelPlayer] - Game.player.exp;
-			
-			if(dif <= Game.player.maxExp[Game.player.levelPlayer] && dif > 0){
-				g.fillRect(58, 65,(int)((Game.player.exp/Game.player.maxExp[Game.player.levelPlayer])*38), 3);
-			}else {
-				g.fillRect(58, 65,(int)(((Game.player.exp + dif)/Game.player.maxExp[Game.player.levelPlayer])*38), 3);
-			}
+			g.drawString("" + (int)Game.player.expAttack + " / " + (int)Game.player.maxExp[Game.player.levelAttack], 38, 49);
+			g.fillRect(89, 45,(int)((Game.player.expAttack/Game.player.maxExp[Game.player.levelAttack])*38), 3);
 			
 			//WoodCutting
 			g.setColor(Color.black);
-			g.fillRect(58, 55, 40, 5);
+			g.fillRect(88, 55, 40, 5);
 			g.setColor(new Color(93,128,158));
-			g.fillRect(59, 56, 38, 3);
+			g.fillRect(89, 56, 38, 3);
+			g.setColor(Color.yellow);
+			g.setFont(new Font("arial", Font.BOLD, 8));
+			g.setColor(Color.white);
+			g.drawString("" + (int)Game.player.expWoodCutting + " / " + (int)Game.player.maxExp[Game.player.levelWoodCutting], 37, 60);
+			g.fillRect(89, 56,(int)((Game.player.expWoodCutting/Game.player.maxExp[Game.player.levelWoodCutting])*38), 3);
+			
+			//Pesca
+			g.setColor(Color.black);
+			g.fillRect(88, 66, 40, 5);
+			g.setColor(new Color(93,128,158));
+			g.fillRect(89, 67, 38, 3);
 			g.setColor(Color.yellow);
 			
-			g.setFont(new Font("arial", Font.BOLD, 7));
+			g.setFont(new Font("arial", Font.BOLD, 8));
 			g.setColor(Color.white);
-			g.drawString("" + (int)Game.player.expWoodCutting + "/" + (int)Game.player.maxExp[Game.player.levelWoodCutting], 37, 60);
-			
-			double dif2;
-			dif2 = Game.player.maxExp[Game.player.levelWoodCutting] - Game.player.expWoodCutting;
-			
-			if(dif2 <= Game.player.maxExp[Game.player.levelWoodCutting] && dif2 > 0) {
-				g.fillRect(58, 56,(int)((Game.player.expWoodCutting/Game.player.maxExp[Game.player.levelWoodCutting])*39), 3);
-			}else {
-				g.fillRect(58, 56,(int)(((Game.player.expWoodCutting + dif2)/Game.player.maxExp[Game.player.levelWoodCutting])*39), 3);
-			}
-			
-//			System.out.println(Game.player.levelWoodCutting);
-			System.out.println(Game.player.expWoodCutting);
-//			System.out.println(Game.player.expWoodCuttingTtl);
+			g.drawString("" + (int)Game.player.exp + " / " + (int)Game.player.maxExp[Game.player.levelPlayer], 37, 71);
 			
 			g.setColor(Color.black);
-			g.fillRect(58, 66, 40, 5);
+			g.fillRect(88, 77, 40, 5);
 			g.setColor(new Color(93,128,158));
-			g.fillRect(59, 67, 38, 3);
+			g.fillRect(89, 78, 38, 3);
 			g.setColor(Color.yellow);
 			
-			g.setFont(new Font("arial", Font.BOLD, 7));
+			g.setFont(new Font("arial", Font.BOLD, 8));
 			g.setColor(Color.white);
-			g.drawString("" + (int)Game.player.exp + "/" + (int)Game.player.maxExp[Game.player.levelPlayer], 37, 71);
+			g.drawString("" + (int)Game.player.exp + " / " + (int)Game.player.maxExp[Game.player.levelPlayer], 37, 82);
 			
 			g.setColor(Color.black);
-			g.fillRect(58, 77, 40, 5);
+			g.fillRect(88, 87, 40, 5);
 			g.setColor(new Color(93,128,158));
-			g.fillRect(59, 78, 38, 3);
+			g.fillRect(89, 88, 38, 3);
 			g.setColor(Color.yellow);
 			
-			g.setFont(new Font("arial", Font.BOLD, 7));
+			g.setFont(new Font("arial", Font.BOLD, 8));
 			g.setColor(Color.white);
-			g.drawString("" + (int)Game.player.exp + "/" + (int)Game.player.maxExp[Game.player.levelPlayer], 37, 82);
+			g.drawString("" + (int)Game.player.exp + " / " + (int)Game.player.maxExp[Game.player.levelPlayer], 37, 92);
 			
 			g.setColor(Color.black);
-			g.fillRect(58, 87, 40, 5);
+			g.fillRect(88, 97, 40, 5);
 			g.setColor(new Color(93,128,158));
-			g.fillRect(59, 88, 38, 3);
+			g.fillRect(89, 98, 38, 3);
 			g.setColor(Color.yellow);
 			
-			g.setFont(new Font("arial", Font.BOLD, 7));
+			g.setFont(new Font("arial", Font.BOLD, 8));
 			g.setColor(Color.white);
-			g.drawString("" + (int)Game.player.exp + "/" + (int)Game.player.maxExp[Game.player.levelPlayer], 37, 92);
+			g.drawString("" + (int)Game.player.exp + " / " + (int)Game.player.maxExp[Game.player.levelPlayer], 37, 102);
 			
 			g.setColor(Color.black);
-			g.fillRect(58, 97, 40, 5);
+			g.fillRect(88, 107, 40, 5);
 			g.setColor(new Color(93,128,158));
-			g.fillRect(59, 98, 38, 3);
+			g.fillRect(89, 108, 38, 3);
 			g.setColor(Color.yellow);
 			
-			g.setFont(new Font("arial", Font.BOLD, 7));
+			g.setFont(new Font("arial", Font.BOLD, 8));
 			g.setColor(Color.white);
-			g.drawString("" + (int)Game.player.exp + "/" + (int)Game.player.maxExp[Game.player.levelPlayer], 37, 102);
-			
-			g.setColor(Color.black);
-			g.fillRect(58, 107, 40, 5);
-			g.setColor(new Color(93,128,158));
-			g.fillRect(59, 108, 38, 3);
-			g.setColor(Color.yellow);
-			
-			g.setFont(new Font("arial", Font.BOLD, 7));
-			g.setColor(Color.white);
-			g.drawString("" + (int)Game.player.exp + "/" + (int)Game.player.maxExp[Game.player.levelPlayer], 37, 112);
+			g.drawString("" + (int)Game.player.exp + " / " + (int)Game.player.maxExp[Game.player.levelPlayer], 37, 112);
 			
 			g.setFont(new Font("arial", Font.BOLD, 7));
 			g.setColor(new Color(255,157,0));
@@ -263,6 +248,12 @@ public class UI {
 			
 		}else {
 			Game.player.offLvls = false;
+		}
+	}
+	
+	private void caixaDeDialogo(Graphics g) {
+		if(Game.sysBuild.message != null) {
+			g.drawImage(UI[21], 0, 110, null);
 		}
 	}
 	
@@ -275,8 +266,8 @@ public class UI {
 			g.drawImage(Game.sysBuild.buildImage[2], 105, 38, null);
 			
 			if(Game.player.clickBuildDescription) {
-				g.drawImage(UI[18], 64, 90, null);
-				g.drawImage(UI[13], 65, 114, null);
+				g.drawImage(UI[18], ControllerUI.POSICAO_ICONE_DESCRICAO_X, ControllerUI.POSICAO_ICONE_DESCRICAO_Y, null);
+				g.drawImage(UI[13], ControllerUI.POSICAO_ICONE_PRECO_X, ControllerUI.POSICAO_ICONE_PRECO_Y, null);
 			}
 		}
 	}
@@ -395,7 +386,6 @@ public class UI {
 	}
 	
 	public void sysOven(Graphics g) {
-		
 		g.drawImage(UI[14], 95, 40, null);
 		
 		if(Game.sysOvenBonfire.imageSlot[2] != null)
@@ -411,21 +401,16 @@ public class UI {
 		if(Game.sysOvenBonfire.slot[0] != null &&
 						Game.sysOvenBonfire.slot[0].itensPack.size()+1 > 1 ){
 			g.drawString((Game.sysOvenBonfire.slot[0].itensPack.size() + 1) + "", 111, 105);
-			
 		}
 		
 		if(Game.sysOvenBonfire.slot[1] != null &&
 				Game.sysOvenBonfire.slot[1].itensPack.size()+1 > 1 ){
 				g.drawString((Game.sysOvenBonfire.slot[1].itensPack.size() + 1) + "", 111, 85);
-	
 		}
 		
 		if(Game.sysOvenBonfire.slot[2] != null ){
 				g.drawString((Game.sysOvenBonfire.slot[2].itensPack.size() + 1) + "", 111, 57);
-	
 		}
-		
-		
 	}
 	
 	public void render(Graphics g) {
@@ -456,6 +441,7 @@ public class UI {
 		abaBuild(g);
 //		sysBuild(g);
 		systemDialog(g);
+		caixaDeDialogo(g);
 		
 //		Game.abaOvenAndBonfire = false;
 //		Game.player.openOven = false;

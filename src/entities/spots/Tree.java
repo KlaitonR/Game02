@@ -39,8 +39,10 @@ public class Tree extends Entity{
 		Stump sp = new Stump(this.getX(), this.getY(), 16, 16, Entity.STUMP_EN);
 		sp.tipo = "cepo";
 		sp.psTiles = this.psTiles;
-		Game.player.expWoodCuttingTtl += exp;
-		Game.player.expWoodCutting += exp;
+		if (Game.player.expWoodCuttingTtl < Game.player.expMaxPossivel) {
+			Game.player.expWoodCuttingTtl += exp;
+			Game.player.expWoodCutting += exp;
+		}
 		Game.entities.add(sp);
 		Game.world.tiles[psTiles].en = sp;
 		Game.entities.remove(this);

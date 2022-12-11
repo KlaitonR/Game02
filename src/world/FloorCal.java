@@ -13,6 +13,4 @@ public class FloorCal extends Tile{
 		mapa.addAll(Mapa.addAll());
 		regiao.addAll(Regiao.addAll());
 	}
-
-	
 }

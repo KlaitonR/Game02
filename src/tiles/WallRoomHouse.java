@@ -14,5 +14,4 @@ public class WallRoomHouse extends WallTile{
 		regiao.add(Regiao.REGIAO_ROOM_HOUSE_01);
 		
 	}
-
 }

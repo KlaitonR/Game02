@@ -19,7 +19,7 @@ public class Sulfor extends Ore {
 		pack = true;
 		qtPack = 63;
 		id = Id.ID_SULFOR;
-		mapa.add(Mapa.MAPA_CALABOUÇO);
+		mapa.add(Mapa.MAPA_CALABOUCO);
 		regiao.add(Regiao.REGIAO_CALABOUÇO);
 	}
 	

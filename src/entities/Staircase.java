@@ -14,7 +14,7 @@ public class Staircase extends Entity{
 		mwidth = 20;
 		mheigth = 16;
 		
-		mapa.add(Mapa.MAPA_CALABOUÇO);
+		mapa.add(Mapa.MAPA_CALABOUCO);
 		regiao.add(Regiao.REGIAO_CALABOUÇO);
 		
 		depth = 0;

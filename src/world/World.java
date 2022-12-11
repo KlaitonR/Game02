@@ -114,7 +114,7 @@ public class World {
 						tiles[xx + (yy*WIDTH)].psTiles = xx + (yy*WIDTH);
 						tiles[xx + (yy*WIDTH)].en = null;
 					
-					}else if(Game.mapaGame.equals(Mapa.MAPA_CALABOUÇO)) {
+					}else if(Game.mapaGame.equals(Mapa.MAPA_CALABOUCO)) {
 						tiles[xx + (yy*WIDTH)] = new EarthTile(xx*16, yy*16, Tile.TILE_EARTH);
 						tiles[xx + (yy*WIDTH)].psTiles = xx + (yy*WIDTH);
 						tiles[xx + (yy*WIDTH)].en = null;
@@ -731,7 +731,7 @@ public class World {
 				}
 			}
 		
-		}else if (Game.mapaGame.equals(Mapa.MAPA_CALABOUÇO)) {
+		}else if (Game.mapaGame.equals(Mapa.MAPA_CALABOUCO)) {
 			WallCal wc = null;
 			
 			for(int i=0; i<wallCalList.size();i++) {
@@ -798,7 +798,7 @@ public class World {
 //			minimapaPixels[i] = 0xEFD551;
 //		}
 		
-		for(int xx = 0; xx< WIDTH; xx++) {
+		for(int xx = 0; xx < WIDTH; xx++) {
 			for(int yy = 0; yy < HEIGHT; yy++) {
 				
 //				if(!tiles[xx + (yy*WIDTH)].show)
@@ -971,7 +971,6 @@ public class World {
 	}
 
 	public static void restarGame(String level) {
-		
 		Game.entities =  new ArrayList<Entity>();
 		Game.enemies =  new ArrayList<Enemy>();
 		Game.spritesheet =  new Spritsheet("/spritesheet.png");
@@ -984,7 +983,6 @@ public class World {
 	}
 	
 	public void render(Graphics g) {
-		
 		int xStart = Camera.x >> 4;
 		int yStart = Camera.y >> 4;
 		
@@ -1010,7 +1008,5 @@ public class World {
 		
 //		g.setColor(Color.black);
 //		g.fillRect(xStart - Camera.x  , yStart - Camera.y , xFinal, yFinal);
-		
 	}
-	
 }

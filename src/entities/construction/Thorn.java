@@ -2,6 +2,9 @@ package entities.construction;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
+import java.util.List;
+
 import util.Mapa;
 import util.Regiao;
 
@@ -9,7 +12,9 @@ public class Thorn extends Construction{
 	
 	public double life;
 	public static int price = 400;
-	public static String description = "Espinhos: Você poderá usar esse recurso como barricada.";
+	public static List<String> description = Arrays.asList("Espinhos: Você poderá usar esse recurso como barricada.",
+			"",
+			"");
 	public static boolean disable;
 	public static boolean unlocked;
 
@@ -23,7 +28,6 @@ public class Thorn extends Construction{
 		
 		mapa.add(Mapa.MAPA_FLORESTA);
 		regiao.add(Regiao.REGIAO_FLORESTA);
-		
 	}
 	
 	public void render(Graphics g) {

@@ -35,6 +35,7 @@ import entities.construction.Thorn;
 import entities.mobs.Mob;
 import entities.objectMap.GramaAgua;
 import entities.objectMap.VitoriaRegia;
+import graficos.ControllerUI;
 import graficos.Spritsheet;
 import graficos.UI;
 import util.CollisonPlayer;
@@ -98,6 +99,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public static GetResource getResource;
 	public Menu menu;
 	public static UI ui;
+	public ControllerUI ctrlUI;
 
 	public static Random rand;
 
@@ -157,6 +159,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		initFrame();
 		spriteButton = new Spritsheet("/button.png");
 		ui = new UI(spriteButton);
+		ctrlUI = new ControllerUI();
 
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 
@@ -394,7 +397,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 
 					World w = null;
 
-					if (mapaGame.equals(Mapa.MAPA_CALABOUÇO)) {
+					if (mapaGame.equals(Mapa.MAPA_CALABOUCO)) {
 						player.dir = player.rightDir;
 						player.setX(14);
 						player.setY(96);
@@ -418,13 +421,13 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 					//calabouço >> floresta
 					if (mapaGame.equals(Mapa.MAPA_FLORESTA) &&
 							regiaoGame.equals(Regiao.REGIAO_FLORESTA) &&
-							player.backRoom.equals(Mapa.MAPA_CALABOUÇO)) {
+							player.backRoom.equals(Mapa.MAPA_CALABOUCO)) {
 						player.setX(Mine.psX + 8);
 						player.setY(Mine.psY + 24);
 						player.dir = player.rightDir;
 						
 					//floresta >> calabouco
-					} else if (mapaGame.equals(Mapa.MAPA_CALABOUÇO) &&
+					} else if (mapaGame.equals(Mapa.MAPA_CALABOUCO) &&
 							regiaoGame.equals(Regiao.REGIAO_CALABOUÇO) &&
 							player.backRoom.equals(Mapa.MAPA_FLORESTA)) {
 						player.setX((1*world.TILE_SIZE)-1);
@@ -499,12 +502,12 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			regiaoGame = Regiao.REGIAO_ROOM_HOUSE_01;
 			
 		//Se está na floresta vai para a mina 
-		}else if (mapaGame.equals(Mapa.MAPA_FLORESTA) && regiaoGame.equals(Regiao.REGIAO_FLORESTA) && player.nextRoom.equals(Mapa.MAPA_CALABOUÇO)) {
-			mapaGame = Mapa.MAPA_CALABOUÇO;
+		}else if (mapaGame.equals(Mapa.MAPA_FLORESTA) && regiaoGame.equals(Regiao.REGIAO_FLORESTA) && player.nextRoom.equals(Mapa.MAPA_CALABOUCO)) {
+			mapaGame = Mapa.MAPA_CALABOUCO;
 			regiaoGame = Regiao.REGIAO_CALABOUÇO;
 			
 		//Se está na mina, vai para a floresta
-		} else if (mapaGame.equals(Mapa.MAPA_CALABOUÇO) && regiaoGame.equals(Regiao.REGIAO_CALABOUÇO) && player.nextRoom.equals(Mapa.MAPA_FLORESTA)) {
+		} else if (mapaGame.equals(Mapa.MAPA_CALABOUCO) && regiaoGame.equals(Regiao.REGIAO_CALABOUÇO) && player.nextRoom.equals(Mapa.MAPA_FLORESTA)) {
 			mapaGame = Mapa.MAPA_FLORESTA;
 			regiaoGame = Regiao.REGIAO_FLORESTA;
 			
@@ -689,6 +692,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			}
 			
 		}
+		
 
 		if (estado_cena == jogando)
 			ui.render(g);
@@ -773,20 +777,41 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public void renderDescription(Graphics g) {
 		if(player.clickBuildDescription && player.build && !player.clickConstruction) {
 			
-			g.setFont(new Font("arial", Font.BOLD, 20));
-			g.setColor(Color.white);
+			int widthMonitor = Toolkit.getDefaultToolkit().getScreenSize().width;
+			int heightMonitor = Toolkit.getDefaultToolkit().getScreenSize().height;
+			
+			int posicaoFraseDescricao0X = ControllerUI.calcularPosicaoTelaRealX(ControllerUI.POSICAO_FRASE_DESCRICAO_0_X, widthMonitor);
+			int posicaoFraseDescricao0Y = ControllerUI.calcularPosicaoTelaRealY(ControllerUI.POSICAO_FRASE_DESCRICAO_0_Y, heightMonitor);
+			
+			int posicaoFraseDescricao1X = ControllerUI.calcularPosicaoTelaRealX(ControllerUI.POSICAO_FRASE_DESCRICAO_1_X, widthMonitor);
+			int posicaoFraseDescricao1Y = ControllerUI.calcularPosicaoTelaRealY(ControllerUI.POSICAO_FRASE_DESCRICAO_1_Y, heightMonitor);
+			
+			int posicaoFraseDescricao2X = ControllerUI.calcularPosicaoTelaRealX(ControllerUI.POSICAO_FRASE_DESCRICAO_2_X, widthMonitor);
+			int posicaoFraseDescricao2Y = ControllerUI.calcularPosicaoTelaRealY(ControllerUI.POSICAO_FRASE_DESCRICAO_2_Y, heightMonitor);
+			
+			int posicaoFrasePrecoX = ControllerUI.calcularPosicaoTelaRealX(ControllerUI.POSICAO_FRASE_PRECO_X, widthMonitor);
+			int posicaoFrasePrecoY = ControllerUI.calcularPosicaoTelaRealY(ControllerUI.POSICAO_FRASE_PRECO_Y, heightMonitor);
+			
+			g.setFont(new Font("arial", Font.BOLD, 16));
+			g.setColor(new Color(73,73,73));
 			
 			if(Game.player.indexDescription == 0) {
-				g.drawString("" + Mine.description, 450, 475);
-				g.drawString("" + Mine.price, 450, 580);
+				g.drawString("" + Mine.description.get(0), posicaoFraseDescricao0X, posicaoFraseDescricao0Y);
+				g.drawString("" + Mine.description.get(1), posicaoFraseDescricao1X, posicaoFraseDescricao1Y);
+				g.drawString("" + Mine.description.get(2), posicaoFraseDescricao2X, posicaoFraseDescricao2Y);
+				g.drawString("" + Mine.price, posicaoFrasePrecoX, posicaoFrasePrecoY);
 				
 			}else if(Game.player.indexDescription == 1){
-				g.drawString("" + Thorn.description, 450, 475);
-				g.drawString("" + Thorn.price, 450, 580);
+				g.drawString("" + Thorn.description.get(0), posicaoFraseDescricao0X, posicaoFraseDescricao0Y);
+				g.drawString("" + Thorn.description.get(1), posicaoFraseDescricao1X, posicaoFraseDescricao1Y);
+				g.drawString("" + Thorn.description.get(2), posicaoFraseDescricao2X, posicaoFraseDescricao2Y);
+				g.drawString("" + Thorn.price, posicaoFrasePrecoX, posicaoFrasePrecoY);
 				
 			}else if(Game.player.indexDescription == 2){
-				g.drawString("" + MineLand.description, 450, 475);
-				g.drawString("" + MineLand.price, 450, 580);
+				g.drawString("" + MineLand.description.get(0), posicaoFraseDescricao0X, posicaoFraseDescricao0Y);
+				g.drawString("" + MineLand.description.get(1), posicaoFraseDescricao1X, posicaoFraseDescricao1Y);
+				g.drawString("" + MineLand.description.get(2), posicaoFraseDescricao2X, posicaoFraseDescricao2Y);
+				g.drawString("" + MineLand.price, posicaoFrasePrecoX, posicaoFrasePrecoY);
 			}
 		}
 	}
@@ -794,17 +819,22 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public void renderMessageErrorConstruction(Graphics g) {
 		if(sysBuild.message != null) {
 			
-			g.setColor(new Color(0,0,0,200));
-			g.fillRect(12, 522, 500, 45);
+			int widthMonitor = Toolkit.getDefaultToolkit().getScreenSize().width;
+			int heightMonitor = Toolkit.getDefaultToolkit().getScreenSize().height;
 			
-//			g.setColor(new Color(255,255,255,150));
-//			g.drawRect(14, 524, 495, 40);
+			int posicaoIconX = ControllerUI.calcularPosicaoTelaRealX(ControllerUI.POSICAO_ICON_INFO_X, widthMonitor);
+			int posicaoIconY = ControllerUI.calcularPosicaoTelaRealY(ControllerUI.POSICAO_ICON_INFO_Y, heightMonitor);
+			int posicaoIconSizeX = ControllerUI.calcularPosicaoTelaRealX(ControllerUI.POSICAO_ICON_INFO_SIZE_X, widthMonitor);
+			int posicaoIconSizeY = ControllerUI.calcularPosicaoTelaRealY(ControllerUI.POSICAO_ICON_INFO_SIZE_Y, heightMonitor);
 			
-			g.drawImage(ui.UI[18], 1 ,514, ui.UI[18].getWidth()*4, ui.UI[18].getHeight()*4, null);
+			g.drawImage(ui.UI[18], posicaoIconX, posicaoIconY, posicaoIconSizeX, posicaoIconSizeY, null);
 			
+			int posicaoFraseX = ControllerUI.calcularPosicaoTelaRealX(ControllerUI.POSICAO_FRASE_MENSAGEM_X, widthMonitor);
+			int posicaoFraseY = ControllerUI.calcularPosicaoTelaRealY(ControllerUI.POSICAO_FRASE_MENSAGEM_Y, heightMonitor);
+
 			g.setFont(new Font("arial", Font.BOLD, 20));
-			g.setColor(new Color(255,255,255,255));
-			g.drawString("" + sysBuild.message, 60, 552);
+			g.setColor(new Color(22,15,0));
+			g.drawString("" + sysBuild.message, posicaoFraseX, posicaoFraseY);
 		}
 	}
 
@@ -1033,32 +1063,39 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public void mouseClicked(MouseEvent e) {
 
 	}
-
+	
 	@Override
 	public void mousePressed(MouseEvent e) {
 		
 		player.mouseShoot = true;
-		player.mx = e.getX() / 3;
-		player.my = e.getY() / 3;
 
-		player.mxShoot = e.getX() / 5.4;
-		player.myShoot = e.getY() / 4.7;
-
-//		System.out.println("x: " + player.mx + "    y:" + player.my);
+		player.mx = e.getX();
+		player.my = e.getY();
+		
+		int widthMonitor = Toolkit.getDefaultToolkit().getScreenSize().width;
+		int heightMonitor = Toolkit.getDefaultToolkit().getScreenSize().height;
+		int posicaoX = ControllerUI.calcularPosicaoX(player.mx, widthMonitor);
+		int posicaoY = ControllerUI.calcularPosicaoY(player.my, heightMonitor);
+		player.mxShoot = ControllerUI.calcularPosicaoMoveX(player.mx, widthMonitor);
+		player.myShoot = ControllerUI.calcularPosicaoMoveY(player.my, heightMonitor);
 
 		if (gameState.equals("NORMAL")) {
-			
 			//Aba levels
-			if (!player.useBag && !player.creation && !player.build && !player.openLvls &&  !Game.player.openOven &&
-					!sysBuild.building && !sysDestruct.destruct &&
-					player.mx >= 15 && player.my >= 48 && player.mx <= 41 && player.my <= 69) {
+			if (!player.useBag && !player.creation && !player.build && !player.openLvls &&  !Game.player.openOven &&!sysBuild.building && !sysDestruct.destruct 
+					&& posicaoX > (ControllerUI.POSICAO_X_ICONE_NIVEIS + ControllerUI.ICONS) 
+					&& posicaoY > (ControllerUI.POSICAO_Y_ICONE_NIVEIS + ControllerUI.ICONS) 
+					&& posicaoX < (ControllerUI.POSICAO_X_ICONE_NIVEIS + ControllerUI.SIZE_TILE - ControllerUI.ICONS) 
+					&& posicaoY < (ControllerUI.POSICAO_Y_ICONE_NIVEIS + ControllerUI.SIZE_TILE - ControllerUI.ICONS)) {
 				player.openLvls = true;
 				player.offLvls = false;
 				player.mouseShoot = false;
 				Sound.Clips.selectedInventory.play();
 
-			} else if (!player.offLvls && 
-					player.mx >= 15 && player.my >= 48 && player.mx <= 41 && player.my <= 69) {
+			} else if (!player.offLvls
+					&& posicaoX > (ControllerUI.POSICAO_X_ICONE_NIVEIS + ControllerUI.ICONS) 
+					&& posicaoY > (ControllerUI.POSICAO_Y_ICONE_NIVEIS + ControllerUI.ICONS) 
+					&& posicaoX < (ControllerUI.POSICAO_X_ICONE_NIVEIS + ControllerUI.SIZE_TILE - ControllerUI.ICONS) 
+					&& posicaoY < (ControllerUI.POSICAO_Y_ICONE_NIVEIS + ControllerUI.SIZE_TILE - ControllerUI.ICONS)) {
 				player.offLvls = true;
 				player.openLvls = false;
 				player.mouseShoot = false;
@@ -1066,15 +1103,21 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			}
 
 			//Mapa
-			if (!player.openMap && !sysBuild.building && !sysDestruct.destruct &&
-					player.mx >= 15 && player.my >= 69 && player.mx <= 41 && player.my <= 88) {
+			if (!player.openMap && !sysBuild.building && !sysDestruct.destruct 
+					&& posicaoX > (ControllerUI.POSICAO_X_ICONE_MAPA + ControllerUI.ICONS) 
+					&& posicaoY > (ControllerUI.POSICAO_Y_ICONE_MAPA + ControllerUI.ICONS) 
+					&& posicaoX < (ControllerUI.POSICAO_X_ICONE_MAPA + ControllerUI.SIZE_TILE - ControllerUI.ICONS) 
+					&& posicaoY < (ControllerUI.POSICAO_Y_ICONE_MAPA + ControllerUI.SIZE_TILE - ControllerUI.ICONS)) {
 				player.openMap = true;
 				player.offMap = false;
 				player.mouseShoot = false;
 				Sound.Clips.paper.play();
 
-			} else if (!player.offMap && !sysBuild.building &&
-					player.mx >= 15 && player.my >= 69 && player.mx <= 41 && player.my <= 88) {
+			} else if (!player.offMap && !sysBuild.building 
+					&& posicaoX > (ControllerUI.POSICAO_X_ICONE_MAPA + ControllerUI.ICONS) 
+					&& posicaoY > (ControllerUI.POSICAO_Y_ICONE_MAPA + ControllerUI.ICONS) 
+					&& posicaoX < (ControllerUI.POSICAO_X_ICONE_MAPA + ControllerUI.SIZE_TILE - ControllerUI.ICONS) 
+					&& posicaoY < (ControllerUI.POSICAO_Y_ICONE_MAPA + ControllerUI.SIZE_TILE - ControllerUI.ICONS)) {
 				player.offMap = true;
 				player.openMap = false;
 				player.mouseShoot = false;
@@ -1083,9 +1126,11 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			}
 			
 			//Aba Build
-			if (!player.build && !player.useBag && !player.creation && !player.openLvls && !sysBuild.building &&
-					!sysDestruct.destruct &&  !Game.player.openOven &&
-					player.mx >= 15 && player.my >= 89 && player.mx <= 41 && player.my <= 109) {
+			if (!player.build && !player.useBag && !player.creation && !player.openLvls && !sysBuild.building && !sysDestruct.destruct &&  !Game.player.openOven
+					&& posicaoX > (ControllerUI.POSICAO_X_ICONE_CONSTRUCAO + ControllerUI.ICONS) 
+					&& posicaoY > (ControllerUI.POSICAO_Y_ICONE_CONSTRUCAO + ControllerUI.ICONS) 
+					&& posicaoX < (ControllerUI.POSICAO_X_ICONE_CONSTRUCAO + ControllerUI.SIZE_TILE - ControllerUI.ICONS) 
+					&& posicaoY < (ControllerUI.POSICAO_Y_ICONE_CONSTRUCAO + ControllerUI.SIZE_TILE - ControllerUI.ICONS)) {
 				if(!Game.mapaGame.equals(Mapa.MAPA_ROOM_HOUSE_01)) {
 					player.build = true;
 					player.mouseShoot = false;
@@ -1098,7 +1143,10 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 				
 				Sound.Clips.selectedInventory.play();
 
-			} else if (player.build && player.mx >= 15 && player.my >= 89 && player.mx <= 41 && player.my <= 109) {
+			} else if (posicaoX > (ControllerUI.POSICAO_X_ICONE_CONSTRUCAO + ControllerUI.ICONS) 
+					&& posicaoY > (ControllerUI.POSICAO_Y_ICONE_CONSTRUCAO + ControllerUI.ICONS) 
+					&& posicaoX < (ControllerUI.POSICAO_X_ICONE_CONSTRUCAO + ControllerUI.SIZE_TILE - ControllerUI.ICONS) 
+					&& posicaoY < (ControllerUI.POSICAO_Y_ICONE_CONSTRUCAO + ControllerUI.SIZE_TILE - ControllerUI.ICONS)) {
 				player.build = false;
 				player.clickBuildDescription = false;
 				player.indexDescription = -1;
@@ -1108,9 +1156,11 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			}
 			
 			//Botão de remover
-			if (!player.build && !player.useBag && !player.creation && !player.openLvls && 
-					!Game.sysDestruct.destruct &&  !Game.player.openOven &&
-					player.mx >= 15 && player.my >= 110 && player.mx <= 41 && player.my <= 130) {
+			if (!player.build && !player.useBag && !player.creation && !player.openLvls && !Game.sysDestruct.destruct &&  !Game.player.openOven
+					&& posicaoX > (ControllerUI.POSICAO_X_ICONE_REMOCAO + ControllerUI.ICONS) 
+					&& posicaoY > (ControllerUI.POSICAO_Y_ICONE_REMOCAO + ControllerUI.ICONS) 
+					&& posicaoX < (ControllerUI.POSICAO_X_ICONE_REMOCAO + ControllerUI.SIZE_TILE - ControllerUI.ICONS) 
+					&& posicaoY < (ControllerUI.POSICAO_Y_ICONE_REMOCAO + ControllerUI.SIZE_TILE - ControllerUI.ICONS)) {
 				
 				if(!Game.mapaGame.equals(Mapa.MAPA_ROOM_HOUSE_01)) {
 					modeDesreuct = true;
@@ -1123,157 +1173,227 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 				
 				Sound.Clips.selectedInventory.play();
 			}
-			
 		}
 
 		if (player.useBag) {
-
 			player.mouseShoot = false;
 
 			// inventario
 			checkClickInv();
-
 			int[] index = { -1, -1 };
+			
 			// Mascaras da mochila
-			if (player.mx >= 164 && player.my >= 32 && player.mx <= 194 && player.my <= 56) {
+			if (posicaoX >= ControllerUI.POSICAO_X_BAG_1 
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_1 
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_1 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_1 + ControllerUI.SIZE_TILE) {
 				index[0] = 0;
 				index[1] = 0;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 200 && player.my >= 32 && player.mx <= 230 && player.my <= 56) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_BAG_2 
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_2 
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_2 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_2 + ControllerUI.SIZE_TILE) {
 				index[0] = 0;
 				index[1] = 1;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 235 && player.my >= 32 && player.mx <= 266 && player.my <= 56) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_BAG_3
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_3 
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_3 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_3 + ControllerUI.SIZE_TILE) {
 				index[0] = 0;
 				index[1] = 2;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 271 && player.my >= 32 && player.mx <= 303 && player.my <= 56) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_BAG_4
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_4 
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_4 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_4 + ControllerUI.SIZE_TILE) {
 				index[0] = 0;
 				index[1] = 3;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 164 && player.my >= 60 && player.mx <= 194 && player.my <= 84) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_BAG_5
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_5 
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_5 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_5 + ControllerUI.SIZE_TILE) {
 				index[0] = 1;
 				index[1] = 0;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 200 && player.my >= 60 && player.mx <= 230 && player.my <= 84) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_BAG_6 
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_6 
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_6 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_6 + ControllerUI.SIZE_TILE) {
 				index[0] = 1;
 				index[1] = 1;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 235 && player.my >= 60 && player.mx <= 266 && player.my <= 84) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_BAG_7 
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_7 
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_7 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_7 + ControllerUI.SIZE_TILE) {
 				index[0] = 1;
 				index[1] = 2;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 271 && player.my >= 60 && player.mx <= 303 && player.my <= 84) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_BAG_8 
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_8 
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_8 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_8 + ControllerUI.SIZE_TILE) {
 				index[0] = 1;
 				index[1] = 3;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 164 && player.my >= 89 && player.mx <= 194 && player.my <= 113) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_BAG_9 
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_9 
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_9 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_9 + ControllerUI.SIZE_TILE) {
 				index[0] = 2;
 				index[1] = 0;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 200 && player.my >= 89 && player.mx <= 230 && player.my <= 113) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_BAG_10 
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_10
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_10 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_10 + ControllerUI.SIZE_TILE) {
 				index[0] = 2;
 				index[1] = 1;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 235 && player.my >= 89 && player.mx <= 266 && player.my <= 113) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_BAG_11 
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_11
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_11 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_11 + ControllerUI.SIZE_TILE) {
 				index[0] = 2;
 				index[1] = 2;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 271 && player.my >= 89 && player.mx <= 303 && player.my <= 113) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_BAG_12 
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_12
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_12 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_12 + ControllerUI.SIZE_TILE) {
 				index[0] = 2;
 				index[1] = 3;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 164 && player.my >= 118 && player.mx <= 194 && player.my <= 142) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_BAG_13 
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_13
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_13 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_13 + ControllerUI.SIZE_TILE) {
 				index[0] = 3;
 				index[1] = 0;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 200 && player.my >= 118 && player.mx <= 230 && player.my <= 142) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_BAG_14 
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_14
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_14 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_14 + ControllerUI.SIZE_TILE) {
 				index[0] = 3;
 				index[1] = 1;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 235 && player.my >= 118 && player.mx <= 266 && player.my <= 142) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_BAG_15 
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_15
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_15 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_15 + ControllerUI.SIZE_TILE) {
 				index[0] = 3;
 				index[1] = 2;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 271 && player.my >= 118 && player.mx <= 303 && player.my <= 142) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_BAG_16 
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_16
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_16 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_16 + ControllerUI.SIZE_TILE) {
 				index[0] = 3;
 				index[1] = 3;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 164 && player.my >= 147 && player.mx <= 194 && player.my <= 171) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_BAG_17 
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_17
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_17 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_17 + ControllerUI.SIZE_TILE) {
 				index[0] = 4;
 				index[1] = 0;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 200 && player.my >= 147 && player.mx <= 230 && player.my <= 171) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_BAG_18 
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_18
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_18 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_18 + ControllerUI.SIZE_TILE) {
 				index[0] = 4;
 				index[1] = 1;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 235 && player.my >= 147 && player.mx <= 266 && player.my <= 171) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_BAG_19 
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_19
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_19 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_19 + ControllerUI.SIZE_TILE) {
 				index[0] = 4;
 				index[1] = 2;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 271 && player.my >= 147 && player.mx <= 303 && player.my <= 171) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_BAG_20 
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_20
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_20 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_20 + ControllerUI.SIZE_TILE) {
 				index[0] = 4;
 				index[1] = 3;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 164 && player.my >= 176 && player.mx <= 194 && player.my <= 200) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_BAG_21 
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_21
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_21 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_21 + ControllerUI.SIZE_TILE) {
 				index[0] = 5;
 				index[1] = 0;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 200 && player.my >= 176 && player.mx <= 230 && player.my <= 200) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_BAG_22 
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_22
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_22 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_22 + ControllerUI.SIZE_TILE) {
 				index[0] = 5;
 				index[1] = 1;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 235 && player.my >= 176 && player.mx <= 266 && player.my <= 200) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_BAG_23
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_23
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_23 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_23 + ControllerUI.SIZE_TILE) {
 				index[0] = 5;
 				index[1] = 2;
 				sysBag.checkClickPositionItemBag(index);
 				player.clickBag = true;
 
-			} else if (player.mx >= 271 && player.my >= 176 && player.mx <= 303 && player.my <= 200) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_BAG_24
+					&& posicaoY >= ControllerUI.POSICAO_Y_BAG_24
+					&& posicaoX <= ControllerUI.POSICAO_X_BAG_24 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_BAG_24 + ControllerUI.SIZE_TILE) {
 				index[0] = 5;
 				index[1] = 3;
 				sysBag.checkClickPositionItemBag(index);
@@ -1283,30 +1403,44 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		}
 
 		if (player.creation) {
-
 			player.mouseShoot = false;
 
 			// inventario
 			checkClickInv();
 
 			// mascaras do Creation
-			if (player.mx >= 168 && player.my >= 97 && player.mx <= 198 && player.my <= 121) {
+			if (posicaoX >= ControllerUI.POSICAO_X_CARFT_1
+					&& posicaoY >= ControllerUI.POSICAO_Y_CARFT_1
+					&& posicaoX <= ControllerUI.POSICAO_X_CARFT_1 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_CARFT_1 + ControllerUI.SIZE_TILE) {
 				sysCre.checkClickPositionItemCreation(0);
 				player.clickCreation = true;
 
-			} else if (player.mx >= 203 && player.my >= 97 && player.mx <= 234 && player.my <= 121) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_CARFT_2
+					&& posicaoY >= ControllerUI.POSICAO_Y_CARFT_2
+					&& posicaoX <= ControllerUI.POSICAO_X_CARFT_2 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_CARFT_2 + ControllerUI.SIZE_TILE) {
 				sysCre.checkClickPositionItemCreation(1);
 				player.clickCreation = true;
 
-			} else if (player.mx >= 167 && player.my >= 125 && player.mx <= 198 && player.my <= 149) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_CARFT_3
+					&& posicaoY >= ControllerUI.POSICAO_Y_CARFT_3
+					&& posicaoX <= ControllerUI.POSICAO_X_CARFT_3 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_CARFT_3 + ControllerUI.SIZE_TILE) {
 				sysCre.checkClickPositionItemCreation(2);
 				player.clickCreation = true;
 
-			} else if (player.mx >= 203 && player.my >= 125 && player.mx <= 234 && player.my <= 149) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_CARFT_4
+					&& posicaoY >= ControllerUI.POSICAO_Y_CARFT_4
+					&& posicaoX <= ControllerUI.POSICAO_X_CARFT_4 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_CARFT_4 + ControllerUI.SIZE_TILE) {
 				sysCre.checkClickPositionItemCreation(3);
 				player.clickCreation = true;
 
-			} else if (player.mx >= 251 && player.my >= 111 && player.mx <= 282 && player.my <= 134) {
+			} else if (posicaoX >= ControllerUI.POSICAO_X_CARFT_5
+					&& posicaoY >= ControllerUI.POSICAO_Y_CARFT_5
+					&& posicaoX <= ControllerUI.POSICAO_X_CARFT_5 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_CARFT_5 + ControllerUI.SIZE_TILE) {
 				sysCre.checkClickPositionItemCreation(4);
 				player.clickCraft = true;
 			}
@@ -1315,10 +1449,13 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		
 		if(player.build) {
 			// mascaras do build
-			
+			player.mouseShoot = false;
 			sysBuild.message = null;
 			
-			if (player.mx >= 126 && player.my >= 60 && player.mx <= 156 && player.my <= 84) { //1
+			if (posicaoX >= ControllerUI.POSICAO_X_CONSTRUCAO_1
+					&& posicaoY >= ControllerUI.POSICAO_Y_CONSTRUCAO_1
+					&& posicaoX <= ControllerUI.POSICAO_X_CONSTRUCAO_1 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_CONSTRUCAO_1 + ControllerUI.SIZE_TILE) { //1
 				if(Mine.unlocked && e.getButton() == MouseEvent.BUTTON1) {
 					sysBuild.index = 0;
 				}else {
@@ -1331,7 +1468,10 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 					player.indexDescription = 0;
 				}
 				
-			} else if (player.mx >= 162 && player.my >= 55 && player.mx <= 192 && player.my <= 84) { //2
+			} else if (posicaoX >= ControllerUI.POSICAO_X_CONSTRUCAO_2
+					&& posicaoY >= ControllerUI.POSICAO_Y_CONSTRUCAO_2
+					&& posicaoX <= ControllerUI.POSICAO_X_CONSTRUCAO_2 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_CONSTRUCAO_2 + ControllerUI.SIZE_TILE) { //2
 				if(Thorn.unlocked && e.getButton() == MouseEvent.BUTTON1) {
 					sysBuild.index = 1;
 				}else {
@@ -1344,7 +1484,10 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 					player.indexDescription = 1;
 				}
 				
-			} else if (player.mx >= 198 && player.my >= 60 && player.mx <= 228 && player.my <= 84) { //3
+			} else if (posicaoX >= ControllerUI.POSICAO_X_CONSTRUCAO_3
+					&& posicaoY >= ControllerUI.POSICAO_Y_CONSTRUCAO_3
+					&& posicaoX <= ControllerUI.POSICAO_X_CONSTRUCAO_3 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_CONSTRUCAO_3 + ControllerUI.SIZE_TILE) { //3
 				
 				if(MineLand.unlocked && e.getButton() == MouseEvent.BUTTON1) {
 					sysBuild.index = 2;
@@ -1358,61 +1501,110 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 					player.indexDescription = 2;
 				}
 				
-			} else if (player.mx >= 234 && player.my >= 60 && player.mx <= 264 && player.my <= 84) { //4
+			} else if (posicaoX >= ControllerUI.POSICAO_X_CONSTRUCAO_4
+					&& posicaoY >= ControllerUI.POSICAO_Y_CONSTRUCAO_4
+					&& posicaoX <= ControllerUI.POSICAO_X_CONSTRUCAO_4 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_CONSTRUCAO_4 + ControllerUI.SIZE_TILE) { //4
 				
-			} else if (player.mx >= 270 && player.my >= 60 && player.mx <= 301 && player.my <= 84) { //5
+			} else if (posicaoX >= ControllerUI.POSICAO_X_CONSTRUCAO_5
+					&& posicaoY >= ControllerUI.POSICAO_Y_CONSTRUCAO_5
+					&& posicaoX <= ControllerUI.POSICAO_X_CONSTRUCAO_5 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_CONSTRUCAO_5 + ControllerUI.SIZE_TILE) { //5
 				
-			} else if (player.mx >= 306 && player.my >= 60 && player.mx <= 337 && player.my <= 84) { //6
-				
-			}
-			
-			
-			else if (player.mx >= 126 && player.my >= 88 && player.mx <= 156 && player.my <= 113) { //7
-				
-			}else if (player.mx >= 162 && player.my >= 88 && player.mx <= 192 && player.my <= 113) { //8
-				
-			}else if (player.mx >= 198 && player.my >= 88 && player.mx <= 228 && player.my <= 113) { //9
-				
-			}else if (player.mx >= 234 && player.my >= 88 && player.mx <= 264 && player.my <= 113) { //10
-				
-			}else if (player.mx >= 270 && player.my >= 88 && player.mx <= 301 && player.my <= 113) { //11
-				
-			}else if (player.mx >= 306 && player.my >= 88 && player.mx <= 337 && player.my <= 113) { //12
+			} else if (posicaoX >= ControllerUI.POSICAO_X_CONSTRUCAO_6
+					&& posicaoY >= ControllerUI.POSICAO_Y_CONSTRUCAO_6
+					&& posicaoX <= ControllerUI.POSICAO_X_CONSTRUCAO_6 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_CONSTRUCAO_6 + ControllerUI.SIZE_TILE) { //6
 				
 			}
 			
+			else if (posicaoX >= ControllerUI.POSICAO_X_CONSTRUCAO_7
+					&& posicaoY >= ControllerUI.POSICAO_Y_CONSTRUCAO_7
+					&& posicaoX <= ControllerUI.POSICAO_X_CONSTRUCAO_7 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_CONSTRUCAO_7 + ControllerUI.SIZE_TILE) { //7
+				
+			}else if (posicaoX >= ControllerUI.POSICAO_X_CONSTRUCAO_8
+					&& posicaoY >= ControllerUI.POSICAO_Y_CONSTRUCAO_8
+					&& posicaoX <= ControllerUI.POSICAO_X_CONSTRUCAO_8 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_CONSTRUCAO_8 + ControllerUI.SIZE_TILE) { //8
+				
+			}else if (posicaoX >= ControllerUI.POSICAO_X_CONSTRUCAO_9
+					&& posicaoY >= ControllerUI.POSICAO_Y_CONSTRUCAO_9
+					&& posicaoX <= ControllerUI.POSICAO_X_CONSTRUCAO_9 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_CONSTRUCAO_9 + ControllerUI.SIZE_TILE) { //9
+				
+			}else if (posicaoX >= ControllerUI.POSICAO_X_CONSTRUCAO_10
+					&& posicaoY >= ControllerUI.POSICAO_Y_CONSTRUCAO_10
+					&& posicaoX <= ControllerUI.POSICAO_X_CONSTRUCAO_10 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_CONSTRUCAO_10 + ControllerUI.SIZE_TILE) { //10
+				
+			}else if (posicaoX >= ControllerUI.POSICAO_X_CONSTRUCAO_11
+					&& posicaoY >= ControllerUI.POSICAO_Y_CONSTRUCAO_11
+					&& posicaoX <= ControllerUI.POSICAO_X_CONSTRUCAO_11 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_CONSTRUCAO_11 + ControllerUI.SIZE_TILE) { //11
+				
+			}else if (posicaoX >= ControllerUI.POSICAO_X_CONSTRUCAO_12
+					&& posicaoY >= ControllerUI.POSICAO_Y_CONSTRUCAO_12
+					&& posicaoX <= ControllerUI.POSICAO_X_CONSTRUCAO_12 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_CONSTRUCAO_12 + ControllerUI.SIZE_TILE) { //12
+			}
 			
-			else if (player.mx >= 126 && player.my >= 117 && player.mx <= 156 && player.my <= 141) { //13
+			else if (posicaoX >= ControllerUI.POSICAO_X_CONSTRUCAO_13
+					&& posicaoY >= ControllerUI.POSICAO_Y_CONSTRUCAO_13
+					&& posicaoX <= ControllerUI.POSICAO_X_CONSTRUCAO_13 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_CONSTRUCAO_13 + ControllerUI.SIZE_TILE) { //13
 				
-			}else if (player.mx >= 162 && player.my >= 117 && player.mx <= 192 && player.my <= 141) { //14
+			}else if (posicaoX >= ControllerUI.POSICAO_X_CONSTRUCAO_14
+					&& posicaoY >= ControllerUI.POSICAO_Y_CONSTRUCAO_14
+					&& posicaoX <= ControllerUI.POSICAO_X_CONSTRUCAO_14 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_CONSTRUCAO_14 + ControllerUI.SIZE_TILE) { //14
 				
-			}else if (player.mx >= 198 && player.my >= 117 && player.mx <= 228 && player.my <= 141) { //15
+			}else if (posicaoX >= ControllerUI.POSICAO_X_CONSTRUCAO_15
+					&& posicaoY >= ControllerUI.POSICAO_Y_CONSTRUCAO_15
+					&& posicaoX <= ControllerUI.POSICAO_X_CONSTRUCAO_15 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_CONSTRUCAO_15 + ControllerUI.SIZE_TILE) { //15
 				
-			}else if (player.mx >= 234 && player.my >= 117 && player.mx <= 264 && player.my <= 141) { //16
+			}else if (posicaoX >= ControllerUI.POSICAO_X_CONSTRUCAO_16
+					&& posicaoY >= ControllerUI.POSICAO_Y_CONSTRUCAO_16
+					&& posicaoX <= ControllerUI.POSICAO_X_CONSTRUCAO_16 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_CONSTRUCAO_16 + ControllerUI.SIZE_TILE) { //16
 				
-			}else if (player.mx >= 270 && player.my >= 117 && player.mx <= 301 && player.my <= 141) { //17
+			}else if (posicaoX >= ControllerUI.POSICAO_X_CONSTRUCAO_17
+					&& posicaoY >= ControllerUI.POSICAO_Y_CONSTRUCAO_17
+					&& posicaoX <= ControllerUI.POSICAO_X_CONSTRUCAO_17 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_CONSTRUCAO_17 + ControllerUI.SIZE_TILE) { //17
 				
-			}else if (player.mx >= 306 && player.my >= 117 && player.mx <= 337 && player.my <= 141) { //18
-				
+			}else if (posicaoX >= ControllerUI.POSICAO_X_CONSTRUCAO_18
+					&& posicaoY >= ControllerUI.POSICAO_Y_CONSTRUCAO_18
+					&& posicaoX <= ControllerUI.POSICAO_X_CONSTRUCAO_18 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_CONSTRUCAO_18 + ControllerUI.SIZE_TILE) { //18
 			}
 		}
 		
 		if(player.openOven) {
-			
 			player.mouseShoot = false;
 			
 			// inventario
 			checkClickInv();
 			
-			if (player.mx >= 210 && player.my >= 143 && player.mx <= 240 && player.my <= 166) { //7
+			if (posicaoX >= ControllerUI.POSICAO_X_OVEN_1
+					&& posicaoY >= ControllerUI.POSICAO_Y_OVEN_1
+					&& posicaoX <= ControllerUI.POSICAO_X_OVEN_1 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_OVEN_1 + ControllerUI.SIZE_TILE) { //7
 				sysOvenBonfire.checkClickPositionOvenBonfire(0);
 				player.clickOvenBonfire = true;
 
-			}else if (player.mx >= 210 && player.my >= 111 && player.mx <= 240 && player.my <= 135) { //8
+			}else if (posicaoX >= ControllerUI.POSICAO_X_OVEN_2
+					&& posicaoY >= ControllerUI.POSICAO_Y_OVEN_2
+					&& posicaoX <= ControllerUI.POSICAO_X_OVEN_2 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_OVEN_2 + ControllerUI.SIZE_TILE) { //8
 				sysOvenBonfire.checkClickPositionOvenBonfire(1);
 				player.clickOvenBonfire = true;
 				
-			}else if (player.mx >= 210 && player.my >= 68 && player.mx <= 240 && player.my <= 91) { //9
+			}else if (posicaoX >= ControllerUI.POSICAO_X_OVEN_3
+					&& posicaoY >= ControllerUI.POSICAO_Y_OVEN_3
+					&& posicaoX <= ControllerUI.POSICAO_X_OVEN_3 + ControllerUI.SIZE_TILE 
+					&& posicaoY <= ControllerUI.POSICAO_Y_OVEN_3 + ControllerUI.SIZE_TILE) { //9
 				sysOvenBonfire.checkClickPositionOvenBonfire(2);
 				player.clickCraftOvenBonfire = true;
 			}
@@ -1420,38 +1612,69 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		
 		if(sysBuild.building) {
 			player.clickConstruction = true;
-			sysBuild.xTarget = (int)(e.getX() / 5.7);
-			sysBuild.yTarget = (int)(e.getY() / 4.7);
+			player.mouseShoot = false;
+			
+			sysBuild.xTarget = ControllerUI.calcularPosicaoMoveX(e.getX(), widthMonitor);
+			sysBuild.yTarget = ControllerUI.calcularPosicaoMoveY(e.getY(), heightMonitor);
 		}
 		
 		if(sysDestruct.destruct) {
 			player.clickDestruction = true;
-			sysDestruct.xTarget = (int)(e.getX() / 5.7);
-			sysDestruct.yTarget = (int)(e.getY() / 4.7);
+			player.mouseShoot = false;
+			
+			sysDestruct.xTarget = ControllerUI.calcularPosicaoMoveX(e.getX(), widthMonitor);
+			sysDestruct.yTarget = ControllerUI.calcularPosicaoMoveY(e.getY(), heightMonitor);
 		}
 
 
 	}
 	
 	public void checkClickInv() {
+		
+		int widthMonitor = Toolkit.getDefaultToolkit().getScreenSize().width;
+		int heightMonitor = Toolkit.getDefaultToolkit().getScreenSize().height;
+
+		int posicaoX = ControllerUI.calcularPosicaoX(player.mx, widthMonitor);
+		int posicaoY = ControllerUI.calcularPosicaoY(player.my, heightMonitor);
+		
+		System.out.println("posicaoX: " + posicaoX);
+		System.out.println("posicaoY: " + posicaoY);
+		System.out.println(ControllerUI.POSICAO_X_SLOTE_1);
+		System.out.println(ControllerUI.POSICAO_Y_SLOTE_1);
+		
 		// Mascaras do inventario
-		if (player.mx >= 143 && player.my >= 223 && player.mx <= 174 && player.my <= 247) {
+		if (posicaoX >= ControllerUI.POSICAO_X_SLOTE_1 
+				&& posicaoY >= ControllerUI.POSICAO_Y_SLOTE_1 
+				&& posicaoX <= ControllerUI.POSICAO_X_SLOTE_1 + ControllerUI.SIZE_TILE 
+				&& posicaoY <= ControllerUI.POSICAO_Y_SLOTE_1 + ControllerUI.SIZE_TILE) {
 			sysInv.checkClickPositionItemInv(0);
 			player.clickInv = true;
 
-		} else if (player.mx >= 178 && player.my >= 223 && player.mx <= 210 && player.my <= 247) {
+		} else if (posicaoX >= ControllerUI.POSICAO_X_SLOTE_2 
+				&& posicaoY >= ControllerUI.POSICAO_Y_SLOTE_2 
+				&& posicaoX <= ControllerUI.POSICAO_X_SLOTE_2 + ControllerUI.SIZE_TILE 
+				&& posicaoY <= ControllerUI.POSICAO_Y_SLOTE_2 + ControllerUI.SIZE_TILE) {
 			sysInv.checkClickPositionItemInv(1);
 			player.clickInv = true;
 
-		} else if (player.mx >= 214 && player.my >= 223 && player.mx <= 246 && player.my <= 247) {
+		} else if (posicaoX >= ControllerUI.POSICAO_X_SLOTE_3 
+				&& posicaoY >= ControllerUI.POSICAO_Y_SLOTE_3 
+				&& posicaoX <= ControllerUI.POSICAO_X_SLOTE_3 + ControllerUI.SIZE_TILE 
+				&& posicaoY <= ControllerUI.POSICAO_Y_SLOTE_3 + ControllerUI.SIZE_TILE) {
 			sysInv.checkClickPositionItemInv(2);
 			player.clickInv = true;
 
-		} else if (player.mx >= 250 && player.my >= 223 && player.mx <= 282 && player.my <= 247) {
+		} else if (posicaoX >= ControllerUI.POSICAO_X_SLOTE_4 
+				&& posicaoY >= ControllerUI.POSICAO_Y_SLOTE_4 
+				&& posicaoX <= ControllerUI.POSICAO_X_SLOTE_4 + ControllerUI.SIZE_TILE 
+				&& posicaoY <= ControllerUI.POSICAO_Y_SLOTE_4 + ControllerUI.SIZE_TILE) {
 			sysInv.checkClickPositionItemInv(3);
 			player.clickInv = true;
 
-		} else if (player.mx >= 287 && player.my >= 223 && player.mx <= 318 && player.my <= 247) {
+		} else if (posicaoX >= ControllerUI.POSICAO_X_SLOTE_5 
+				&& posicaoY >= ControllerUI.POSICAO_Y_SLOTE_5 
+				&& posicaoX <= ControllerUI.POSICAO_X_SLOTE_5 + ControllerUI.SIZE_TILE 
+				&& posicaoY <= ControllerUI.POSICAO_Y_SLOTE_5 + ControllerUI.SIZE_TILE) {
 			sysInv.checkClickPositionItemInv(4);
 			player.clickInv = true;
 
@@ -1482,8 +1705,12 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public void mouseMoved(MouseEvent e) {
 
 		if (player != null) {
-			player.moveMx = ((e.getX() / 5.7));
-			player.moveMy = ((e.getY() / 4.7));
+			
+			int widthMonitor = Toolkit.getDefaultToolkit().getScreenSize().width;
+			int heightMonitor = Toolkit.getDefaultToolkit().getScreenSize().height;
+			
+			player.moveMx = ControllerUI.calcularPosicaoMoveX(e.getX(), widthMonitor);
+			player.moveMy = ControllerUI.calcularPosicaoMoveY(e.getY(), heightMonitor);
 			
 //			if(sysBuild != null) {
 //				sysBuild.xTarget = (int)(e.getX() / 5.7);

@@ -1,6 +1,5 @@
 package entities;
 
-//import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -8,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import entities.construction.Construction;
 import entities.mobs.Mob;
 import main.Game;
 import util.Id;
@@ -164,6 +164,21 @@ public class Entity {
 		
 	}
 	
+public static boolean isColiddingConstruction(Construction e1, Construction e2) {
+
+		Rectangle e1Mask = new Rectangle(e1.getX() + e1.maskxNoConstruction, e1.getY() + e1.maskyNoConstruction, e1.maskmNoConstruction, e1.maskhNoConstruction);
+		Rectangle e2Mask = new Rectangle(e2.getX() + e2.maskx, e2.getY() + e2.masky, e2.mwidth, e2.mheigth);
+		
+		return e1Mask.intersects(e2Mask);
+		
+//		if(e1Mask.intersects(e2Mask) && e1.z == e2.z) {
+//			return true;
+//		}else {
+//			return false;	
+//		}
+		
+	}
+	
 	public static boolean isColiddingTile(Entity e, Tile t) {
 		
 		Rectangle eMask = new Rectangle(e.getX() + e.getMaskx(), e.getY() + e.getMasky(), e.getMaskw(), e.getMaskh());
@@ -269,7 +284,6 @@ public class Entity {
 				if(x == target.x * 16 && y == target.y * 16) {
 					path.remove(path.size() - 1);
 				}
-				
 			}
 		}
 	}
@@ -291,7 +305,7 @@ public class Entity {
 		g.drawImage(sprite ,this.getX() - Camera.x, this.getY() - Camera.y , null);
 		
 //		g.setColor(Color.red);
-//		g.fillRect(this.getX() + maskx - Camera.x, this.getY() + masky - Camera.y, maskw, maskh);
+//		g.fillRect(this.getX() + maskx - Camera.x, this.getY() + masky - Camera.y, maskx, masky);
 		
 	}
 

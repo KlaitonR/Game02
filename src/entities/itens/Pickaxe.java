@@ -13,7 +13,7 @@ public class Pickaxe extends Entity{
 		super(x, y, width, height, sprite);
 		
 		id = Id.ID_PICKAXE;
-		mapa.add(Mapa.MAPA_CALABOUÇO);
+		mapa.add(Mapa.MAPA_CALABOUCO);
 		regiao.add(Regiao.REGIAO_CALABOUÇO);
 	}
 }

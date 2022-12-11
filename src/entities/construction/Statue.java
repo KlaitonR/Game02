@@ -18,9 +18,8 @@ public class Statue extends Construction{
 		mheigth = 60;
 		
 		id = Id.ID_STATUE;
-		mapa.add(Mapa.MAPA_CALABOUÇO);
+		mapa.add(Mapa.MAPA_CALABOUCO);
 		regiao.add(Regiao.REGIAO_CALABOUÇO);
-		
 	}
 	
 	public void render(Graphics g) {
@@ -35,5 +34,4 @@ public class Statue extends Construction{
 //		g.fillRect(this.getX() - Camera.x + maskx, this.getY() - Camera.y + masky, mwidth, mheigth);
 		
 	}
-
 }

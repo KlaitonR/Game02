@@ -15,7 +15,7 @@ public class SilverBar extends Entity{
 		id = Id.ID_BAR_SILVER;
 		pack = true;
 		qtPack = 63;
-		mapa.add(Mapa.MAPA_CALABOUÇO);
+		mapa.add(Mapa.MAPA_CALABOUCO);
 		regiao.add(Regiao.REGIAO_CALABOUÇO);
 	}
 

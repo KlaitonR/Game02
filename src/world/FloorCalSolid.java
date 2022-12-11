@@ -10,8 +10,7 @@ public class FloorCalSolid extends WallTile{
 	public FloorCalSolid(int x, int y, BufferedImage sprite) {
 		super(x, y, sprite);
 		
-		mapa.add(Mapa.MAPA_CALABOUÇO);
+		mapa.add(Mapa.MAPA_CALABOUCO);
 		regiao.add(Regiao.REGIAO_CALABOUÇO);
 	}
-
 }

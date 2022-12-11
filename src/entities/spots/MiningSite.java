@@ -23,7 +23,7 @@ public class MiningSite extends Entity{
 	
 	public MiningSite(double x, double y, int width, int height, BufferedImage sprite) {
 		super(x, y, width, height, sprite);
-		mapa.add(Mapa.MAPA_CALABOUÇO);
+		mapa.add(Mapa.MAPA_CALABOUCO);
 		regiao.add(Regiao.REGIAO_CALABOUÇO);
 	}
 	

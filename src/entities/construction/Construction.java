@@ -32,6 +32,11 @@ public class Construction extends Entity {
 	public int masckConstructionW;
 	public int masckConstructionH;
 	
+	public int maskxNoConstruction;
+	public int maskyNoConstruction;
+	public int maskmNoConstruction;
+	public int maskhNoConstruction;
+	
 	public Construction (double x, double y, int width, int height, BufferedImage sprite) {
 		super(x, y, width, height, sprite);
 		

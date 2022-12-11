@@ -19,7 +19,7 @@ public class PotassiumNitrate extends Ore {
 		id = Id.ID_POTASSIUM_NITRATE;
 		pack = true;
 		qtPack = 63;
-		mapa.add(Mapa.MAPA_CALABOUÇO);
+		mapa.add(Mapa.MAPA_CALABOUCO);
 		regiao.add(Regiao.REGIAO_CALABOUÇO);
 	}
 	

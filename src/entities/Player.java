@@ -41,10 +41,11 @@ public class Player extends Entity{
 	clickConstruction, clickDestruct, clickDestruction, openOven, coocking;
 	public boolean dropItem, getItem, useItem;
 
-	public double life = 100, maxLife = 100, exp, expAtatck, expWoodCutting, expWoodCuttingTtl;
-	public double [] maxExp = {500, 1000, 5000, 10000, 20000};
-	public int ammo = 1000, levelPlayer, levelAttack, levelWoodCutting, maxLevel = 4, money = 120000, indexDescription = -1;
-
+	public double life = 100, maxLife = 100, exp, expWoodCutting, expWoodCuttingTtl, expAttack, expAttackTtl;
+	public double [] maxExp = {600, 1000, 6000, 10000, 20000};
+	public int ammo = 1000, levelPlayer, levelAttack, levelWoodCutting, maxLevel = 4, money = 10000, indexDescription = -1;
+	public int expMaxPossivel;
+	
 	public String levelRoom;
 	public Mapa nextRoom;
 	public Mapa backRoom;
@@ -153,6 +154,10 @@ public class Player extends Entity{
 		
 		maskx = 4; masky = 0; mwidth = 8; mheigth = 16;
 		depth = 2;
+		
+		for(int i=0;i<maxExp.length;i++) {
+			expMaxPossivel += maxExp[i];
+		}
 		
 		rightPlayer = new BufferedImage[4];
 		leftPlayer = new BufferedImage[4];
@@ -334,27 +339,33 @@ public class Player extends Entity{
 	}
 	
 	public void checkLevel() {
-		
-		for(int i=0; i<maxExp.length; i++) {
-			
-			if(expAtatck >= maxExp[i]) { 
-				continue;
-			} else {
-				if(levelAttack != i)
-					expAtatck = 0;
-				levelAttack = i;
-				break;
+		if (Game.player.expAttackTtl <= Game.player.expMaxPossivel) {
+			for (int i = 0; i < maxExp.length; i++) {
+				if (expAttack >= maxExp[i] && levelAttack == i) {
+					if (levelAttack == maxLevel) {
+						expAttack = (int)Game.player.maxExp[i];
+						continue;
+					} else {
+						Game.player.expAttack = 0;
+						levelAttack = i + 1;
+						break;
+					}
+				}
 			}
 		}
 		
-		for(int i=0; i<maxExp.length; i++) {
-			if(expWoodCuttingTtl >= maxExp[i]) {
-				continue;
-			} else {
-				if(levelWoodCutting != i) 
-					expWoodCutting = expWoodCuttingTtl - maxExp[i-1];
-				levelWoodCutting = i;
-				break;
+		if (Game.player.expWoodCuttingTtl <= Game.player.expMaxPossivel) {
+			for (int i = 0; i < maxExp.length; i++) {
+				if (expWoodCutting >= maxExp[i] && levelWoodCutting == i) {
+					if (levelWoodCutting == maxLevel) {
+						expWoodCutting = (int)Game.player.maxExp[i];
+						continue;
+					} else {
+						Game.player.expWoodCutting = 0;
+						levelWoodCutting = i + 1;
+						break;
+					}
+				}
 			}
 		}
 	}
@@ -572,7 +583,7 @@ public class Player extends Entity{
 	
 	private void collidingNoInteratorAndSound() {
 		
-		if(!Game.mapaGame.equals(Mapa.MAPA_CALABOUÇO)) {
+		if(!Game.mapaGame.equals(Mapa.MAPA_CALABOUCO)) {
 		
 			if(Game.collision.checkCollisionFishingSpotMask()) {
 				Sound.Clips.waterRunning.loop();
@@ -819,7 +830,6 @@ public class Player extends Entity{
 			indexAnimatioFishing = 0;
 			framesAnimatioFishing = 0;
 		}
-		
 	}
 	
 	private void enterWorld() {
@@ -828,7 +838,6 @@ public class Player extends Entity{
 			useBag = false;
 			creation = false;
 			build = false;
-			
 		}
 	}
 	
@@ -866,7 +875,6 @@ public class Player extends Entity{
 			openLvls = false;
 			openOven = false;
 		}
-		
 	}
 	
 	public void tick() {
