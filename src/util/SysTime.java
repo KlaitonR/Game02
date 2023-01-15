@@ -13,7 +13,7 @@ import main.Sound;
 
 public class SysTime {
 
-	public int hour = 8, minute = 0, second = 0, days = 0, darken;
+	public int hour = 8, minute = 0, second = 0, days = 1, darken;
 	public boolean dusk, dawn, night, day;
 	public int duskHour = 18, duskFinalHour = 19, dawnHour = 6, dawnFinalHour = 7;
 	public int controlDarken, opacityNight = 235;

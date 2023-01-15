@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -19,6 +20,7 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -122,9 +124,6 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 
 	double mx, my;
 
-//	public InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("pixelfont.ttf");
-//	public Font newfont;
-
 	public boolean saveGame;
 
 	public static String gameState = "MENU";
@@ -143,6 +142,11 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public static boolean enterWorld, modeConstruction, modeDesreuct;
 
 	public int timeCena = 0, maxTimeCena = 60 * 3;
+	
+	public InputStream fontPixel = ClassLoader.getSystemClassLoader().getResourceAsStream("fonts/FontPixel.ttf");
+	public InputStream fontPixel02 = ClassLoader.getSystemClassLoader().getResourceAsStream("fonts/FontPixel.ttf");
+	public Font fontMessageBuild;
+	public Font fontBuild;
 
 	public Game() {
 
@@ -227,14 +231,15 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		world.regiao = regiaoGame;
 		worlds.add(world);
 		menu = new Menu();
-
-//		try {
-//			newfont = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(70f);
-//		}catch (FontFormatException f) {
-//			f.printStackTrace();
-//		}catch(IOException e){
-//			e.printStackTrace();
-//		}
+		
+		try {
+			fontMessageBuild = Font.createFont(Font.TRUETYPE_FONT, fontPixel).deriveFont(30f);
+			fontBuild = Font.createFont(Font.TRUETYPE_FONT, fontPixel02).deriveFont(20f);
+		}catch (FontFormatException f) {
+			f.printStackTrace();
+		}catch(IOException e){
+			e.printStackTrace();
+		}
 	}
 
 	public static void main(String args[]) {
@@ -495,7 +500,6 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	}
 
 	public void verificaRoom() {
-		
 		//Se está na floresta vai para a casa
 		if(mapaGame.equals(Mapa.MAPA_FLORESTA) && regiaoGame.equals(Regiao.REGIAO_FLORESTA) && player.nextRoom.equals(Mapa.MAPA_ROOM_HOUSE_01)) {
 			mapaGame = Mapa.MAPA_ROOM_HOUSE_01;
@@ -690,9 +694,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			if(enterWorld || modeConstruction || modeDesreuct) {
 				shade(g);
 			}
-			
 		}
-		
 
 		if (estado_cena == jogando)
 			ui.render(g);
@@ -792,7 +794,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			int posicaoFrasePrecoX = ControllerUI.calcularPosicaoTelaRealX(ControllerUI.POSICAO_FRASE_PRECO_X, widthMonitor);
 			int posicaoFrasePrecoY = ControllerUI.calcularPosicaoTelaRealY(ControllerUI.POSICAO_FRASE_PRECO_Y, heightMonitor);
 			
-			g.setFont(new Font("arial", Font.BOLD, 16));
+			g.setFont(fontBuild);
 			g.setColor(new Color(73,73,73));
 			
 			if(Game.player.indexDescription == 0) {
@@ -818,7 +820,6 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	
 	public void renderMessageErrorConstruction(Graphics g) {
 		if(sysBuild.message != null) {
-			
 			int widthMonitor = Toolkit.getDefaultToolkit().getScreenSize().width;
 			int heightMonitor = Toolkit.getDefaultToolkit().getScreenSize().height;
 			
@@ -832,8 +833,8 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			int posicaoFraseX = ControllerUI.calcularPosicaoTelaRealX(ControllerUI.POSICAO_FRASE_MENSAGEM_X, widthMonitor);
 			int posicaoFraseY = ControllerUI.calcularPosicaoTelaRealY(ControllerUI.POSICAO_FRASE_MENSAGEM_Y, heightMonitor);
 
-			g.setFont(new Font("arial", Font.BOLD, 20));
-			g.setColor(new Color(22,15,0));
+			g.setFont(fontMessageBuild);
+			g.setColor(new Color(50,20,0));
 			g.drawString("" + sysBuild.message, posicaoFraseX, posicaoFraseY);
 		}
 	}
@@ -1703,7 +1704,6 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-
 		if (player != null) {
 			
 			int widthMonitor = Toolkit.getDefaultToolkit().getScreenSize().width;

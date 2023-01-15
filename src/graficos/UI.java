@@ -19,8 +19,10 @@ public class UI {
 	public BufferedImage [] UI;
 	public InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("fonts/pixelfont.ttf");
 	public InputStream stream02 = ClassLoader.getSystemClassLoader().getResourceAsStream("fonts/pixelfont.ttf");
+	public InputStream fontPixel = ClassLoader.getSystemClassLoader().getResourceAsStream("fonts/FontPixel.ttf");
 	public Font newfont;
 	public Font fontSystemCreat;
+	public Font fontGlobal;
 	static public Spritsheet spriteUI;
 	public boolean buttonColletct;
 	public boolean buttonEnterRoom;
@@ -56,15 +58,16 @@ public class UI {
 		UI[18] = spriteUI.getSprite(96, 80, 16, 16); //Icone de informação
 		UI[19] = spriteUI.getSprite(160, 80, 16, 16); //Forno ligado
 		UI[20] = spriteUI.getSprite(112, 80, 16, 16); //Button ESC
-		UI[21] = spriteUI.getSprite(0, 384, 112, 16); //Caixa de diálogo
+		UI[21] = spriteUI.getSprite(0, 384, 128, 16); //Caixa de diálogo
 		
 		button = new BufferedImage[2];
 		button[0] = Game.spriteButton.getSprite(0, 0, 5, 5);
 		button[1] = Game.spriteButton.getSprite(0, 5, 5, 5);
 		
 		try {
-			newfont = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(14f);
+			newfont = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(15f);
 			fontSystemCreat = Font.createFont(Font.TRUETYPE_FONT, stream02).deriveFont(22f);
+			fontGlobal = Font.createFont(Font.TRUETYPE_FONT, fontPixel).deriveFont(8f);
 		}catch (FontFormatException f) {
 			f.printStackTrace();
 		}catch(IOException e){
@@ -75,7 +78,7 @@ public class UI {
 	
 	private void timeSystem(Graphics g) {
 		if(Game.gameState.equals("NORMAL") || Menu.pause) {
-			g.setFont(new Font("arial", Font.BOLD, 9));
+			g.setFont(newfont);
 			g.setColor(Color.white);
 			
 			if(Game.sysTime.hour < 10 && Game.sysTime.minute < 10) 
@@ -96,12 +99,12 @@ public class UI {
 		g.drawImage(UI[0], 58 ,123 , null);
 		
 		if(Game.sysInv.handItem != null) {
+//			g.setFont(newfont);
 			g.setFont(newfont);
 			g.setColor(Color.white);
 			
 			//Ajudar a centralizar o texto
-		
-			g.drawString(Game.sysInv.handItem.tipo, 121 - Game.sysInv.handItem.tipo.length()*2, 135);
+			g.drawString(Game.sysInv.handItem.tipo, 121 - (int)(Game.sysInv.handItem.tipo.length()*2.25), 135);
 			
 		}
 				

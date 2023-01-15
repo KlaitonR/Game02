@@ -11,7 +11,7 @@ import util.Regiao;
 
 public class Tree extends Entity{
 	
-	public static int cuttingTime, maxCuttingTime = Game.rand.nextInt(5) + 5;
+	public static int cuttingTime, maxCuttingTime = Game.rand.nextInt(500) + 5;
 	
 	public int life;
 	public static int exp;
